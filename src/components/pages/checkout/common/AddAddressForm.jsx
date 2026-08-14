@@ -18,6 +18,7 @@ import { useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import SelectForm from "./SelectForm";
 import AccountContext from "@/context/accountContext";
+import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 
 const AddAddressForm = ({
   isLoading,
@@ -106,7 +107,7 @@ const AddAddressForm = ({
             payload.userId = userId;
           }
 
-          await request(
+          const response = await request(
             {
               url,
               method: methodToUse,
@@ -114,6 +115,12 @@ const AddAddressForm = ({
             },
             router
           );
+
+          if (response?.response || response?.isAxiosError) {
+            const message = response?.response?.data?.error || "Unable to save the address. Please try again.";
+            ToastNotification("error", message);
+            return;
+          }
 
           setModal(false);
 
@@ -124,6 +131,7 @@ const AddAddressForm = ({
 
         } catch (error) {
           console.error("Checkout address save failed:", error);
+          ToastNotification("error", error?.response?.data?.error || "Unable to save the address. Please try again.");
         }
       }}
     >

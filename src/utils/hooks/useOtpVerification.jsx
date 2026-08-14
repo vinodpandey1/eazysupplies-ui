@@ -41,8 +41,13 @@ const LoginWithMobileHandle = (responseData, router, refetch, compareRefetch, Ca
   
   if (responseData.status === 200 || responseData.status === 201) {
     // SET COOKIES EXACTLY LIKE EMAIL LOGIN
-    // 1. Set uat cookie (access token) - use a placeholder for OTP login
-    const authToken =   Cookies.get("authToken");  
+    // The API cookie is HttpOnly and belongs to api.eazysupplies.com, so the
+    // storefront must use the access token returned in the login response.
+    const authToken = responseData.data?.access_token;
+    if (!authToken) {
+      setShowBoxMessage?.({ type: 'error', message: 'Login token was not returned. Please try again.' });
+      return;
+    }
     Cookies.set("uat", authToken, { path: "/", expires: new Date(Date.now() + 24 * 60 * 6000) });
     // 2. Set account cookie with user data
     if (typeof window !== "undefined" && responseData.data) {
@@ -179,6 +184,7 @@ const useOtpVerification = (setState, setShowBoxMessage) => {
         
         const response = await fetch(url, {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
