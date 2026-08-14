@@ -60,18 +60,6 @@ export const FilterSortData = [
     value: "high-low",
     label: "HighLowPrice",
   },
-  {
-    value: "a-z",
-    label: "AZOrder",
-  },
-  {
-    value: "z-a",
-    label: "ZAOrder",
-  },
-  {
-    value: "discount-high-low",
-    label: "% Off - Hight To Low",
-  },
 ];
 export const FilterPaginateData = [
   {
