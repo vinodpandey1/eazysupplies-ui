@@ -23,10 +23,33 @@ const CollectionContain = () => {
   const { themeOption } = useContext(ThemeOptionContext);
   const [category, brand, attribute, price, rating, sortBy, field, layout, paginate, title] = useCustomSearchParams(["category", "brand", "attribute", "price", "rating", "sortBy", "field", "layout", "paginate", "title"]);
   const collectionLayout = layout?.layout ? layout?.layout : themeOption?.collection?.collection_layout;
-  const collectionTitle = title?.title?.trim() || "Collections";
   const searchParams = useSearchParams();
   const currentCollectionLink = `/collections${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
   const { categoryIsLoading } = useContext(CategoryContext);
+  const categoryId = category?.category?.split(",")?.[0];
+  const brandId = brand?.brand?.split(",")?.[0];
+  const activeName = title?.title?.trim();
+
+  const breadcrumbDetails = categoryId
+    ? {
+        title: activeName || `Category ${categoryId}`,
+        items: [
+          { name: "Category", categoryPopover: true, icon: "category" },
+          { name: activeName || `Category ${categoryId}`, link: currentCollectionLink, icon: "category", current: true },
+        ],
+      }
+    : brandId
+      ? {
+          title: activeName || `Brand ${brandId}`,
+          items: [
+            { name: "Brand", icon: "brand" },
+            { name: activeName || `Brand ${brandId}`, link: currentCollectionLink, icon: "brand", current: true },
+          ],
+        }
+      : {
+          title: "All Products",
+          items: [{ name: "All Products", link: "/collections", icon: "products", current: true }],
+        };
 
   useEffect(() => {
     axios.get(CategoryAPI).then((res) => {
@@ -83,8 +106,8 @@ const CollectionContain = () => {
       ) : (
         <>
           <Breadcrumbs
-            title={collectionTitle}
-            subNavigation={collectionTitle === "Collections" ? [{ name: "Collections", link: "/collections", categoryPopover: true }] : [{ name: "Collections", link: "/collections", categoryPopover: true }, { name: collectionTitle, link: currentCollectionLink }]}
+            title={breadcrumbDetails.title}
+            subNavigation={breadcrumbDetails.items}
           />
           {isCollectionMatch[collectionLayout]}
         </>

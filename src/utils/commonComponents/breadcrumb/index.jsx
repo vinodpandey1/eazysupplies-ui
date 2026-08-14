@@ -4,6 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Breadcrumb, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
+import { RiArrowRightSLine, RiFolder3Line, RiHome4Line, RiPriceTag3Line, RiShoppingBag3Line } from "react-icons/ri";
+
+const breadcrumbIcons = {
+  category: RiFolder3Line,
+  brand: RiPriceTag3Line,
+  products: RiShoppingBag3Line,
+};
 
 const Breadcrumbs = ({ mainHeading, subNavigation, subTitle, title }) => {
   const { t } = useTranslation("common");
@@ -23,21 +30,35 @@ const Breadcrumbs = ({ mainHeading, subNavigation, subTitle, title }) => {
   };
 
   const visibleCategories = categoryData.filter((category) => category?.name && category.name.toUpperCase() !== "DEFAULT");
+  const itemContent = (result) => {
+    const ItemIcon = breadcrumbIcons[result?.icon];
+    return (
+      <>
+        {ItemIcon && <ItemIcon className="breadcrumb-icon" aria-hidden="true" />}
+        <span>{t(result?.name?.replaceAll("-", " "))}</span>
+      </>
+    );
+  };
+
   return (
     <div className="breadcrumb-section">
       <Container>
         <h2>{t(title?.replaceAll("-", " "))}</h2>
         <nav className="theme-breadcrumb">
           <Breadcrumb>
-            <div className="breadcrumb-item active">
-              <Link href="/"> {t("Home")} </Link>
+            <div className="breadcrumb-item active breadcrumb-home-item">
+              <Link href="/" className="breadcrumb-link">
+                <RiHome4Line className="breadcrumb-icon" aria-hidden="true" />
+                <span>{t("Home")}</span>
+              </Link>
             </div>
             {subNavigation?.map((result, i) => (
-              <div key={i} className="breadcrumb-item active ">
+              <div key={i} className={`breadcrumb-item active ${result?.current ? "breadcrumb-current" : ""}`} aria-current={result?.current ? "page" : undefined}>
+                <RiArrowRightSLine className="breadcrumb-separator" aria-hidden="true" />
                 {result?.categoryPopover ? (
                   <Dropdown className="breadcrumb-category-dropdown" isOpen={categoryPopoverOpen} toggle={() => setCategoryPopoverOpen((open) => !open)}>
                     <DropdownToggle tag="button" color="link" className="breadcrumb-category-toggle p-0 border-0 text-uppercase">
-                      {t(result?.name?.replaceAll("-", " "))}
+                      {itemContent(result)}
                     </DropdownToggle>
                     <DropdownMenu style={{ maxHeight: "320px", minWidth: "280px", overflowY: "auto" }}>
                       <DropdownItem header>{t("Categories")}</DropdownItem>
@@ -50,9 +71,9 @@ const Breadcrumbs = ({ mainHeading, subNavigation, subTitle, title }) => {
                     </DropdownMenu>
                   </Dropdown>
                 ) : result?.link ? (
-                  <Link href={result.link}> {t(result?.name?.replaceAll("-", " "))} </Link>
+                  <Link href={result.link} className="breadcrumb-link">{itemContent(result)}</Link>
                 ) : (
-                  <span> {t(result?.name?.replaceAll("-", " "))} </span>
+                  <span className="breadcrumb-label">{itemContent(result)}</span>
                 )}
               </div>
             ))}

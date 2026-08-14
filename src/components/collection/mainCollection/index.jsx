@@ -6,9 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiFilterFill } from "react-icons/ri";
 import { Col, Row } from "reactstrap";
-import CollectionSidebar from "../collectionSidebar";
 import CollectionProducts from "./CollectionProducts";
-import FilterBtn from "./FilterBtn";
 import FilterPaginate from "./FilterPaginate";
 import FilterSort from "./FilterSort";
 import GridBox from "./GridBox";
@@ -56,14 +54,12 @@ const MainCollection = ({ filter, setFilter, isBanner, isOffcanvas, classicStore
                   <Col>
                     <div className={`${sidebarPopUp ? "popup-filter" : "product-filter-content"}`}>
                       <div className="dropdown-box-group">
-                        {isOffcanvas && <FilterBtn />}
                         {sidebarPopUp && <PopUpSidebar filter={filter} setFilter={setFilter} />}
                         {!noSort && <FilterSort filter={filter} setFilter={setFilter} />}
                         {!noPagination && <FilterPaginate filter={filter} setFilter={setFilter} />}
                       </div>
                       <GridBox grid={grid} setGrid={setGrid} />
                     </div>
-                    {isOffcanvas && <CollectionSidebar sellerClass={"top-filter filter-bottom-content"} filter={filter} setFilter={setFilter} isOffcanvas={true} />}
                   </Col>
                 </Row>
               </div>
