@@ -9,6 +9,9 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 
+const hasCompleteShippingAddress = (address) =>
+  ["address", "city", "zipcode"].every((field) => String(address?.[field] ?? "").trim());
+
 const PlaceOrder = ({ values, addToCartData, errors }) => {
   const { t } = useTranslation("common");
   const access_token = Cookies.get("uat");
@@ -24,8 +27,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
     if (!accountData?.data?.id) {
       setDisable(Object.keys(errors).length > 0);
     } else {
-      // console.log(values, "addresssssss")
-      setDisable(!(values["shipping_address"]));
+      setDisable(!hasCompleteShippingAddress(values["shipping_address"]));
     }
   }, [access_token, values, errors]);
 
@@ -33,6 +35,10 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
     if (!access_token) {
       ToastNotification("info", "Please log in to complete checkout. Your cart has been saved.");
       router.push("/auth/login?redirect=/checkout");
+      return;
+    }
+    if (!hasCompleteShippingAddress(values?.shipping_address)) {
+      ToastNotification("warn", "Please add and select a complete delivery address before placing the order.");
       return;
     }
     if (submissionLock.current) return;
@@ -73,7 +79,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
           method: "CREDIT_CARD",
           status: "PENDING",
           userId: accountData?.data?.id,
-          amount: tempProduct.reduce((sum, item) => sum + Number(item?.price || 0), 0)
+          amount: tempProduct.reduce((sum, item) => sum + Number(item?.price || 0) * Number(item?.quantity || 0), 0)
         },
         jsonData: {
           note: "First test order"
@@ -134,7 +140,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
   };
   return (
     <div className="text-end">
-      <Btn className="order-btn" onClick={handleClick} disabled={isSubmitting || cartProducts?.length === 0}>
+      <Btn className="order-btn" onClick={handleClick} disabled={disable || isSubmitting || cartProducts?.length === 0}>
         {isSubmitting ? "Placing order..." : t("PlaceRequest")}
       </Btn>
       {/* {addToCartData?.is_digital_only ? (

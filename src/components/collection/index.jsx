@@ -68,7 +68,7 @@ const CollectionContain = () => {
     collection_left_sidebar: <CollectionLeftSidebar filter={filter} setFilter={setFilter} />,
     collection_right_sidebar: <CollectionRightSidebar filter={filter} setFilter={setFilter} />,
     collection_2_grid: <CollectionNoSidebar filter={filter} setFilter={setFilter} />,
-    collection_3_grid: <CollectionNoSidebar filter={filter} setFilter={setFilter} />,
+    collection_3_grid: <CollectionOffCanvas filter={filter} setFilter={setFilter} />,
     collection_4_grid: <CollectionNoSidebar filter={filter} setFilter={setFilter} />,
     collection_5_grid: <CollectionNoSidebar filter={filter} setFilter={setFilter} />,
     collection_list_view: <CollectionNoSidebar filter={filter} setFilter={setFilter} />,

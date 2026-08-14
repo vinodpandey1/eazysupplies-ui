@@ -25,7 +25,8 @@ const MainCollection = ({ filter, setFilter, isBanner, isOffcanvas, classicStore
     if (layout?.layout == "collection_2_grid") {
       setGrid(2);
     } else if (layout?.layout == "collection_3_grid") {
-      setGrid(3);
+      // The stakeholder-approved collection layout uses four products per desktop row.
+      setGrid(4);
     } else if (layout?.layout == "collection_4_grid") {
       setGrid(4);
     } else if (layout?.layout == "collection_5_grid") {
