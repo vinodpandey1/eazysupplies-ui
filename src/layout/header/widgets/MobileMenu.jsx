@@ -6,14 +6,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { RiHeartLine, RiHome2Line, RiSearch2Line, RiShoppingBagLine, RiUserLine } from "react-icons/ri";
+import AccountContext from "@/context/accountContext";
 
 const MobileMenu = () => {
   const { setOpenAuthModal, setCartCanvas } = useContext(ThemeOptionContext);
 
-  const isAuthenticated = Cookies.get("uat");
+  const { accountData } = useContext(AccountContext);
+  const isAuthenticated = Boolean(accountData?.data?.id || Cookies.get("uat"));
   const router = useRouter();
-  const handleProfileClick = (path) => {
-    isAuthenticated ? router.push("/account/dashboard") : setOpenAuthModal(true);
+  const handleProfileClick = (event) => {
+    event.preventDefault();
+    accountData?.data?.id || Cookies.get("uat") ? router.push("/account/dashboard") : setOpenAuthModal(true);
     handleActive(5);
   };
   const handleWishlist = () => {
@@ -51,8 +54,8 @@ const MobileMenu = () => {
             <span>{t("Order") ? t("Order") : "Order"}</span>
           </a>
         </li>
-        <li className={active == "5" ? "active" : ""} onClick={() => handleProfileClick()}>
-          <a href={"account/dashboard"}>
+        <li className={active == "5" ? "active" : ""}>
+          <a href={"/account/dashboard"} onClick={handleProfileClick}>
             <RiUserLine />
             <span>{t("User")}</span>
           </a>

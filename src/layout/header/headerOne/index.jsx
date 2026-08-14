@@ -14,6 +14,7 @@ import MainHeaderMenu from "../widgets/mainHeaderMenu";
 import TopBar from "../widgets/TopBar";
 import { useTranslation } from "react-i18next";
 import { Href } from "@/utils/constants";
+import AccountContext from "@/context/accountContext";
 
 
 const HeaderOne = () => {
@@ -21,12 +22,13 @@ const HeaderOne = () => {
   const UpScroll = useHeaderScroll(false);
   const { t } = useTranslation("common");
   const router = useRouter();
-  const isAuthenticated = Cookies.get("uat");
+  const { accountData } = useContext(AccountContext);
+  const isAuthenticated = Boolean(accountData?.data?.id || Cookies.get("uat"));
   const handleProfileClick = (e) => {
     // Prevent the <Link> component from navigating on its own
     e.preventDefault(); 
 
-    if (isAuthenticated) {
+    if (accountData?.data?.id || Cookies.get("uat")) {
       router.push("/account/dashboard");
     } else {
       setOpenAuthModal(true);
@@ -90,7 +92,7 @@ const HeaderOne = () => {
                           <HeaderCart />
                         </li>
                         <li className="onhover-div">
-                      <Link href={isAuthenticated ? "/account/dashboard" : Href} onClick={handleProfileClick}>
+                      <Link href="/account/dashboard" onClick={handleProfileClick}>
                         <RiUserLine />
                       </Link>
                     </li>

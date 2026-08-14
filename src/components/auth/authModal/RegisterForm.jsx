@@ -28,20 +28,19 @@ import { RegisterAPI } from "@/utils/axiosUtils/API";
 import useCreate from "@/utils/hooks/useCreate";
 import { YupObject, emailSchema, nameSchema, passwordConfirmationSchema, passwordSchema, phoneSchema, gstnSchema } from "@/utils/validation/ValidationSchema";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import ThemeOptionContext from "@/context/themeOptionsContext";
-import { useRouter } from "next/navigation";
 import "../../../index.css";
 import { tsurl } from "@/utils/constants";
+import useHandleLogin from "@/utils/hooks/useLogin";
 const RegisterForm = () => {
   const [showBoxMessage, setShowBoxMessage] = useState();
   const [successMessage, setSuccessMessage] = useState(null);
   const { t } = useTranslation("common");
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
-  const { setOpenAuthModal } = useContext(ThemeOptionContext);
-  const router = useRouter();
+  const pendingLogin = useRef(null);
+  const { mutate: login } = useHandleLogin(setShowBoxMessage);
 
   // Custom success handler
   const handleSuccess = (resData) => {
@@ -57,21 +56,17 @@ const RegisterForm = () => {
     }
     else if (resData.status === 201)
     {
-      alert("Registration successful! You can now login after activation via email.");
       setSuccessMessage({
         type: 'success',
-        message: t("Registration Success") || "Registration successful! You can now login."
+        message: "Registration successful. Signing you in..."
       });
+      if (pendingLogin.current) {
+        login(pendingLogin.current);
+      }
     }
     // Clear any error messages
     setShowBoxMessage(null);
 
-    // Close modal after 3 seconds and optionally redirect
-    setTimeout(() => {
-      setOpenAuthModal(false);
-      // Uncomment if you want to redirect to home page
-      // router.push('/');
-    }, 5000);
   };
 
   // Custom error handler
@@ -122,7 +117,12 @@ const RegisterForm = () => {
     setSuccessMessage(null);
     setShowBoxMessage(null);
 
-    // Call the mutation
+    pendingLogin.current = {
+      email: values.email,
+      password: values.password,
+    };
+
+    // Create the account, then automatically authenticate it.
     mutate(values);
   };
 
@@ -518,7 +518,7 @@ const RegisterForm = () => {
                       fill="#10b981" />
                   </svg>
                   <p className="text-muted small mb-0">
-                    {successMessage.type === "error" ? "Registration failed" : t("Registration CompleteMessage") || "Registration complete! Closing this window..."}
+                    {successMessage.type === "error" ? "Registration failed" : "Registration complete. Signing you in and continuing checkout..."}
                   </p>
                 </div>
               </div>

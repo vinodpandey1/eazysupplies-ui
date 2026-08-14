@@ -28,20 +28,21 @@ const transformLocalStorageData = (localStorageData) => {
   return transformedData;
 };
 
-const LoginHandle = (responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal) => {
+const LoginHandle = async (responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal) => {
   if (responseData.status === 200 || responseData.status === 201) {
-    Cookies.set("uat", responseData.data?.access_token, { path: "/", expires: new Date(Date.now() + 24 * 60 * 6000) });
+    Cookies.set("uat", responseData.data?.access_token, { path: "/", expires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
     const ISSERVER = typeof window === "undefined";
     if (typeof window !== "undefined") {
       Cookies.set("account", JSON.stringify(responseData.data));
       localStorage.setItem("account", JSON.stringify(responseData.data));
       setShowBoxMessage(responseData.data?.message);
     }
-    router.push(CallBackUrl);
-
-    refetch();
+    await refetch();
+    Cookies.remove("CallBackUrl", { path: "/" });
     // compareRefetch();
     setOpenAuthModal(false);
+    router.replace(CallBackUrl);
+    router.refresh();
     // cartRefetch();
     // const wishListID = Cookies.get("wishListID");
     // const CompareId = Cookies.get("compareId");
@@ -61,7 +62,12 @@ const useHandleLogin = (setShowBoxMessage = () => {}) => {
   // const { mutate } = useCreate(SyncCart, false, false, "No");
   // const { addToWishlist } = useContext(WishlistContext);
   // const { mutate: compareCartMutate } = useCreate(CompareAPI, false, false, "Added to Compare List");
-  const CallBackUrl = Cookies.get("CallBackUrl") ? Cookies.get("CallBackUrl") : "/account/dashboard";
+  const requestedCallBackUrl = Cookies.get("CallBackUrl");
+  const CallBackUrl = requestedCallBackUrl?.startsWith("/") &&
+    !requestedCallBackUrl.startsWith("//") &&
+    !requestedCallBackUrl.startsWith("/auth/")
+    ? requestedCallBackUrl
+    : "/account/dashboard";
   const { refetch } = useContext(AccountContext);
   // const { refetch: cartRefetch } = useContext(CartContext);
   // const { refetch: compareRefetch } = useContext(CompareContext);
@@ -72,7 +78,7 @@ const useHandleLogin = (setShowBoxMessage = () => {}) => {
       if (response?.response) throw response;
       return response;
     },
-    onSuccess: (responseData) => LoginHandle(responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal),
+    onSuccess: async (responseData) => LoginHandle(responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal),
     onError: (err) => setShowBoxMessage(err?.response?.data?.error || err?.message || "Unable to log in"),
   });
 };
