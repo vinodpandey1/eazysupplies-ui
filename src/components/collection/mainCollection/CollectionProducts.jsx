@@ -31,9 +31,9 @@ const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
           brand_ids: brandKey || undefined,
           sort: filter?.sortBy || "asc",
           field: filter?.field || "createdAt",
+          _request: Date.now(),
         },
         signal: controller.signal,
-        headers: { "Cache-Control": "no-cache" },
       })
       .then((response) => setProducts(response.data?.data || []))
       .catch((error) => {
