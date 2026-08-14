@@ -13,7 +13,7 @@ import { RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
 
 const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
   const { convertCurrency } = useContext(SettingContext);
-  const { setCartCanvas } = useContext(ThemeOptionContext);
+  const { setCartCanvas, setOpenAuthModal } = useContext(ThemeOptionContext);
   const { cartProducts, removeCart, getTotal } = useContext(CartContext);
   const { t } = useTranslation("common");
   const onEdit = (data) => {
@@ -26,8 +26,13 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
     return getTotal(cartProducts);
   }, [cartProducts, modal]);
 
-  const handelCheckout = () => {
+  const handleCheckout = (event) => {
     Cookies.set("CallBackUrl", "/checkout");
+    setCartCanvas(false);
+    if (!Cookies.get("uat")) {
+      event.preventDefault();
+      setOpenAuthModal(true);
+    }
   };
 
     const getFirstOriginalUrl = (filesString) => {
@@ -102,9 +107,7 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
                 <Link
                   href={"/checkout"}
                   className="btn checkout"
-                  onClick={() => {
-                    setCartCanvas(false), handelCheckout;
-                  }}
+                  onClick={handleCheckout}
                 >
                   {t("Checkout")}
                 </Link>

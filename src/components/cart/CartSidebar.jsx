@@ -15,6 +15,14 @@ const CartSidebar = () => {
   const { setOpenAuthModal } = useContext(ThemeOptionContext);
   const { t } = useTranslation("common");
   const isAuth = Cookies.get("uat");
+
+  const handleCheckout = (event) => {
+    if (!isAuth) {
+      event.preventDefault();
+      Cookies.set("CallBackUrl", "/checkout");
+      setOpenAuthModal(true);
+    }
+  };
   return (
     <Col xxl={3} xl={4}>
       <div className="summery-box p-sticky">
@@ -51,7 +59,7 @@ const CartSidebar = () => {
         <div className="button-group cart-button">
           <ul>
             <li>
-              <Link href={isAuth ? `/checkout` : `${setOpenAuthModal(true)}`} className="btn btn-animation proceed-btn fw-bold">
+              <Link href="/checkout" onClick={handleCheckout} className="btn btn-animation proceed-btn fw-bold">
                 {t("ProcessToCheckout")}
               </Link>
             </li>
