@@ -24,6 +24,10 @@ const ReleaseVersionGuard = () => {
 
         const { release } = await response.json();
         if (release && release !== "unknown" && release !== CURRENT_RELEASE) {
+          const reloadMarker = `storefront-release-reload:${release}`;
+          if (window.sessionStorage.getItem(reloadMarker) === "done") return;
+
+          window.sessionStorage.setItem(reloadMarker, "done");
           reloading = true;
           window.location.reload();
         }

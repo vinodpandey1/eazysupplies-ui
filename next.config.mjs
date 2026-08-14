@@ -3,7 +3,7 @@
 const releaseId =
   process.env.NEXT_PUBLIC_RELEASE_ID ||
   process.env.RELEASE_ID ||
-  `build-${Date.now()}`;
+  "unknown";
 
 const nextConfig = {
   staticPageGenerationTimeout: 180,
