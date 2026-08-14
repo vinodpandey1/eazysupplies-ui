@@ -6,6 +6,7 @@ import ResponsiveMenuOpen from "../common/ResponsiveMenuOpen";
 import MyOrders from "./MyOrders";
 import AccountContext from "@/context/accountContext";
 import { useContext, useEffect } from "react";
+import AccountSidebar from "../common/AccountSidebar";
 
 const AccountOrders = () => {
   const { accountData } = useContext(AccountContext);
@@ -17,7 +18,8 @@ const AccountOrders = () => {
     <>
       <Breadcrumb title={"Order"} subNavigation={[{ name: "Order" }]} />
       <WrapperComponent classes={{ sectionClass: "dashboard-section section-b-space user-dashboard-section", fluidClass: "container" }} customCol={true}>
-        <Col lg={12}>
+        <AccountSidebar tabActive={"order"} />
+        <Col xxl={9} lg={8}>
           <div className="faq-content">
             <div className="tab-content">
               <ResponsiveMenuOpen />
