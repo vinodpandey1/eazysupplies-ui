@@ -1,4 +1,5 @@
 import "../index.scss";
+import ReleaseVersionGuard from "@/components/widgets/ReleaseVersionGuard";
 import { I18nProvider } from "./i18n/i18n-context";
 import { detectLanguage } from "./i18n/server";
 
@@ -47,7 +48,10 @@ export default async function RootLayout({ children }) {
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
           <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
         </head>
-        <body suppressHydrationWarning={true}>{children}</body>
+        <body suppressHydrationWarning={true}>
+          <ReleaseVersionGuard />
+          {children}
+        </body>
       </html>
     </I18nProvider>
   );

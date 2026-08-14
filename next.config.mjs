@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 
+const releaseId =
+  process.env.NEXT_PUBLIC_RELEASE_ID ||
+  process.env.RELEASE_ID ||
+  `build-${Date.now()}`;
+
 const nextConfig = {
   staticPageGenerationTimeout: 180,
+  generateBuildId: async () => releaseId,
+  env: {
+    NEXT_PUBLIC_RELEASE_ID: releaseId,
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
