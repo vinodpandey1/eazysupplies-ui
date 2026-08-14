@@ -1,6 +1,26 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
+const getMenuHref = (menu) => {
+  const path = String(menu?.path || "");
+  const filter = path.toLowerCase().includes("category")
+    ? "category"
+    : path.toLowerCase().includes("brand")
+      ? "brand"
+      : null;
+
+  if (filter && menu?.id) {
+    const params = new URLSearchParams({
+      layout: "collection_3_grid",
+      [filter]: String(menu.id),
+      title: menu?.title || "",
+    });
+    return `/collections?${params.toString()}`;
+  }
+
+  return path.startsWith("/") ? path : `/${path}`;
+};
+
 const LinkBox = ({ menu, onNavigate }) => {
   const { t } = useTranslation("common");
   return (
@@ -10,7 +30,7 @@ const LinkBox = ({ menu, onNavigate }) => {
       ) : (
         <>
           {menu.link_type == "link" && menu.is_target_blank === 0 ? (
-            <Link onClick={onNavigate} className="dropdown-item" href={menu?.path.charAt(0) == "/" ? `collections?layout=collection_3_grid&${menu?.path.includes("category") ? "category=" + menu?.id + "&title=" +menu?.title : "brand=" + menu.id + "&title=" +menu?.title }` : `/${menu?.path}`}>
+            <Link onClick={onNavigate} className="dropdown-item" href={getMenuHref(menu)}>
               {menu.title}
               {menu.badge_text && <label className={`menu-label ${menu?.badge_color ? menu?.badge_color : ''}`}>{menu?.badge_text}</label>}
             </Link>

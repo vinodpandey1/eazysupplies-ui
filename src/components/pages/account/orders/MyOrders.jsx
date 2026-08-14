@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import { RiEyeLine } from "react-icons/ri";
 import { Card, CardBody, Table } from "reactstrap";
 import request from "@/utils/axiosUtils";
-import { GetOrderByUserId } from "@/utils/axiosUtils/API";
+import { BASE_URL } from "@/utils/axiosUtils/API";
 import { showMonthWiseDateAndTime } from "@/utils/customFunctions/DateFormat";
 import { useTranslation } from "react-i18next";
 import AccountHeading from "../common/AccountHeading";
@@ -39,9 +39,6 @@ const MyOrders = ({ userId }) => {
   const router = useRouter();
   const { convertCurrency } = useContext(SettingContext);
 
-  // Get API base URL from next.config.mjs environment variables
-  const API_BASE_URL = process.env.API_PROD_URL;
-
   /**
    * Fetches orders for the current user from the API with pagination
    * Uses API URL from next.config.mjs
@@ -57,9 +54,7 @@ const MyOrders = ({ userId }) => {
       setLoading(true);
       setError(null);
       
-      // Use API URL from next.config.mjs environment configuration
-      //const apiUrl = `${API_BASE_URL}/orders?userId=${userId}&page=${page}&limit=${limit}`;
-      const apiUrl = `${API_BASE_URL}/orders?page=${page}&paginate=${limit}`;
+      const apiUrl = `${BASE_URL}/api/orders?page=${page}&paginate=${limit}`;
       
       
       console.log('Fetching orders from:', apiUrl); // For debugging
