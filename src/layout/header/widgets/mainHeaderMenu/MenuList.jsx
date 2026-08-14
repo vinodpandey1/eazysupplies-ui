@@ -8,6 +8,16 @@ import Cookies from "js-cookie";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 import { useContext } from "react";
 import ThemeOptionContext from "@/context/themeOptionsContext";
+import { RiFolder3Line, RiHome4Line, RiPriceTag3Line } from "react-icons/ri";
+
+const topLevelMenuIcons = {
+  home: RiHome4Line,
+  categories: RiFolder3Line,
+  category: RiFolder3Line,
+  "top brand": RiPriceTag3Line,
+  brands: RiPriceTag3Line,
+  brand: RiPriceTag3Line,
+};
 
 const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
   const { t } = useTranslation("common");
@@ -17,6 +27,13 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
   };
   const isAuthenticated = Cookies.get("uat");
   const { setOpenAuthModal } = useContext(ThemeOptionContext);
+  const TopLevelIcon = level === 0 ? topLevelMenuIcons[menu?.title?.trim().toLowerCase()] : null;
+  const menuLabel = (
+    <>
+      {TopLevelIcon && <TopLevelIcon className="header-nav-icon" aria-hidden="true" />}
+      <span>{t(menu.title)}</span>
+    </>
+  );
 
   const protectedRoutes = [`/account/dashboard`, `/account/notification`, `/account/wallet`, `/account/bank-details`, `/account/bank-details`, `/account/point`, `/account/refund`, `/account/order`, `/account/addresses`, `/wishlist`, `/compare`];
 
@@ -37,23 +54,23 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
               temp[level] = menu.title !== temp[level] && menu.title;
               setIsOpen(temp);
             }}
-            className="nav-link dropdown-toggle"
+            className={`nav-link dropdown-toggle ${level === 0 ? "header-nav-link-with-icon" : ""}`}
           >
-            <span>{t(menu.title)}</span>
+            {menuLabel}
             {menu.badge_text && <label className="new-dropdown">{menu.badge_text}</label>}
           </a>
         )}
 
         {menu.link_type === "link" && menu.is_target_blank === 0 && (
-          <Link onClick={() => { protectedRoute(menu.path); closeMenus(); }} className={`dropdown-item ${isOpen[level] === menu.title ? "show" : ""}`} href={`${menu.path.charAt(0) == "/" ? menu.path : `/${menu.path}`}`}>
-            {t(menu.title)}
+          <Link onClick={() => { protectedRoute(menu.path); closeMenus(); }} className={`dropdown-item ${level === 0 ? "header-nav-link-with-icon" : ""} ${isOpen[level] === menu.title ? "show" : ""}`} href={`${menu.path.charAt(0) == "/" ? menu.path : `/${menu.path}`}`}>
+            {menuLabel}
             {menu.badge_text && <label className={`menu-label ${menu?.badge_color ? menu?.badge_color : ""}`}>{menu?.badge_text}</label>}
           </Link>
         )}
 
         {menu?.is_target_blank === 1 && (
-          <a onClick={closeMenus} className={`dropdown-item ${isOpen[level] === menu?.title ? "show" : ""}`} href={menu?.path}>
-            {t(menu?.title)}
+          <a onClick={closeMenus} className={`dropdown-item ${level === 0 ? "header-nav-link-with-icon" : ""} ${isOpen[level] === menu?.title ? "show" : ""}`} href={menu?.path}>
+            {menuLabel}
             {menu?.badge_text && <label className={`menu-label ${menu?.badge_color ? menu?.badge_color : ""}`}>{menu?.badge_text}</label>}
           </a>
         )}

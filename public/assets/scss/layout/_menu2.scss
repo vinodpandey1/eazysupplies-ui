@@ -75,6 +75,24 @@ header {
       cursor: pointer;
     }
 
+    .header-nav-link-with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: color 0.2s ease, transform 0.2s ease;
+
+      &:hover {
+        color: var(--theme-color);
+        transform: translateY(-1px);
+      }
+
+      .header-nav-icon {
+        color: var(--theme-color);
+        font-size: 18px;
+        flex: 0 0 auto;
+      }
+    }
+
     .nav-item {
       margin-bottom: 0;
       position: relative;

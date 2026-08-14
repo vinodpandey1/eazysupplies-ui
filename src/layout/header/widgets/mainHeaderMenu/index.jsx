@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import MenuList from "./MenuList";
 import { BASE_URL } from "@/utils/axiosUtils/API";
 import Link from "next/link";
+import { RiHome4Line, RiShoppingBag3Line } from "react-icons/ri";
 
 const MainHeaderMenu = () => {
   const [isOpen, setIsOpen] = useState([]);
@@ -36,6 +37,9 @@ const MainHeaderMenu = () => {
     isLoading && refetch();
   }, [isLoading]);
 
+  const homeMenu = headerMenu?.find((menu) => menu?.title?.trim().toLowerCase() === "home");
+  const remainingMenus = headerMenu?.filter((menu) => menu !== homeMenu) || [];
+
   return (
     <>
       {isLoading ? (
@@ -50,12 +54,23 @@ const MainHeaderMenu = () => {
         </ul>
       ) : (
         <ul className={`navbar-nav ${isClosing ? "menu-closing" : ""}`} onMouseEnter={() => isClosing && setIsClosing(false)}>
+          {homeMenu ? (
+            <MenuList menu={homeMenu} customClass="nav-item" level={0} isOpen={isOpen} setIsOpen={setIsOpen} closeMenus={closeMenus} />
+          ) : (
+            <li className="nav-item">
+              <Link onClick={closeMenus} className="dropdown-item header-nav-link-with-icon" href="/">
+                <RiHome4Line className="header-nav-icon" aria-hidden="true" />
+                <span>Home</span>
+              </Link>
+            </li>
+          )}
           <li className="nav-item">
-            <Link onClick={closeMenus} className="dropdown-item" href="/collections?layout=collection_3_grid">
-              All Products
+            <Link onClick={closeMenus} className="dropdown-item header-nav-link-with-icon" href="/collections?layout=collection_3_grid">
+              <RiShoppingBag3Line className="header-nav-icon" aria-hidden="true" />
+              <span>All Products</span>
             </Link>
           </li>
-          {headerMenu?.map((menu, i) => (
+          {remainingMenus.map((menu, i) => (
             <MenuList menu={menu} key={i} customClass={`${!menu?.path ? "dropdown" : ""} nav-item `} level={0} isOpen={isOpen} setIsOpen={setIsOpen} closeMenus={closeMenus} />
           ))}
         </ul>
