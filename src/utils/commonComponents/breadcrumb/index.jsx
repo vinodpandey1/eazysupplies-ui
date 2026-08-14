@@ -70,6 +70,8 @@ const Breadcrumbs = ({ mainHeading, subNavigation, subTitle, title }) => {
                       {!visibleCategories.length && <DropdownItem disabled>{t("NoCategoryFound")}</DropdownItem>}
                     </DropdownMenu>
                   </Dropdown>
+                ) : result?.current ? (
+                  <span className="breadcrumb-label">{itemContent(result)}</span>
                 ) : result?.link ? (
                   <Link href={result.link} className="breadcrumb-link">{itemContent(result)}</Link>
                 ) : (
