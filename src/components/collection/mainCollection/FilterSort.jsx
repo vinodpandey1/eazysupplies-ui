@@ -13,20 +13,25 @@ const FilterSort = ({ filter, setFilter }) => {
   const router = useRouter();
   const pathname = usePathname();
   const handleSort = (data) => {
+    const field = data.value === "low-high" || data.value === "high-low" ? "price" : "name";
+
     setFilter((prev) => {
       return {
         ...prev,
         sortBy: data.value,
-        field: data && (data.value == "asc" || data.value == "desc") ? "created_at" : null,
+        field,
       };
     });
 
-    let queryParams = new URLSearchParams({ ...attribute, ...price, ...category, ...layout, ...paginate, sortBy: data.value }).toString();
-    if (data && (data.value == "asc" || data.value == "desc")) {
-      const fieldQuery = new URLSearchParams();
-      fieldQuery.append("field", "created_at");
-      queryParams += "&" + fieldQuery.toString();
-    }
+    const queryParams = new URLSearchParams({
+      ...attribute,
+      ...price,
+      ...category,
+      ...layout,
+      ...paginate,
+      sortBy: data.value,
+      field,
+    }).toString();
     router.push(`${pathname}?${queryParams}`);
   };
   return (
