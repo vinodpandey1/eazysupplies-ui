@@ -104,12 +104,16 @@ const LoginWithMobileHandle = (responseData, router, refetch, compareRefetch, Ca
     }
     
     // Get CallBackUrl exactly like email login
-    const finalCallBackUrl = Cookies.get("CallBackUrl") ? Cookies.get("CallBackUrl") : "/account/dashboard";
+    const requestedCallBackUrl = Cookies.get("CallBackUrl");
+    const finalCallBackUrl = requestedCallBackUrl?.startsWith("/") && !requestedCallBackUrl.startsWith("/auth/")
+      ? requestedCallBackUrl
+      : "/account/dashboard";
     // Cleanup temporary cookies
     Cookies.remove("wishListID");
     Cookies.remove("compareId");
     Cookies.remove("up"); // Remove phone cookie
     Cookies.remove("uc"); // Remove country code cookie
+    Cookies.remove("CallBackUrl");
     // localStorage.removeItem("cart"); // Don't remove cart, email login doesn't
     
     // Show success message
@@ -135,7 +139,7 @@ const LoginWithMobileHandle = (responseData, router, refetch, compareRefetch, Ca
       // router.push(finalCallBackUrl);
       
       // Or use window.location for immediate redirect
-      window.location.href = finalCallBackUrl;
+      window.location.replace(finalCallBackUrl);
     }, 1000);
     
   } else {
