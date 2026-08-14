@@ -4,6 +4,7 @@ import Breadcrumbs from "@/utils/commonComponents/breadcrumb";
 import useHandleLogin from "@/utils/hooks/useLogin";
 import { YupObject, emailSchema, passwordSchema } from "@/utils/validation/ValidationSchema";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Col, Container, FormGroup, Row } from "reactstrap";
@@ -56,11 +57,11 @@ const LoginContainer = () => {
             <Col lg="6" className="right-login">
               <h3>{t("NewCustomer")}</h3>
               <div className="theme-card authentication-right">
-                <h6 className="title-font">{t("CreateAAccount")}</h6>
+                <h6 className="title-font">{t("CreateAccount")}</h6>
                 <p>{t("SignUpDescription")}</p>
-                <a href="#" className="btn btn-solid">
+                <Link href="/auth/register" className="btn btn-solid">
                   {t("CreateAccount")}
-                </a>
+                </Link>
               </div>
             </Col>
           </Row>

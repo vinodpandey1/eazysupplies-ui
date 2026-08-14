@@ -10,23 +10,30 @@ import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 
-const ProductBox2 = ({ productState, setProductState }) => {
-  const { t } = useTranslation("common");
-const getFirstOriginalUrl = (filesString) => {
+const getFirstOriginalUrl = (filesString, updatedAt) => {
   if (!filesString) return null;
   const [firstFile] = filesString.split(",");
   if (!firstFile) return null;
   const trimmedFile = firstFile.trim();
   const url = new URL(process.env.NEXT_PUBLIC_FILE_API_URL);
   url.searchParams.set("file", trimmedFile);
+  if (updatedAt) {
+    url.searchParams.set("v", updatedAt);
+  }
   return url.toString();
 };
 
 const lowercase = (text) => {
   return typeof text === "string" ? text.toLowerCase() : "";
-}
+};
 
-const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
+const ProductBox2 = ({ productState, setProductState }) => {
+  const { t } = useTranslation("common");
+
+  const originalUrl = getFirstOriginalUrl(
+    productState?.product?.productImage,
+    productState?.product?.updatedAt,
+  );
   const { convertCurrency } = useContext(SettingContext);
   return (
     <div className={`basic-product theme-product-1 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
