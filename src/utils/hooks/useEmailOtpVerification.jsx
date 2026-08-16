@@ -50,27 +50,21 @@ const useEmailOtpVerification = (setState, setShowBoxMessage) => {
         throw new Error("New password is required.");
       }
       
-      const url = `${BASE_URL}/api/auth/login_auth?action=forgotPassword&email=${encodeURIComponent(email)}&otp=${otp}&password=${encodeURIComponent(password)}`;
-      
-      console.log("DEBUG: Calling password update API:", url);
-      
-      const response = await fetch(url, {
-        method: "GET",
+      const response = await fetch(`${BASE_URL}/api/auth/password-reset`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ action: "reset", email, otp, password, audience: "customer" }),
       });
 
       const responseText = await response.text();
-      console.log("DEBUG: Raw response:", responseText);
-      
       let responseData;
       
       try {
         responseData = JSON.parse(responseText);
       } catch (parseError) {
         if (responseText.includes('<!DOCTYPE html>')) {
-          console.error("API endpoint not found. Please check:", url);
           throw new Error("Unable to connect to server. Please try again later.");
         }
         console.error("Failed to parse response:", responseText);
@@ -84,8 +78,6 @@ const useEmailOtpVerification = (setState, setShowBoxMessage) => {
       };
     },
     onSuccess: (responseData) => {
-      console.log("DEBUG: Password update response:", responseData);
-      
       if (responseData.status === 200 || responseData.status === 201 || responseData.ok) {
         // Clean up - remove email cookie
         Cookies.remove("email");

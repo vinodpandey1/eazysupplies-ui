@@ -8,6 +8,7 @@
  */
 import Btn from "@/elements/buttons/Btn";
 import useEmailOtpVerification from "@/utils/hooks/useEmailOtpVerification";
+import { BASE_URL } from "@/utils/axiosUtils/API";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "reactstrap";
@@ -112,8 +113,12 @@ const EmailOTPVerificationForm = ({ setState, setShowBoxMessage }) => {
     if (countdown === 0 && emailAddress) {
       try {
         const response = await fetch(
-          `/api/auth/login_auth?action=forgetpasswordotp&email=${encodeURIComponent(emailAddress)}`,
-          { method: "GET", headers: { "Content-Type": "application/json" } }
+          `${BASE_URL}/api/auth/password-reset`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "request", email: emailAddress, audience: "customer" }),
+          }
         );
         
         if (response.ok) {

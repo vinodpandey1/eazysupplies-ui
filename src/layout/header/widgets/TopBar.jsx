@@ -15,7 +15,7 @@ const TopBar = ({ classes }) => {
     <div className={`top-header ${classes?.top_bar_class ? classes?.top_bar_class : ""}`}>
       <div className={`${classes?.container_class ? classes?.container_class : "container"}`}>
         <Row>
-          <Col lg={12}>
+          <Col xs={8} lg={8}>
             <div className="header-contact">
               <ul>
                 <li>
@@ -27,16 +27,13 @@ const TopBar = ({ classes }) => {
               </ul>
             </div>
           </Col>
-          {/* <Col lg={6} className="text-end">
+          <Col xs={4} lg={4} className="text-end">
             <ul className="right-nav-about">
               <li className="right-nav-list">
                 <HeaderLanguage />
               </li>
-              <li className="right-nav-list">
-                <HeaderCurrency />
-              </li>
             </ul>
-          </Col> */}
+          </Col>
         </Row>
       </div>
     </div>

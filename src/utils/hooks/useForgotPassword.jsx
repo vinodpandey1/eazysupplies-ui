@@ -37,29 +37,21 @@ const useHandleForgotPassword = (setShowBoxMessage, setState) => {
   
   return useMutation({
     mutationFn: async (data) => {
-      console.log("Sending forgot password OTP to:", data.email);
-      
-      const url = `${BASE_URL}/api/auth/login_auth?action=forgetpasswordotp&email=${encodeURIComponent(data.email)}`;
-      
-      console.log("DEBUG: Calling URL:", url);
-      
-      const response = await fetch(url, {
-        method: "GET",
+      const response = await fetch(`${BASE_URL}/api/auth/password-reset`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ action: "request", email: data.email, audience: "customer" }),
       });
 
       const responseText = await response.text();
-      console.log("DEBUG: Raw response:", responseText);
-      
       let responseData;
       
       try {
         responseData = JSON.parse(responseText);
       } catch (parseError) {
         if (responseText.includes('<!DOCTYPE html>')) {
-          console.error("API endpoint not found. Please check:", url);
           throw new Error("Unable to connect to server. Please try again later.");
         }
         console.error("Failed to parse response:", responseText);
@@ -74,8 +66,6 @@ const useHandleForgotPassword = (setShowBoxMessage, setState) => {
       };
     },
     onSuccess: (responseData, requestData) => {
-      console.log("Forgot password OTP sent response:", responseData);
-      
       if (responseData.status === 200 || responseData.status === 201 || responseData.ok) {
         const email = responseData.email || requestData.email;
         
