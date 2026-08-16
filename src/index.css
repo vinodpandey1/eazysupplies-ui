@@ -3099,6 +3099,15 @@
   padding: 40px;
   border-radius: 20px;
   margin: 20px 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.transaction-id-value {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.45;
 }
 
 .payment-status-success {
@@ -5433,7 +5442,6 @@
     gap: 8px;
   }
 }
-
 
 
 

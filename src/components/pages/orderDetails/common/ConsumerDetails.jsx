@@ -472,14 +472,14 @@ const ConsumerDetails = ({ data, taxData }) => {
                           
                           <div className="payment-status-card-modern payment-status-success mb-4 mx-auto" style={{ maxWidth: '400px' }}>
                             <Row>
-                              <Col xs={6}>
+                              <Col xs={12}>
                                 <p className="text-muted small mb-1">Transaction ID</p>
-                                <p className="font-monospace fw-bold mb-0">
+                                <p className="font-monospace fw-bold mb-0 transaction-id-value">
                                   {data?.payment?.transectionid || "N/A"}
                                 </p>
                               </Col></Row>
                               <Row>
-                              <Col xs={6}>
+                              <Col xs={12} className="mt-3">
                                 <p className="text-muted small mb-1">Amount Paid</p>
                                 <p className="fw-bold mb-0">
                                   ₹{data?.payment?.amount || getItemsTotalPrice()?.total?.toFixed(2)}
@@ -488,8 +488,8 @@ const ConsumerDetails = ({ data, taxData }) => {
                             </Row>
                           </div>
                           
-                          <div className="d-flex gap-3 justify-content-center">
-                            <a target="_blank" href={"https://api.eazysupplies.com/api/file?userId="+data?.userId+"&file=performa-invoice"+data?.id+".pdf"} ><button className="btn btn-outline-primary px-4 py-2 rounded-pill">
+                          <div className="d-flex flex-wrap gap-3 justify-content-center">
+                            <a target="_blank" href={`${process.env.API_PROD_URL}/invoice/${data?.id}`}><button className="btn btn-outline-primary px-4 py-2 rounded-pill">
                               <i className="ri-download-line me-2"></i>
                               Invoice
                             </button></a>
@@ -553,7 +553,7 @@ const ConsumerDetails = ({ data, taxData }) => {
                             {data?.payment?.transectionid && (
                               <div className="payment-status-card-modern payment-status-info" style={{ maxWidth: '400px' }}>
                                 <p className="text-muted small mb-1">Transaction Reference</p>
-                                <p className="font-monospace fw-bold mb-0">
+                                <p className="font-monospace fw-bold mb-0 transaction-id-value">
                                   {data.payment.transectionid}
                                 </p>
                               </div>
