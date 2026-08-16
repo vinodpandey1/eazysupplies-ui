@@ -344,7 +344,7 @@ const ConsumerDetails = ({ data, taxData }) => {
                   </div>
                   <div className="order-id-badge-modern">
                      <span>Order # {data.id}</span>
-                     <span><a className="link-primary small mb-0" href={`${process.env.API_PROD_URL}/invoice/${data.id}`} target="_blank">Invoice</a></span>
+                     <span><a className="link-primary small mb-0" href={`${process.env.API_PROD_URL}/invoice/${data.id}/pdf`} target="_blank">Invoice</a></span>
                   </div>
                 </div>
 
@@ -489,7 +489,7 @@ const ConsumerDetails = ({ data, taxData }) => {
                           </div>
                           
                           <div className="d-flex flex-wrap gap-3 justify-content-center">
-                            <a target="_blank" href={`${process.env.API_PROD_URL}/invoice/${data?.id}`}><button className="btn btn-outline-primary px-4 py-2 rounded-pill">
+                            <a target="_blank" href={`${process.env.API_PROD_URL}/invoice/${data?.id}/pdf`}><button className="btn btn-outline-primary px-4 py-2 rounded-pill">
                               <i className="ri-download-line me-2"></i>
                               Invoice
                             </button></a>
