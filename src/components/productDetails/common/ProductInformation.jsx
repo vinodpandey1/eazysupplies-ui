@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
+import BrandLogo from "@/components/widgets/BrandLogo";
 
 /**
  * ProductInformation Component
@@ -161,16 +162,16 @@ const ProductInformation = ({ productState }) => {
   };
 
   // Helper function to get brand name by ID
-  const getBrandName = (brandId) => {
+  const getBrand = (brandId) => {
     if (!isValidValue(brandId)) {
-      return "NA";
+      return null;
     }
     
     // Convert to number if it's a string
     const id = typeof brandId === 'string' ? parseInt(brandId) : brandId;
     
     const brand = brands.find(br => br.id === id);
-    return brand ? brand.name : "NA";
+    return brand || null;
   };
 
   // Helper function to get tax name and value by ID
@@ -227,6 +228,7 @@ const ProductInformation = ({ productState }) => {
 
   // Get tax details for the product
   const taxDetails = getTaxDetails(product?.tax);
+  const productBrand = getBrand(product?.brandId);
 
   return (
     <div className="bordered-box">
@@ -267,8 +269,9 @@ const ProductInformation = ({ productState }) => {
           {/* Brand - Show name instead of ID */}
           <li>
             <span className="info-label">{t("Brand")} : </span>
-            <span className="info-value">
-              {getBrandName(product?.brandId)}
+            <span className="info-value d-inline-flex align-items-center gap-2">
+              {productBrand && <BrandLogo brand={productBrand} width={54} height={30} />}
+              {productBrand?.name || "NA"}
             </span>
           </li>
 

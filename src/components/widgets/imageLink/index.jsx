@@ -18,24 +18,24 @@ const ImageLink = ({ classes = {}, imgUrl, placeholder, link, height, width, hom
     <>
       {imgUrl?.redirect_link?.link_type === "external_url" ? (
         <Link className="h-100" href={imgUrl?.redirect_link?.link || "/"} target="_blank">
-          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: "url(" + (imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder) + ")" }}></div> : <Image src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
+          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: "url(" + (imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder) + ")" }}></div> : <Image unoptimized src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
         </Link>
       ) : imgUrl?.redirect_link?.link_type === "collection" && !homeBanner ? (
         <Link className="h-100" href={imgUrl?.redirect_link?.link || Href} target="_blank">
-          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: "url(" + (imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder) + ")" }}></div> : <Image src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
+          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: "url(" + (imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder) + ")" }}></div> : <Image unoptimized src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
         </Link>
       ) : imgUrl?.redirect_link?.link_type === "collection" && homeBanner ? (
         <Link className="h-100" href={imgUrl?.redirect_link?.link ? `/category/${imgUrl?.redirect_link?.link}` : Href}>
-          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: "url(" + (imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder) + ")" }}></div> : <Image src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
+          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: "url(" + (imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder) + ")" }}></div> : <Image unoptimized src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
         </Link>
       ) : imgUrl?.redirect_link?.link_type === "product" && productRoute ? (
         <Link className="h-100" href={`/${productRoute}`}>
-          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: `url(${imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder}` }}></div> : <Image src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
+          {bgImage ? <div className={`bg-size ${classes}`} style={{ backgroundImage: `url(${imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder}` }}></div> : <Image unoptimized src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />}
         </Link>
       ) : bgImage ? (
         <div className={`bg-size ${classes}`} style={{ backgroundImage: `url(${imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder}` }}></div>
       ) : (
-        (imgUrl?.image_url || placeholder) && <Image src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />
+        (imgUrl?.image_url || placeholder) && <Image unoptimized src={imgUrl?.image_url ? storageURL + imgUrl?.image_url : placeholder} className="bg-img w-100 img-fluid" alt="banner" height={height} width={width} />
       )}
     </>
   );
