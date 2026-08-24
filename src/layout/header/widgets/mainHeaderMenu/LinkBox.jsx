@@ -1,13 +1,19 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import BrandContext from "@/context/brandContext";
 import BrandLogo from "@/components/widgets/BrandLogo";
 
 const LinkBox = ({ menu, onNavigate }) => {
   const { t } = useTranslation("common");
-  const { brandState = [] } = useContext(BrandContext);
+  const { brandState = [], refetch } = useContext(BrandContext);
   const isBrandList = menu?.title?.toLowerCase() === "brand list";
+
+  useEffect(() => {
+    if (isBrandList && brandState.length === 0) {
+      refetch?.();
+    }
+  }, [isBrandList, brandState.length, refetch]);
 
   if (isBrandList) {
     return (
