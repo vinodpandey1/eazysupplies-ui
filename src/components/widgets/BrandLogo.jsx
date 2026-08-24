@@ -14,7 +14,13 @@ const BrandLogo = ({ brand, width = 72, height = 40, className = "" }) => (
     width={width}
     height={height}
     className={className}
-    style={{ objectFit: "contain" }}
+    style={{
+      display: "block",
+      width: "100%",
+      height: "100%",
+      objectFit: "contain",
+      objectPosition: "center",
+    }}
     unoptimized
   />
 );

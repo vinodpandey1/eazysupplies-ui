@@ -269,8 +269,8 @@ const ProductInformation = ({ productState }) => {
           {/* Brand - Show name instead of ID */}
           <li>
             <span className="info-label">{t("Brand")} : </span>
-            <span className="info-value">
-              {productBrand ? <BrandBadge brand={productBrand} /> : "NA"}
+            <span className="info-value d-inline-flex align-items-center" style={{ minHeight: 44 }}>
+              {productBrand ? <BrandBadge brand={productBrand} className="ms-1" /> : "NA"}
             </span>
           </li>
 
