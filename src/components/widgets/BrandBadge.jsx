@@ -4,9 +4,12 @@ import BrandLogo from "./BrandLogo";
 const BrandBadge = ({ brand, compact = false, className = "" }) => {
   if (!brand) return null;
 
+  const brandFilter = brand.id || brand.slug || brand.name;
+  const brandUrl = `/collections?layout=collection_3_grid&brand=${encodeURIComponent(brandFilter)}&title=${encodeURIComponent(brand.name)}`;
+
   return (
     <Link
-      href={`/brand/${brand.slug || brand.name}`}
+      href={brandUrl}
       className={`d-inline-flex align-items-center justify-content-center bg-white text-decoration-none ${className}`}
       aria-label={`View ${brand.name} products`}
       title={brand.name}

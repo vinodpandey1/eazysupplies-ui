@@ -12,7 +12,7 @@ const FilterSort = ({ filter, setFilter }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const handleSort = (data) => {
-    const isNameSort = data?.value === "asc" || data?.value === "desc";
+    const isNameSort = data?.value === "a-z" || data?.value === "z-a";
     const field = isNameSort ? "name" : "price";
 
     setFilter((prev) => {

@@ -36,7 +36,7 @@ const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
           paginate: filter?.paginate || 25,
           category_ids: categoryKey || undefined,
           brand_ids: brandKey || undefined,
-          sort: filter?.sortBy === "desc" || filter?.sortBy === "high-low" ? "desc" : "asc",
+          sort: filter?.sortBy === "z-a" || filter?.sortBy === "high-low" ? "desc" : "asc",
           field: filter?.field === "price" || filter?.sortBy === "low-high" || filter?.sortBy === "high-low" ? "price" : "name",
           _request: Date.now(),
         },

@@ -64,7 +64,7 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
                 <div className="col-9">
                   <div className="row g-4">
                     {menu?.child?.map((megaMenu, i) => (
-                      <div className="dropdown-column col-xl-4" key={i}>
+                      <div className={`dropdown-column ${megaMenu?.title?.toLowerCase() === "brand list" ? "col-xl-12" : "col-xl-4"}`} key={i}>
                         <LinkBox menu={megaMenu} onNavigate={closeMenus} />
                       </div>
                     ))}

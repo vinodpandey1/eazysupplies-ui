@@ -18,7 +18,7 @@ import MainCollectionSlider from "./collectionSlider";
 import LayoutSidebar from "./layoutSidebar";
 
 const CollectionContain = () => {
-  const [filter, setFilter] = useState({ category: [], brand: [], price: [], attribute: [], rating: [], sortBy: "asc", field: "created_at", paginate: 25 });
+  const [filter, setFilter] = useState({ category: [], brand: [], price: [], attribute: [], rating: [], sortBy: "a-z", field: "name", paginate: 25 });
   const { themeOption } = useContext(ThemeOptionContext);
   const [category, brand, attribute, price, rating, sortBy, field, layout, paginate, title] = useCustomSearchParams(["category", "brand", "attribute", "price", "rating", "sortBy", "field", "layout", "paginate", "title"]);
   const collectionLayout = layout?.layout ? layout?.layout : themeOption?.collection?.collection_layout;
@@ -65,8 +65,8 @@ const CollectionContain = () => {
         attribute: attribute ? attribute?.attribute?.split(",") : [],
         price: price ? price?.price?.split(",") : [],
         rating: rating ? rating?.rating?.split(",") : [],
-        sortBy: sortBy ? sortBy?.sortBy : "asc",
-        field: field ? field?.field : "created_at",
+        sortBy: sortBy ? sortBy?.sortBy : "a-z",
+        field: field ? field?.field : "name",
       };
     });
   }, [category, brand, attribute, price, rating, sortBy, field, paginate]);

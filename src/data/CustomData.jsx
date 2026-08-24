@@ -45,14 +45,6 @@ export const FilterPrice = [
 
 export const FilterSortData = [
   {
-    value: "asc",
-    label: "AscendingOrder",
-  },
-  {
-    value: "desc",
-    label: "DescendingOrder",
-  },
-  {
     value: "low-high",
     label: "LowHighPrice",
   },
@@ -67,10 +59,6 @@ export const FilterSortData = [
   {
     value: "z-a",
     label: "ZAOrder",
-  },
-  {
-    value: "discount-high-low",
-    label: "% Off - Hight To Low",
   },
 ];
 export const FilterPaginateData = [
