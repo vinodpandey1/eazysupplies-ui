@@ -17,6 +17,7 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
   };
   const isAuthenticated = Cookies.get("uat");
   const { setOpenAuthModal } = useContext(ThemeOptionContext);
+  const isBrandMenu = menu?.child?.some((item) => item?.title?.toLowerCase() === "brand list");
 
   const protectedRoutes = [`/account/dashboard`, `/account/notification`, `/account/wallet`, `/account/bank-details`, `/account/bank-details`, `/account/point`, `/account/refund`, `/account/order`, `/account/addresses`, `/wishlist`, `/compare`];
 
@@ -29,7 +30,7 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
 
   return (
     <>
-      <li suppressHydrationWarning className={`${menu.link_type == "sub" && menu.child ? "nav-item dropdown" : "nav-item"} ${menu?.badge_text ? "new-nav-item" : ""} ${menu.mega_menu ? "dropdown-mega" : ""}`}>
+      <li suppressHydrationWarning className={`${menu.link_type == "sub" && menu.child ? "nav-item dropdown" : "nav-item"} ${menu?.badge_text ? "new-nav-item" : ""} ${menu.mega_menu && !isBrandMenu ? "dropdown-mega" : ""}`}>
         {menu.link_type === "sub" && (
           <a
             onClick={() => {
@@ -57,7 +58,16 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
             {menu?.badge_text && <label className={`menu-label ${menu?.badge_color ? menu?.badge_color : ""}`}>{menu?.badge_text}</label>}
           </a>
         )}
-        {menu?.mega_menu === 1 ? (
+        {menu?.mega_menu === 1 && isBrandMenu ? (
+          <div
+            className={`dropdown-menu ${isOpen[level] === menu?.title ? "show" : ""}`}
+            style={{ width: 290, minWidth: 290, left: "auto", right: 0, padding: 16 }}
+          >
+            {menu?.child?.map((brandMenu, i) => (
+              <LinkBox menu={brandMenu} onNavigate={closeMenus} key={i} />
+            ))}
+          </div>
+        ) : menu?.mega_menu === 1 ? (
           <div className={`dropdown-menu dropdown-menu-2 ${isOpen[level] === menu?.title ? "show" : ""}`}>
             <div className="row g-4">
               {menu?.mega_menu_type === "side_banner" ? (

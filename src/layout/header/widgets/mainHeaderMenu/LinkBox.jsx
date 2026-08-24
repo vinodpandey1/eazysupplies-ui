@@ -20,7 +20,7 @@ const LinkBox = ({ menu, onNavigate }) => {
       <div className="brand-menu-panel">
         <h5 className="dropdown-header mb-3">{t(menu.title)}</h5>
         <div
-          className="d-grid gap-3"
+          className="d-grid"
           style={{ gridTemplateColumns: "minmax(180px, 1fr)" }}
         >
           {brandState.map((brand) => (
@@ -28,19 +28,17 @@ const LinkBox = ({ menu, onNavigate }) => {
               key={brand.id}
               href={`/collections?layout=collection_3_grid&brand=${brand.id}&title=${encodeURIComponent(brand.name)}`}
               onClick={onNavigate}
-              className="d-flex align-items-center justify-content-center bg-white text-decoration-none"
+              className="d-flex align-items-center justify-content-start bg-white text-decoration-none"
               aria-label={`Shop ${brand.name}`}
               title={brand.name}
               style={{
-                minHeight: 62,
-                padding: "8px 12px",
-                border: "1px solid #e8ece7",
-                borderRadius: 10,
-                boxShadow: "0 2px 10px rgba(30, 53, 40, 0.05)",
+                minHeight: 52,
+                padding: "7px 10px",
+                borderBottom: "1px solid #edf0ec",
               }}
             >
-              <span style={{ display: "block", width: 78, height: 38 }}>
-                <BrandLogo brand={brand} width={78} height={38} />
+              <span style={{ display: "block", width: 72, height: 34 }}>
+                <BrandLogo brand={brand} width={72} height={34} />
               </span>
             </Link>
           ))}
