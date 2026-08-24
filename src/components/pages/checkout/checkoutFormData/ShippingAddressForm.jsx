@@ -32,12 +32,12 @@ const ShippingAddressForm = ({ values, setFieldValue, data }) => {
 
     const { address, phone } = extractAddress(full?.address);
 
-    setFieldValue("shipping_address_id", opt.value);
+    setFieldValue("shipping_address_id", opt.id);
 
     // Cleanly set field values
     setFieldValue("shipping_address.name", full?.name || "");
     setFieldValue("shipping_address.address", address);
-    setFieldValue("shipping_address.phone", phone);
+    setFieldValue("shipping_address.phone", full?.phone || phone);
     setFieldValue("shipping_address.city", full?.city || "");
     setFieldValue("shipping_address.zipcode", full?.zipcode || "");
     setFieldValue("shipping_address.country_code", full?.country_code || "91");
@@ -62,9 +62,10 @@ const ShippingAddressForm = ({ values, setFieldValue, data }) => {
               inputprops: {
                 name: "shipping_address_id",
                 id: "shipping_address_id",
-                options: data,
-                onChange: handleSelectAddress
-              }
+                options: data || [],
+              },
+              store: "obj",
+              setvalue: (_fieldName, option) => handleSelectAddress(option),
             }
           ]}
         />
@@ -105,6 +106,7 @@ const ShippingAddressForm = ({ values, setFieldValue, data }) => {
                 nameList={[
                   {
                     name: "shipping_address.country_code",
+                    label: "Code",
                     toplabel: "Code",
                     inputprops: {
                       name: "shipping_address.country_code",

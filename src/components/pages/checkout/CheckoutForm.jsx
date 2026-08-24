@@ -32,8 +32,8 @@ const CheckoutForm = ({ values, setFieldValue, errors }) => {
       refetchOnWindowFocus: false,
       select: (res) =>
         res?.data?.data?.map((addr) => ({
-          value: addr.id,
-          label: `${addr.name} - ${addr.address}`,
+          id: addr.id,
+          name: `${addr.name} - ${addr.address}`,
           full: {
             id: addr.id,
             name: addr.name,
@@ -52,7 +52,7 @@ const CheckoutForm = ({ values, setFieldValue, errors }) => {
       setFieldValue("all_addresses", addressList);
       // default select first address if none set
       if (!values.shipping_address_id && addressList.length > 0) {
-        setFieldValue("shipping_address_id", addressList[0].value);
+        setFieldValue("shipping_address_id", addressList[0].id);
         setFieldValue("shipping_address", addressList[0].full);
       }
     }

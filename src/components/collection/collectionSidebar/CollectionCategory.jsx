@@ -62,9 +62,11 @@ const CollectionCategory = ({ filter, setFilter }) => {
       return {
         ...prev,
         category: temp,
+        brand: [],
       };
     });
     const queryParams = new URLSearchParams(searchParams.toString());
+    queryParams.delete("brand");
     if (temp.length > 0) queryParams.set("category", temp.join(","));
     else queryParams.delete("category");
     queryParams.delete("page");
