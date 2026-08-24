@@ -30,12 +30,11 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
   }, [access_token, values, errors]);
 
   const handleClick = async() => {
-    if (!access_token) {
-      ToastNotification("info", "Please log in to complete checkout. Your cart has been saved.");
-      router.push("/auth/login?redirect=/checkout");
+    if (submissionLock.current) return;
+    if (!access_token && (!values?.name || !values?.email || !values?.phone)) {
+      ToastNotification("error", "Please enter your name, email and phone number before placing the order.");
       return;
     }
-    if (submissionLock.current) return;
     if (!values?.shipping_address?.address || !values?.shipping_address?.city || !values?.shipping_address?.zipcode) {
       ToastNotification("error", "Please add and select a complete shipping address before placing the order.");
       return;
@@ -64,6 +63,14 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
       url: CreateOrderAPI,
       data: {
         userId: accountData?.data?.id,
+        ...(!access_token && {
+          guest: {
+            name: values?.name,
+            email: values?.email,
+            phone: String(values?.phone || ""),
+            countryCode: String(values?.country_code || "91"),
+          },
+        }),
         status: "PENDING",
         items: tempProduct,
         shipping: {
@@ -76,7 +83,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
         payment: {
           method: "CREDIT_CARD",
           status: "PENDING",
-          userId: accountData?.data?.id,
+          ...(accountData?.data?.id ? { userId: accountData.data.id } : {}),
           amount: tempProduct.reduce((sum, item) => sum + Number(item?.price || 0) * Number(item?.quantity || 0), 0)
         },
         jsonData: {
@@ -87,10 +94,12 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
       withCredentials: true
     })
       .then(res => {
-        ToastNotification("success", "Order placed successfully. You can track it in My Orders.");
+        ToastNotification("success", access_token
+          ? "Order placed successfully. You can track it in My Orders."
+          : `Order #${res?.data?.id} placed successfully. Confirmation has been sent to your email.`);
         clearCart();
         idempotencyKey.current = null;
-        router.push('/account/order');
+        router.push(access_token ? '/account/order' : '/');
       })
       .catch(err => {
         console.log(err);

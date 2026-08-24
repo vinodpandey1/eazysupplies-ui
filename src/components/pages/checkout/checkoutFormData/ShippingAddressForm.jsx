@@ -52,23 +52,25 @@ const ShippingAddressForm = ({ values, setFieldValue, data }) => {
       <Row className="checkout-form g-md-4 g-sm-3 g-2">
 
         {/* -------- Saved Address Dropdown -------- */}
-        <SearchableSelectInput
-          nameList={[
-            {
-              name: "shipping_address_id",
-              title: "Your Address",
-              toplabel: "Your Addresses",
-              colprops: { xxl: 6, lg: 12, sm: 6 },
-              inputprops: {
+        {data?.length > 0 && (
+          <SearchableSelectInput
+            nameList={[
+              {
                 name: "shipping_address_id",
-                id: "shipping_address_id",
-                options: data || [],
-              },
-              store: "obj",
-              setvalue: (_fieldName, option) => handleSelectAddress(option),
-            }
-          ]}
-        />
+                title: "Your Address",
+                toplabel: "Your Addresses",
+                colprops: { xs: 12 },
+                inputprops: {
+                  name: "shipping_address_id",
+                  id: "shipping_address_id",
+                  options: data,
+                },
+                store: "obj",
+                setvalue: (_fieldName, option) => handleSelectAddress(option),
+              }
+            ]}
+          />
+        )}
 
         {/* -------- Address Type -------- */}
         <SimpleInputField

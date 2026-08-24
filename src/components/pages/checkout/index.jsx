@@ -174,7 +174,7 @@ const CheckoutContent = () => {
               phone: phoneSchema,
               password: idCreateAccount,
               shipping_address: addressSchema,
-              billing_address: addressSchema
+              billing_address: Yup.object().notRequired()
             })}
 
             onSubmit={(value) => {
