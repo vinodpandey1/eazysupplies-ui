@@ -21,7 +21,7 @@ const LinkBox = ({ menu, onNavigate }) => {
         <h5 className="dropdown-header mb-3">{t(menu.title)}</h5>
         <div
           className="d-grid gap-3"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(92px, 1fr))" }}
+          style={{ gridTemplateColumns: "minmax(180px, 1fr)" }}
         >
           {brandState.map((brand) => (
             <Link
