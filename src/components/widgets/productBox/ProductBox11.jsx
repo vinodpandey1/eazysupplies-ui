@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import CartButton from "./widgets/CartButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
+import BrandBadge from "@/components/widgets/BrandBadge";
 
 const getProductThumbnail = (product) => {
   if (product?.product_thumbnail?.original_url) return product.product_thumbnail;
@@ -44,7 +45,7 @@ const ProductBox11 = ({ productState, setProductState, listView = false }) => {
         </div>
         <div className="product-detail">
           {productState?.product?.brand && (
-            <Link href={`/brand/${productState.product.brand.slug || productState.product.brand.name}`} className="product-title">{productState.product.brand.name}</Link>
+            <BrandBadge brand={productState.product.brand} compact className="mb-2" />
           )}
 
           <Link href={`/product/${productPath}`} className="product-title product-title-highlight">

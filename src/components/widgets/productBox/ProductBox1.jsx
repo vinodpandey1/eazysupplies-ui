@@ -7,6 +7,7 @@ import CartButton from "./widgets/CartButton";
 import ImageVariant from "./widgets/ImageVariant";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
+import BrandBadge from "@/components/widgets/BrandBadge";
 
 const ProductBox1 = ({ productState, setProductState }) => {
   const { convertCurrency } = useContext(SettingContext);
@@ -37,9 +38,7 @@ const ProductBox1 = ({ productState, setProductState }) => {
 
       <div className="product-detail">
         {productState?.product?.brand && (
-          <Link className="product-title" href={`/brand/${productState?.product?.brand.slug}`}>
-            {productState?.product?.brand?.name}
-          </Link>
+          <BrandBadge brand={productState.product.brand} compact className="mb-2" />
         )}
 
         <Link href={`/product/${productState?.product?.slug}`}>

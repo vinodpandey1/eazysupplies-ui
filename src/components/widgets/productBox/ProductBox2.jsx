@@ -9,6 +9,7 @@ import CartButton from "./widgets/CartButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
+import BrandBadge from "@/components/widgets/BrandBadge";
 
 const ProductBox2 = ({ productState, setProductState, onNavigate }) => {
   const { t } = useTranslation("common");
@@ -61,9 +62,7 @@ const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
                 <ProductBoxVariantAttribute showVariableType={["color", "image"]} productState={productState} setProductState={setProductState} />
               </div>
             </div>
-            <Link href={`/product/${productState?.product?.id}`} onClick={onNavigate}>
-              <h6>{ productState?.product?.brand?.name}</h6>
-            </Link>
+            <BrandBadge brand={productState?.product?.brand} compact className="mb-2" />
             <h4 className="price">
               {convertCurrency(productState?.product?.price)}
               {productState?.product?.skuType ? ` / ${lowercase(productState.product.skuType)}` : ""}

@@ -48,9 +48,11 @@ const BrandContainer = ({ params }) => {
       <Breadcrumbs title={`Brand : ${params}`} subNavigation={[{ name: params }]} />
       <WrapperComponent classes={{ sectionClass: "brand-section", fluidClass: "container" }} noRowCol={true}>
         {Brand && (
-          <div className="brand-box d-flex flex-column align-items-center justify-content-center gap-3 rounded border bg-white p-4">
-            <BrandLogo brand={Brand} width={240} height={110} />
-            <h2 className="mb-0">{Brand.name}</h2>
+          <div className="brand-box d-inline-flex align-items-center gap-3 rounded border bg-white px-4 py-3">
+            <span className="d-inline-flex align-items-center justify-content-center rounded border bg-white" style={{ width: 64, height: 64, overflow: "hidden" }}>
+              <BrandLogo brand={Brand} width={54} height={54} />
+            </span>
+            <h3 className="mb-0 fw-semibold">{Brand.name}</h3>
           </div>
         )}
       </WrapperComponent>

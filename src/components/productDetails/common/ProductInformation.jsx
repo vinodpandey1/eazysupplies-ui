@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
-import BrandLogo from "@/components/widgets/BrandLogo";
+import BrandBadge from "@/components/widgets/BrandBadge";
 
 /**
  * ProductInformation Component
@@ -269,9 +269,8 @@ const ProductInformation = ({ productState }) => {
           {/* Brand - Show name instead of ID */}
           <li>
             <span className="info-label">{t("Brand")} : </span>
-            <span className="info-value d-inline-flex align-items-center gap-2">
-              {productBrand && <BrandLogo brand={productBrand} width={54} height={30} />}
-              {productBrand?.name || "NA"}
+            <span className="info-value">
+              {productBrand ? <BrandBadge brand={productBrand} /> : "NA"}
             </span>
           </li>
 
