@@ -232,8 +232,11 @@ const ProductInformation = ({ productState }) => {
 
   return (
     <div className="bordered-box">
-      {/* Section Header */}
-      <h4 className="sub-title">{t("ProductInformation")}</h4>
+      {/* Keep the brand mark visually separate from the specification labels. */}
+      <div className="d-flex align-items-center justify-content-between gap-3 mb-3">
+        <h4 className="sub-title mb-0">{t("ProductInformation")}</h4>
+        {productBrand && <BrandBadge brand={productBrand} />}
+      </div>
 
       {/* Show error state */}
       {error && (
@@ -263,14 +266,6 @@ const ProductInformation = ({ productState }) => {
             <span className="info-label">{t("Category")} : </span>
             <span className="info-value">
               {getCategoryName(product?.categoryId)}
-            </span>
-          </li>
-
-          {/* Brand - Show name instead of ID */}
-          <li>
-            <span className="info-label">{t("Brand")} : </span>
-            <span className="info-value d-inline-flex align-items-center" style={{ minHeight: 44 }}>
-              {productBrand ? <BrandBadge brand={productBrand} className="ms-1" /> : "NA"}
             </span>
           </li>
 
