@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * TrackOrderDetails Component
  * 
@@ -40,9 +42,11 @@ import OptimizedImage from "@/components/widgets/OptimizedImage";
 import Loader from "@/layout/loader";
 import ConsumerDetails from "./common/ConsumerDetails";
 import StatusDetail from "./common/StatusDetails";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
+  const searchParams = useSearchParams();
+  const showLegacyView = searchParams.get("orderView") === "legacy";
   /**
    * Calculate product discounts and tax amounts for a specific order item
    * @param {Object} product - Product data object
@@ -82,7 +86,7 @@ const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="track-order-container">
+    <div className={`track-order-container ${showLegacyView ? "is-legacy-order-view" : "is-consolidated-order-view"}`}>
       {/* Header Section with Order Summary */}
       <div className="order-header">
         <div className="header-content">
