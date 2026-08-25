@@ -1,578 +1,214 @@
-/**
- * ConsumerDetails Component
- * 
- * Displays comprehensive consumer information, order summary, and payment processing interface.
- * Integrates billing/shipping details with real-time payment status management and processing.
- * Supports multiple payment methods and dynamic status visualization.
- * 
- * Features:
- * - Consumer profile and address management
- * - Dynamic order summary with tax calculations
- * - Payment method selection and processing
- * - Real-time payment status tracking (Pending/Success/Failed)
- * - Country/state data integration for address formatting
- * - Responsive design with modern UI components
- * - Secure payment processing integration
- * - Multi-language support via i18n
- * 
- * @component
- * @param {Object} props - Component properties
- * @param {Object} props.data - Order data containing consumer, payment, and shipping information
- * @param {Array} props.taxData - Tax configuration data for calculations
- * 
- * @example
- * return (
- *   <ConsumerDetails 
- *     data={orderData}
- *     taxData={taxRates}
- *   />
- * )
- * 
- * @returns {JSX.Element} Consumer information panel with payment processing interface
- * 
- * @developer : Simran Samir
- */
-
-import SettingContext from "@/context/settingContext";
-import request from "@/utils/axiosUtils";
-import { CountryAPI, BASE_URL } from "@/utils/axiosUtils/API";
-import useFetchQuery from "@/utils/hooks/useFetchQuery"; 
-import Link from "next/link";
-import { PaymentMethod } from "@/utils/constants";
+import { BASE_URL } from "@/utils/axiosUtils/API";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Card, CardBody, Col, Input, Label, Row } from "reactstrap";
+import { useMemo, useState } from "react";
 import axios from "axios";
 
+const PAYMENT_METHODS = [
+  { id: "NB", name: "Online Payment", description: "Pay securely through the online payment gateway", icon: "ri-bank-card-line" },
+  { id: "OFF", name: "Offline Payment", description: "Record the order for payment through the support team", icon: "ri-hand-coin-line" },
+];
+
+const money = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+};
+
 const ConsumerDetails = ({ data, taxData }) => {
-  const { convertCurrency } = useContext(SettingContext);
-  const { t } = useTranslation("common");
   const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("");
   const [loading, setLoading] = useState(false);
-  
-  const { data: countryData } = useFetchQuery([CountryAPI], () => request({ url: CountryAPI }, router), {
-    refetchOnWindowFocus: false,
-    select: (res) => res.data.map((country) => ({ id: country.id, name: country.name, state: country.state })),
-  });
+  const [paymentError, setPaymentError] = useState("");
+  const [paymentNotice, setPaymentNotice] = useState("");
 
-  // Check payment status
-  const paymentStatus = data?.payment?.status || data?.payment_status;
-  const isPaymentPending = paymentStatus === "PENDING";
+  const paymentStatus = String(data?.payment?.status || data?.payment_status || "PENDING").toUpperCase();
+  const recordedPaymentMethod = data?.payment?.method || data?.payment_method || "";
   const isPaymentSuccess = paymentStatus === "SUCCESS";
   const isPaymentFailed = paymentStatus === "FAILED";
-  
-  // Show payment options ONLY when: Order is APPROVED AND Payment is PENDING
-  const shouldShowPayment = data?.status === "APPROVED" && isPaymentPending;
+  const isOfflinePaymentRecorded = recordedPaymentMethod === "OFF";
+  const shouldShowPayment = data?.status === "APPROVED" && !isPaymentSuccess && !isOfflinePaymentRecorded;
 
-  const getCountryName = (countryId) => {
-    const country = countryData?.find((country) => country.id === countryId);
-    if (country) {
-      return country.name;
-    }
-    return "";
-  };
-
-  const getStateName = (stateId, countryId) => {
-    const state = countryData?.find((country) => country.id === countryId)?.state.find((state) => state.id === stateId);
-    if (state) {
-      return state.name;
-    }
-    return "";
-  };
-
-  function getItemsTotalPrice() {
+  const invoice = useMemo(() => {
     const approvedItems = Array.isArray(data?.jsonOrderData) ? data.jsonOrderData : [];
-    let totalTax = 0;
-    let total = 0;
-
-    (data?.items || []).forEach((item) => {
+    const sourceItems = Array.isArray(data?.items) ? data.items : [];
+    const rows = sourceItems.map((item) => {
       const quantity = Math.max(Number(item?.quantity) || 0, 0);
       const approved = approvedItems.find((row) => Number(row?.productId) === Number(item?.productId));
-      if (approved) {
-        const approvedLineTotal = Number(approved.totalPrice);
-        const approvedTax = Number(approved.taxAmount) * quantity;
-        total += Number.isFinite(approvedLineTotal) ? approvedLineTotal : 0;
-        totalTax += Number.isFinite(approvedTax) ? approvedTax : 0;
+      const unitPrice = Number(approved?.price ?? item?.price ?? item?.product?.price ?? 0) || 0;
+      const sellingPrice = Number(approved?.sellingPrice ?? unitPrice) || 0;
+      const discountPercentage = Number(approved?.discountPercentage ?? 0) || 0;
+      const calculatedDiscount = Math.max(unitPrice - sellingPrice, 0) * quantity;
+      const discountAmount = Number.isFinite(Number(approved?.discountAmount))
+        ? Math.max(Number(approved.discountAmount), calculatedDiscount)
+        : calculatedDiscount;
+      const taxId = Number(item?.product?.tax);
+      const fallbackTaxPercentage = Number((taxData || []).find((tax) => Number(tax.id) === taxId)?.value || 0);
+      const taxPercentage = Number(approved?.taxPercentage ?? approved?.taxpercent ?? fallbackTaxPercentage) || 0;
+      const taxableSubtotal = sellingPrice * quantity;
+      const taxAmount = Number.isFinite(Number(approved?.taxAmount))
+        ? Number(approved.taxAmount)
+        : taxableSubtotal * taxPercentage / 100;
+      const total = Number.isFinite(Number(approved?.totalPrice))
+        ? Number(approved.totalPrice)
+        : taxableSubtotal + taxAmount;
+      return {
+        id: item?.id || item?.productId,
+        name: approved?.name || item?.product?.name || item?.name || "Product",
+        quantity, unitPrice, discountPercentage, discountAmount, sellingPrice,
+        taxPercentage, taxAmount, total,
+      };
+    });
+    return {
+      rows,
+      grossSubtotal: rows.reduce((sum, row) => sum + row.unitPrice * row.quantity, 0),
+      totalDiscount: rows.reduce((sum, row) => sum + row.discountAmount, 0),
+      totalTax: rows.reduce((sum, row) => sum + row.taxAmount, 0),
+      grandTotal: rows.reduce((sum, row) => sum + row.total, 0),
+    };
+  }, [data, taxData]);
+
+  const selectPaymentMethod = (method) => {
+    if (loading) return;
+    setPaymentMethod(method);
+    setPaymentError("");
+    setPaymentNotice("");
+  };
+
+  const proceedPayment = async () => {
+    if (!shouldShowPayment || loading) return;
+    if (!paymentMethod) {
+      setPaymentError("Please select Online Payment or Offline Payment to continue.");
+      return;
+    }
+    if (!Number.isFinite(invoice.grandTotal) || invoice.grandTotal <= 0) {
+      setPaymentError("The order total is invalid. Please refresh and try again.");
+      return;
+    }
+    setLoading(true);
+    setPaymentError("");
+    setPaymentNotice("");
+    try {
+      const response = await axios({
+        method: "post",
+        url: `${BASE_URL}/api/payments/benePay/getUrl`,
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+        data: {
+          orderId: data.id,
+          amount: invoice.grandTotal,
+          method: paymentMethod,
+          reasonForCollection: ` Order Id #${data.id}`,
+        },
+      });
+      const paymentUrl = response.data?.realTimePaymentData?.message;
+      if (paymentMethod === "NB" && paymentUrl?.startsWith("https")) {
+        window.location.assign(paymentUrl);
         return;
       }
-
-      const unitPrice = Number(item?.price ?? item?.product?.price ?? 0);
-      const taxId = Number(item?.product?.tax);
-      const taxPercent = Number((taxData || []).find((tax) => Number(tax.id) === taxId)?.value || 0);
-      const unitTax = unitPrice * taxPercent / 100;
-      totalTax += unitTax * quantity;
-      total += (unitPrice + unitTax) * quantity;
-    });
-
-    return {
-      totalTax: Number.isFinite(totalTax) ? totalTax : 0,
-      total: Number.isFinite(total) ? total : 0,
-    };
-  }
-
-  async function proceedPayment() {
-    if (!shouldShowPayment) return;
-    
-    setLoading(true);
-    const amount = getItemsTotalPrice()?.total;
-    const reasonForCollection = " Order Id #" + data.id;
-    
-    if (paymentMethod == "") {
-      alert("Please Select Payment Method");
+      if (paymentMethod === "OFF") {
+        setPaymentNotice("Offline Payment has been selected and recorded for this order.");
+        router.refresh();
+        return;
+      }
+      setPaymentError("The payment gateway did not return a valid payment URL. Please try again.");
+    } catch (error) {
+      setPaymentError(error?.response?.data?.error || error?.response?.data?.message || "Payment processing failed. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-    if (!Number.isFinite(amount) || amount <= 0) {
-      alert("The order total is invalid. Please refresh and try again.");
-      setLoading(false);
-      return;
-    }
-    
-    var _data = JSON.stringify({
-      "orderId": data.id,
-      "amount": amount,
-      "method": paymentMethod,
-      "reasonForCollection": reasonForCollection
-    });
-    
-    var config = {
-      method: 'post',
-      url: BASE_URL +'/api/payments/benePay/getUrl',
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: _data
-    };
-
-    axios(config)
-      .then(function (response) {
-        const payurl = response.data?.realTimePaymentData?.message;
-        if(payurl !== "" && payurl?.startsWith("https")) {
-          window.location.assign(payurl);
-        } else {
-          alert("Thanks for Offline payment , please contact Support Staff for further order processing");
-          router.push('/account/order');
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        alert("Payment processing failed. Please try again.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
-
-  // Status Chip Component using CSS classes
-  const StatusChip = ({ status, text }) => {
-    return (
-      <span className={`status-chip-modern ${status}`}>
-        <i className={`ri-${status === "success" ? "checkbox-circle-fill" : status === "warning" ? "time-line" : status === "danger" ? "close-circle-fill" : "information-line"}`}></i>
-        <span>{text}</span>
-      </span>
-    );
   };
 
-  // Map payment method IDs to icons
-  const getPaymentIconClass = (methodId) => {
-    const iconMap = {
-      'credit_card': 'credit-card',
-      'debit_card': 'credit-card',
-      'upi': 'upi',
-      'wallet': 'wallet',
-      'net_banking': 'net-banking',
-      'cod': 'cod',
-      'cc': 'credit-card',
-      'dc': 'credit-card'
-    };
-    return iconMap[methodId] || 'other';
-  };
+  const paymentMethodLabel = recordedPaymentMethod === "NB"
+    ? "Online Payment"
+    : recordedPaymentMethod === "OFF" ? "Offline Payment" : "Not selected";
 
   return (
-    <>
-      <div className="summary-details my-3">
-        <Row className="g-4 align-items-stretch">
-          {/* Consumer Details Card - Removed h-100 to make size content-dependent */}
-          <Col xxl={6} lg={12} md={6}>
-            <div className="glass-card">
-              <div className="card-body p-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <div>
-                    <h3 className="order-title mb-1 d-flex align-items-center gap-2">
-                      <div className="icon-container-modern icon-container-blue">
-                        <i className="ri-user-3-line"></i>
-                      </div>
-                      <span className="gradient-text">Consumer Details</span>
-                    </h3>
-                    <p className="text-muted small mb-0">Order information and shipping details</p>
-                  </div>
-                  <StatusChip 
-                    status={data?.status === "APPROVED" ? "success" : "warning"} 
-                    text={data?.status || "N/A"}
-                  />
-                </div>
-                
-                {/* Address Cards */}
-                <div>
-                  {data?.billing_address && (
-                    <div className="info-card-modern mb-3">
-                      <div className="d-flex align-items-center gap-3 mb-3">
-                        <div className="icon-container-modern icon-container-green">
-                          <i className="ri-map-pin-line"></i>
-                        </div>
-                        <div>
-                          <h6 className="mb-0">Billing Address</h6>
-                          <p className="text-muted small mb-0">Primary contact address</p>
-                        </div>
-                      </div>
-                      <div className="pl-5">
-                        <p className="mb-1">{data.billing_address.street}</p>
-                        <p className="text-muted small mb-2">
-                          {data.billing_address.city}, {getStateName(data.billing_address.state_id, data.billing_address.country_id)} - {data.billing_address.pincode}
-                        </p>
-                        <div className="d-flex align-items-center gap-2 text-muted small">
-                          <i className="ri-phone-line"></i>
-                          <span>+{data.billing_address.country_code} {data.billing_address.phone}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {data?.shipping && (
-                    <div className="info-card-modern info-card-modern-shipping mb-3">
-                      <div className="d-flex align-items-center gap-3 mb-3">
-                        <div className="icon-container-modern icon-container-green">
-                          <i className="ri-truck-line"></i>
-                        </div>
-                        <div>
-                          <h6 className="mb-0">Shipping Address</h6>
-                          <p className="text-muted small mb-0">Delivery location</p>
-                        </div>
-                      </div>
-                      <div className="pl-5">
-                        <p className="mb-1">{data?.shipping?.address}</p>
-                        <p className="text-muted small mb-2">
-                          {data?.shipping?.city}, {data?.shipping?.country} - {data?.shipping?.postalCode}
-                        </p>
-                        <div className="d-flex align-items-center gap-2 text-muted small">
-                          <i className="ri-phone-line"></i>
-                          <span>{data?.user?.countryCode} {data?.user?.phone}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Status Cards */}
-                <Row className="g-3 mt-3">
-                  <Col md={6}>
-                    <div className="status-badge-modern">
-                      <div className="d-flex align-items-center gap-3">
-                        <div className="icon-container-modern icon-container-purple">
-                          <i className="ri-bank-card-line"></i>
-                        </div>
-                        <div>
-                          <p className="text-muted small mb-1">Payment Mode</p>
-                          <p className="mb-0">
-                            {data?.payment_method?.toUpperCase() || "Not Selected"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                  
-                  <Col md={6}>
-                    <div className="status-badge-modern">
-                      <div className="d-flex align-items-center gap-3">
-                        <div className="icon-container-modern icon-container-blue">
-                          <i className="ri-wallet-3-line"></i>
-                        </div>
-                        <div>
-                          <p className="text-muted small mb-1">Payment Status</p>
-                          <div className="mt-1">
-                            {paymentStatus ? (
-                              <StatusChip 
-                                status={
-                                  isPaymentSuccess ? "success" : 
-                                  isPaymentFailed ? "danger" : 
-                                  isPaymentPending ? "warning" : "info"
-                                } 
-                                text={paymentStatus}
-                              />
-                            ) : (
-                              <span className="text-muted">No payment</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      
-                    </div>
-                  </Col>
-                </Row>
-                
-                {/* Delivery Slot */}
-                {!data?.is_digital_only && data?.delivery_description && (
-                  <div className="info-card-modern info-card-modern-delivery mt-3">
-                    <div className="d-flex align-items-center gap-3">
-                      <div className="icon-container-modern icon-container-orange">
-                        <i className="ri-calendar-line"></i>
-                      </div>
-                      <div>
-                        <h6 className="mb-0">Delivery Slot</h6>
-                        <p className="mb-0">{data.delivery_description}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Col>
+    <section className="order-invoice-panel my-4" aria-labelledby="order-invoice-title">
+      <header className="order-invoice-header">
+        <div className="order-invoice-company">
+          <strong>Earthling Consumer Products Pvt. Ltd.</strong>
+          <span>Order and payment summary</span>
+        </div>
+        <div className="order-invoice-number">
+          <span>ORDER</span><strong>#{data?.id}</strong><small>{data?.status || "PENDING"}</small>
+        </div>
+      </header>
 
-          {/* Order Summary & Payment Card - Keep h-100 */}
-          <Col xxl={6} lg={12} md={6}>
-            <div className="glass-card glass-card-success h-100">
-              <div className="card-body p-4 h-100 d-flex flex-column">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <div>
-                    <h3 className="order-title mb-1 d-flex align-items-center gap-2">
-                      <div className="icon-container-modern icon-container-green">
-                        <i className="ri-file-list-3-line"></i>
-                      </div>
-                      <span className="gradient-text-success">Order Summary</span>
-                    </h3>
-                    <p className="text-muted small mb-0">Complete payment details and total amount</p>
-                  </div>
-                  <div className="order-id-badge-modern">
-                     <span>Order # {data.id}</span>
-                     <span><a className="link-primary small mb-0" href={`${BASE_URL}/api/file?file=performa-invoice${data.id}.pdf`} target="_blank" rel="noreferrer">Invoice</a></span>
-                  </div>
-                </div>
-
-                {/* Summary Section */}
-                <div className="summary-section-modern mb-4">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <span>Tax</span>
-                    <span className="fw-bold">
-                      ₹{getItemsTotalPrice()?.totalTax?.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="divider my-3"></div>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="fw-bold">Total Amount</span>
-                    <span className="summary-total-modern">
-                      ₹{getItemsTotalPrice()?.total?.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Payment Section */}
-                <div className="payment-section flex-grow-1 d-flex flex-column">
-                  {shouldShowPayment ? (
-                    <>
-                      {/* Pending Payment State */}
-                      <div className="mb-4">
-                        <div className="payment-status-card-modern payment-status-pending">
-                          <div className="d-flex align-items-center gap-3">
-                            <div className="icon-container-modern icon-container-orange">
-                              <i className="ri-time-line"></i>
-                            </div>
-                            <div>
-                              <h5 className="mb-1">Payment Pending</h5>
-                              <p className="mb-0 text-muted">
-                                Complete payment to process your order. Select a payment method below.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Payment Methods - Radio Button Grid */}
-                      <div className="mb-4 flex-grow-1">
-                        <h5 className="mb-3 d-flex align-items-center gap-2">
-                          <i className="ri-bank-card-2-line text-primary"></i>
-                          Select Payment Method
-                        </h5>
-                        
-                        <Row className="g-3">
-                          {PaymentMethod.map((method, index) => (
-                            <Col md={6} key={index}>
-                              <div 
-                                className={`payment-radio-option ${paymentMethod === method.id ? 'selected' : ''}`}
-                                onClick={() => setPaymentMethod(method.id)}
-                              >
-                                <div className="d-flex align-items-center">
-                                  <div className="radio-check"></div>
-                                  <div className={`payment-icon ${getPaymentIconClass(method.id)} ms-3`}>
-                                    <i className={`ri-${method.icon || 'bank-card-line'}`}></i>
-                                  </div>
-                                  <div className="ms-3 flex-grow-1">
-                                    <div className="payment-method-name">{method.name}</div>
-                                    <p className="payment-method-desc">
-                                      {method.description || "Secure payment"}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </Col>
-                          ))}
-                        </Row>
-                      </div>
-
-                      {/* Pay Now Button */}
-                      <button
-                        className={`btn-modern-primary w-100 mb-3 ${!paymentMethod ? 'disabled' : ''}`}
-                        onClick={() => proceedPayment()}
-                        disabled={loading || !paymentMethod}
-                      >
-                        {loading ? (
-                          <div className="d-flex align-items-center justify-content-center gap-2">
-                            <div className="spinner-modern"></div>
-                            <span>Processing Payment...</span>
-                          </div>
-                        ) : (
-                          <div className="d-flex align-items-center justify-content-center gap-3">
-                            <i className="ri-lock-line"></i>
-                            <span>Pay Now - ₹{getItemsTotalPrice()?.total?.toFixed(2)}</span>
-                            <i className="ri-arrow-right-line"></i>
-                          </div>
-                        )}
-                      </button>
-                      
-                      {!paymentMethod && (
-                        <p className="text-center text-muted small mb-3">
-                          Please select a payment method to continue
-                        </p>
-                      )}
-
-                      {/* Security Note */}
-                      <div className="security-badge-modern mt-auto">
-                        <i className="ri-shield-check-line"></i>
-                        <div>
-                          <h6 className="mb-1">Secure Payment</h6>
-                          <p className="mb-0 small">
-                            Your payment is protected with bank-level 256-bit SSL encryption
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    /* Payment Status Display */
-                    <div className="text-center py-4 flex-grow-1 d-flex flex-column justify-content-center">
-                      {isPaymentSuccess ? (
-                        <>
-                          <div className="success-icon-modern mb-4">
-                            <div className="checkmark-circle">
-                              <div className="checkmark"></div>
-                            </div>
-                          </div>
-                          <h4 className="mb-3">Payment Successful!</h4>
-                          <p className="text-muted mb-4 mx-auto" style={{ maxWidth: '400px' }}>
-                            Your payment has been processed successfully. Your order is now being prepared for shipment.
-                          </p>
-                          
-                          <div className="payment-status-card-modern payment-status-success mb-4 mx-auto" style={{ maxWidth: '400px' }}>
-                            <Row>
-                              <Col xs={6}>
-                                <p className="text-muted small mb-1">Transaction ID</p>
-                                <p className="font-monospace fw-bold mb-0" style={{ overflowWrap: "anywhere" }}>
-                                  {data?.payment?.transectionid || "N/A"}
-                                </p>
-                              </Col></Row>
-                              <Row>
-                              <Col xs={6}>
-                                <p className="text-muted small mb-1">Amount Paid</p>
-                                <p className="fw-bold mb-0">
-                                  ₹{data?.payment?.amount || getItemsTotalPrice()?.total?.toFixed(2)}
-                                </p>
-                              </Col>
-                            </Row>
-                          </div>
-                          
-                          <div className="d-flex gap-3 justify-content-center">
-                            <a target="_blank" rel="noreferrer" href={`${BASE_URL}/api/file?file=performa-invoice${data?.id}.pdf`} ><button className="btn btn-outline-primary px-4 py-2 rounded-pill">
-                              <i className="ri-download-line me-2"></i>
-                              Invoice
-                            </button></a>
-                            <a target="_blank" rel="noreferrer" href={`${BASE_URL}/api/file?file=performa-transportReport${data?.id}.pdf`} >
-                            <button className="btn-modern-primary px-4 py-2">
-                              <i className="ri-chat-3-line me-2"></i>
-                              Track Order
-                            </button></a>
-                          </div>
-                        </>
-                      ) : isPaymentFailed ? (
-                        <>
-                          <div className="payment-status-card-modern payment-status-failed mb-4">
-                            <div className="d-flex align-items-center justify-content-center mb-3">
-                              <i className="ri-close-circle-fill text-danger" style={{ fontSize: '4rem' }}></i>
-                            </div>
-                            <h4 className="mb-3">Payment Failed</h4>
-                            <p className="text-muted mb-4 mx-auto" style={{ maxWidth: '400px' }}>
-                              We couldn't process your payment. Please try again or contact our support team.
-                            </p>
-                            <button className="btn-modern-primary px-5 py-2.5">
-                              <i className="ri-customer-service-line me-2"></i>
-                              Contact Support
-                            </button>
-                          </div>
-                        </>
-                      ) : data?.status !== "APPROVED" ? (
-                        <>
-                          <div className="payment-status-card-modern payment-status-pending">
-                            <div className="d-flex align-items-center justify-content-center mb-3">
-                              <i className="ri-time-line text-warning" style={{ fontSize: '4rem' }}></i>
-                            </div>
-                            <h4 className="mb-3">Order Under Review</h4>
-                            <p className="text-muted mb-4 mx-auto" style={{ maxWidth: '400px' }}>
-                              Your order is currently being reviewed. Payment options will be available once approved.
-                            </p>
-                            <div className="status-chip-modern warning">
-                              <i className="ri-information-line"></i>
-                              Current Status: {data?.status || "Pending"}
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        // Other statuses
-                        <>
-                          <div className="payment-status-card-modern payment-status-info">
-                            <div className="d-flex align-items-center justify-content-center mb-3">
-                              <i className="ri-information-line text-info" style={{ fontSize: '4rem' }}></i>
-                            </div>
-                            <h4 className="mb-3">Payment Information</h4>
-                            <div className="mb-4">
-                              <StatusChip 
-                                status={
-                                  paymentStatus === "SUCCESS" ? "success" : 
-                                  paymentStatus === "FAILED" ? "danger" : 
-                                  "warning"
-                                } 
-                                text={paymentStatus || "Not Available"}
-                              />
-                            </div>
-                            {data?.payment?.transectionid && (
-                              <div className="payment-status-card-modern payment-status-info" style={{ maxWidth: '400px' }}>
-                                <p className="text-muted small mb-1">Transaction Reference</p>
-                                <p className="font-monospace fw-bold mb-0">
-                                  {data.payment.transectionid}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
+      <div className="order-invoice-meta">
+        <div>
+          <span className="order-invoice-label">BILLED TO</span>
+          <strong>{data?.user?.name || "Customer"}</strong>
+          <p>{[data?.shipping?.address, data?.shipping?.city, data?.shipping?.postalCode, data?.shipping?.country].filter(Boolean).join(", ")}</p>
+          {data?.user?.phone && <small>Phone: {data?.user?.countryCode} {data.user.phone}</small>}
+        </div>
+        <div className="order-invoice-actions">
+          <a href={`${BASE_URL}/api/file?file=performa-invoice${data?.id}.pdf`} target="_blank" rel="noreferrer">
+            <i className="ri-file-download-line" aria-hidden="true"></i>Download invoice
+          </a>
+        </div>
       </div>
-    </>
+
+      <div className="order-invoice-table-wrap">
+        <table className="order-invoice-table">
+          <thead><tr>
+            <th>Product description</th><th>Qty</th><th>Unit price</th><th>Disc %</th>
+            <th>Disc amt</th><th>Selling price</th><th>Tax</th><th>Total</th>
+          </tr></thead>
+          <tbody>
+            {invoice.rows.map((row) => <tr key={row.id}>
+              <td data-label="Product">{row.name}</td>
+              <td data-label="Qty">{row.quantity}</td>
+              <td data-label="Unit price">₹{money(row.unitPrice)}</td>
+              <td data-label="Discount">{money(row.discountPercentage)}%</td>
+              <td data-label="Discount amount">-₹{money(row.discountAmount)}</td>
+              <td data-label="Selling price">₹{money(row.sellingPrice)}</td>
+              <td data-label="Tax">₹{money(row.taxAmount)} <small>({money(row.taxPercentage)}%)</small></td>
+              <td data-label="Total"><strong>₹{money(row.total)}</strong></td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="order-invoice-totals">
+        <div><span>Gross subtotal</span><strong>₹{money(invoice.grossSubtotal)}</strong></div>
+        <div><span>Total discount</span><strong>-₹{money(invoice.totalDiscount)}</strong></div>
+        <div><span>Total GST/Tax</span><strong>+₹{money(invoice.totalTax)}</strong></div>
+        <div className="order-invoice-grand-total"><span>Grand total</span><strong>₹{money(invoice.grandTotal)}</strong></div>
+      </div>
+
+      <div className="order-payment-panel">
+        {shouldShowPayment ? <>
+          <div className="order-payment-heading">
+            <div><span className="order-invoice-label">PAYMENT</span><h3 id="order-invoice-title">Choose payment method</h3></div>
+            <span className="order-payment-status is-pending">{paymentStatus}</span>
+          </div>
+          <div className="order-payment-options" role="radiogroup" aria-label="Payment method">
+            {PAYMENT_METHODS.map((method) => <button
+              type="button" role="radio" aria-checked={paymentMethod === method.id}
+              className={`order-payment-option ${paymentMethod === method.id ? "is-selected" : ""}`}
+              key={method.id} onClick={() => selectPaymentMethod(method.id)} disabled={loading}
+            >
+              <i className={method.icon} aria-hidden="true"></i>
+              <span><strong>{method.name}</strong><small>{method.description}</small></span>
+              <span className="order-payment-radio" aria-hidden="true"></span>
+            </button>)}
+          </div>
+          {paymentError && <div className="order-payment-message is-error" role="alert">{paymentError}</div>}
+          {paymentNotice && <div className="order-payment-message is-success" role="status">{paymentNotice}</div>}
+          <button type="button" className="order-pay-now" onClick={proceedPayment} disabled={loading || !paymentMethod}>
+            {loading ? <><span className="spinner-modern"></span>Processing payment…</> : <><i className="ri-lock-line"></i>Pay now · ₹{money(invoice.grandTotal)}</>}
+          </button>
+        </> : <div className="order-payment-recorded">
+          <div className={`order-payment-recorded-icon ${isPaymentSuccess ? "is-success" : isPaymentFailed ? "is-failed" : "is-pending"}`}>
+            <i className={isPaymentSuccess ? "ri-checkbox-circle-fill" : isPaymentFailed ? "ri-close-circle-fill" : "ri-time-line"}></i>
+          </div>
+          <div><span className="order-invoice-label">PAYMENT DETAILS</span><h3>{paymentMethodLabel}</h3>
+            <p>Status: <strong>{paymentStatus}</strong></p>
+            {data?.payment?.transectionid && <small>Transaction reference: {data.payment.transectionid}</small>}
+          </div>
+          <strong className="order-payment-recorded-amount">₹{money(data?.payment?.amount || invoice.grandTotal)}</strong>
+        </div>}
+      </div>
+    </section>
   );
 };
 
