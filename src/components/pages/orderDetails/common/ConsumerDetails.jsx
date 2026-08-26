@@ -25,7 +25,8 @@ const ConsumerDetails = ({ data, taxData }) => {
   const isPaymentSuccess = paymentStatus === "SUCCESS";
   const isPaymentFailed = paymentStatus === "FAILED";
   const isOfflinePaymentRecorded = recordedPaymentMethod === "OFF";
-  const shouldShowPayment = data?.status === "APPROVED" && !isPaymentSuccess && !isOfflinePaymentRecorded;
+  const isOrderApproved = String(data?.status || "").toUpperCase() === "APPROVED";
+  const shouldShowPayment = isOrderApproved && !isPaymentSuccess && !isOfflinePaymentRecorded;
 
   const invoice = useMemo(() => {
     const approvedItems = Array.isArray(data?.jsonOrderData) ? data.jsonOrderData : [];
@@ -141,9 +142,15 @@ const ConsumerDetails = ({ data, taxData }) => {
           {data?.user?.phone && <small>Phone: {data?.user?.countryCode} {data.user.phone}</small>}
         </div>
         <div className="order-invoice-actions">
-          <a href={`${BASE_URL}/api/file?file=performa-invoice${data?.id}.pdf`} target="_blank" rel="noreferrer">
-            <i className="ri-file-download-line" aria-hidden="true"></i>Download invoice
-          </a>
+          {isOrderApproved ? (
+            <a href={`${BASE_URL}/api/file?file=performa-invoice${data?.id}.pdf`} target="_blank" rel="noreferrer">
+              <i className="ri-file-download-line" aria-hidden="true"></i>Download invoice
+            </a>
+          ) : (
+            <span className="is-disabled" aria-disabled="true" title="The invoice is generated after admin approval">
+              <i className="ri-time-line" aria-hidden="true"></i>Invoice available after admin approval
+            </span>
+          )}
         </div>
       </div>
 

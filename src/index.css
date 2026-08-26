@@ -76,7 +76,8 @@
   letter-spacing: 0.1em;
 }
 
-.order-invoice-actions a {
+.order-invoice-actions a,
+.order-invoice-actions span {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -85,6 +86,13 @@
   border-radius: 999px;
   color: var(--invoice-green-dark);
   font-weight: 700;
+}
+
+.order-invoice-actions .is-disabled {
+  border-color: #e1e5e2;
+  background: #f5f7f5;
+  color: #7b857e;
+  cursor: not-allowed;
 }
 
 .order-invoice-table-wrap { overflow-x: auto; padding: 8px 26px 0; }
