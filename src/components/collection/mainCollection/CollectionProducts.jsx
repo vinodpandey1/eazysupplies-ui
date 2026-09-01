@@ -11,7 +11,7 @@ import axios from "axios";
 
 const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
   const { themeOption } = useContext(ThemeOptionContext);
-  const [adjustGrid, setAdjustGrid] = useState("col-6 col-lg-4");
+  const [adjustGrid, setAdjustGrid] = useState("col-6 col-md-4");
   const [products, setProducts] = useState([]);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -44,15 +44,10 @@ const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
       })
       .then((response) => {
         const responseData = response.data || {};
-        const seen = new Set();
-        const uniqueProducts = (responseData.data || []).filter((product) => {
-          const key = product?.sku?.trim()?.toLowerCase();
-          if (!key) return true;
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-        setProducts(uniqueProducts);
+        // Render the exact page returned by the API. Removing duplicates here made
+        // the visible row count smaller than the API's `per_page`/`total` values
+        // and caused items to disappear from a paginated catalogue.
+        setProducts(Array.isArray(responseData.data) ? responseData.data : []);
         setPagination({
           current_page: Number(responseData.current_page) || page,
           total: Number(responseData.total) || 0,
@@ -76,18 +71,20 @@ const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
   const changePage = (nextPage) => {
     if (nextPage < 1 || nextPage > pagination.last_page || nextPage === page) return;
     setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.querySelector(".product-top-filter")?.scrollIntoView({ block: "start", behavior: "auto" });
   };
 
   useEffect(() => {
     if (grid == 2) {
-      setAdjustGrid("col-6");
+      setAdjustGrid("col-12 col-sm-6");
     } else if (grid == 3) {
-      setAdjustGrid("col-xl-4 col-lg-6 col-md-4 col-6");
+      setAdjustGrid("col-6 col-md-4");
     } else if (grid == 4) {
-      setAdjustGrid("col-xl-3 col-lg-4 col-md-6 col-6");
+      setAdjustGrid("col-6 col-md-4 col-xl-3");
+    } else if (grid == 5) {
+      setAdjustGrid("col-6 col-md-4 col-lg-3 col-xxl-5th");
     } else if (grid == "list") {
-      setAdjustGrid("col-6 col-sm-12");
+      setAdjustGrid("col-12");
     }
   }, [grid]);
 

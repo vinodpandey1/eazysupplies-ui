@@ -10,25 +10,30 @@ import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import BrandBadge from "@/components/widgets/BrandBadge";
+import { getProductPricing, getUnitLabel } from "@/utils/pricing/productPricing";
 
 const ProductBox2 = ({ productState, setProductState, onNavigate }) => {
   const { t } = useTranslation("common");
-const getFirstOriginalUrl = (filesString) => {
-  if (!filesString) return null;
-  const [firstFile] = filesString.split(",");
-  if (!firstFile) return null;
-  const trimmedFile = firstFile.trim();
-  const url = new URL(process.env.NEXT_PUBLIC_FILE_API_URL);
-  url.searchParams.set("file", trimmedFile);
-  return url.toString();
-};
+  const getFirstOriginalUrl = (filesString) => {
+    if (!filesString) return null;
+    const [firstFile] = filesString.split(",");
+    const trimmedFile = firstFile?.trim();
+    if (!trimmedFile) return null;
 
-const lowercase = (text) => {
-  return typeof text === "string" ? text.toLowerCase() : "";
-}
+    try {
+      const url = new URL(process.env.NEXT_PUBLIC_FILE_API_URL || "https://api.eazysupplies.com/api/file");
+      url.searchParams.set("file", trimmedFile);
+      return url.toString();
+    } catch {
+      return null;
+    }
+  };
 
-const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
+  const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
   const { convertCurrency } = useContext(SettingContext);
+  const pricing = getProductPricing(productState?.product, productState?.selectedVariation);
+  const unitLabel = getUnitLabel(productState?.product);
+  const ratingCount = Number(productState?.product?.reviews_count);
   return (
     <div className={`basic-product theme-product-1 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
       <div className="overflow-hidden">
@@ -42,10 +47,12 @@ const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
           <Link href={`/product/${productState?.product?.id}`} onClick={onNavigate}>
             <OptimizedImage src={originalUrl ? originalUrl : placeHolderImage} className="img-fluid bg-img" alt={productState?.product?.name} />
           </Link>
-          <div className="rating-label">
-            <RiStarSFill />
-            <span>{productState?.product?.reviews_count}</span>
-          </div>
+          {Number.isFinite(ratingCount) && ratingCount > 0 && (
+            <div className="rating-label">
+              <RiStarSFill />
+              <span>{ratingCount}</span>
+            </div>
+          )}
           <div className="cart-info">
             {/* <WishlistButton customAnchor={true} productstate={productState?.product} /> */}
             <CartButton productState={productState} selectedVariation={productState.selectedVariation} />
@@ -63,12 +70,11 @@ const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
               </div>
             </div>
             <BrandBadge brand={productState?.product?.brand} compact className="mb-2" />
-            <h4 className="price">
-              {convertCurrency(productState?.product?.price)}
-              {productState?.product?.skuType ? ` / ${lowercase(productState.product.skuType)}` : ""}
-              {Number(productState?.product?.mrp) > Number(productState?.product?.price) && (
-                <del className="ms-2">{convertCurrency(productState.product.mrp)}</del>
-              )}
+            <h4 className="price product-price-display">
+              <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
+              {unitLabel && <span className="unit-label"> {unitLabel}</span>}
+              {pricing.hasOffer && <del className="regular-price">{convertCurrency(pricing.regularPrice)}</del>}
+              {pricing.hasOffer && <span className="discounted-price">{pricing.discountPercentage}% {t("Off")}</span>}
               {/* {productState?.selectedVariation ? convertCurrency(productState?.selectedVariation.sale_price) : convertCurrency(productState?.product?.sale_price)} Adjust currencySymbol based on your implementation
               {(productState?.selectedVariation ? productState?.selectedVariation.discount : productState?.product?.discount) ? (
                 <>
@@ -77,7 +83,7 @@ const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
                 </>
               ) : null} */}
             </h4>
-            <div className="price"><CartButton productState={productState} text={"Add to Cart"} selectedVariation={productState.selectedVariation} /></div>
+            <div className="product-card-cart-action"><CartButton productState={productState} text={"Add to Cart"} selectedVariation={productState.selectedVariation} /></div>
           </div>
           {/* <ul className="offer-panel">
             {[1, 2, 3].map((_, index) => (

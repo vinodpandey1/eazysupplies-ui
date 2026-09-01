@@ -4,6 +4,7 @@ import SettingContext from "@/context/settingContext";
 import Loader from "@/layout/loader";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { calculateCartTotals } from "@/utils/pricing/orderTotals";
 import ApplyCoupon from "./ApplyCoupon";
 import PlaceOrder from "./PlaceOrder";
 import PointWallet from "./PointWallet";
@@ -12,6 +13,7 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
   const { convertCurrency } = useContext(SettingContext);
   const { cartProducts } = useContext(CartContext);
   const { t } = useTranslation("common");
+  const { subtotal } = calculateCartTotals(cartProducts);
 
   useEffect(() => {
     // console.log(cartProducts, "jjj")
@@ -34,7 +36,7 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
               <ul className="sub-total">
                 <li>
                   {t("Subtotal")}
-                  <span className="count">{convertCurrency(cartProducts?.reduce((sum, item) => sum + item?.sub_total, 0))}</span>
+                  <span className="count">{convertCurrency(subtotal)}</span>
                 </li>
                 <li>
                   {t("Shipping")}
@@ -42,7 +44,7 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
                 </li>
                 <li>
                   {t("Tax")}
-                  <span className="count">{convertCurrency("0")}</span>
+                  <span className="count checkout-review-value">Calculated after order review</span>
                 </li>
 
                 {/* <PointWallet values={values} setFieldValue={setFieldValue} data={data} /> */}
@@ -55,10 +57,13 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
                   </li>
                 ) : null}
                 <li className="list-total">
-                  {t("Total")}
-                  <span className="count">{convertCurrency(cartProducts?.reduce((sum, item) => sum + item?.sub_total, 0))}</span>
+                  Estimated order value
+                  <span className="count">{convertCurrency(subtotal)}</span>
                 </li>
               </ul>
+              <p className="checkout-pricing-note">
+                Discounts, tax and the final payable total are confirmed when the order is reviewed.
+              </p>
               <PlaceOrder values={values} errors={errors} />
             </div>
           </div>

@@ -1,4 +1,5 @@
 import "../index.scss";
+import "../styles/storefront-remediation.css";
 import { I18nProvider } from "./i18n/i18n-context";
 import { detectLanguage } from "./i18n/server";
 

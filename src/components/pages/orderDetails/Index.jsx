@@ -22,7 +22,7 @@ const OrderDetailsTracking = () => {
   const [orderData, setOrderData] = useState([])
   const [taxData, setTaxData] = useState([]);
   const router = useRouter();
-  const { data, isLoading } = useFetchQuery([GetOrderById, orderId], () => request({ url: GetOrderById + orderId, method: "GET", withCredentials: true }, router), {
+  const { data, isLoading, refetch: refetchOrder } = useFetchQuery([GetOrderById, orderId], () => request({ url: GetOrderById + orderId, method: "GET", withCredentials: true }, router), {
     enabled: Boolean(orderId),
     refetchOnWindowFocus: false,
     select: (res) => res?.data,
@@ -45,12 +45,12 @@ const OrderDetailsTracking = () => {
           <div className="faq-content">
             <div className="tab-pane">
               <ResponsiveMenuOpen />
-              <Col xxl={12} lg={8}>
+              <Col xs={12}>
                 {data ? (
                   <div className="dashboard-right-sidebar">
                     <TabContent>
                       <TabPane className="show active">
-                        <TrackOrderDetails data={data} isLoading={isLoading} orderNumber={orderId} taxData={taxData} />
+                        <TrackOrderDetails data={data} isLoading={isLoading} orderNumber={orderId} taxData={taxData} onPaymentRecorded={refetchOrder} />
                       </TabPane>
                     </TabContent>
                   </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CartContext from ".";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
+import { calculateCartTotals } from "@/utils/pricing/orderTotals";
 
 const CartProvider = (props) => {
   const [cartProducts, setCartProducts] = useState([]);
@@ -24,16 +25,12 @@ const CartProvider = (props) => {
 
   // ✅ Calculate total dynamically
   const total = useMemo(() => {
-    return cartProducts?.reduce((prev, curr) => {
-      return prev + Number(curr.sub_total);
-    }, 0);
+    return calculateCartTotals(cartProducts).subtotal;
   }, [cartProducts]);
 
   // ✅ Helper to calculate total (for external calls)
   const getTotal = (value) => {
-    return value?.reduce((prev, curr) => {
-      return prev + Number(curr.sub_total);
-    }, 0);
+    return calculateCartTotals(value).subtotal;
   };
 
   // ✅ Save data to localStorage

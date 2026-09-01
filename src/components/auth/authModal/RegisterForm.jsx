@@ -28,48 +28,61 @@ import { RegisterAPI } from "@/utils/axiosUtils/API";
 import useCreate from "@/utils/hooks/useCreate";
 import { YupObject, emailSchema, nameSchema, passwordConfirmationSchema, passwordSchema, phoneSchema, gstnSchema } from "@/utils/validation/ValidationSchema";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import ThemeOptionContext from "@/context/themeOptionsContext";
 import { useRouter } from "next/navigation";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 import "../../../index.css";
 import { tsurl } from "@/utils/constants";
-const RegisterForm = () => {
+const RegisterForm = ({ setState }) => {
   const [showBoxMessage, setShowBoxMessage] = useState();
   const [successMessage, setSuccessMessage] = useState(null);
   const { t } = useTranslation("common");
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [termsError, setTermsError] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
-  const { setOpenAuthModal } = useContext(ThemeOptionContext);
   const router = useRouter();
 
-  // Custom success handler
-  const handleSuccess = (resData) => {
-    if (resData.status === 409)
-      {
-        setSuccessMessage({
-        type: 'error',
-        message: "An account already exists with this email or phone number. Please login."
-      });
+  const openLogin = () => {
+    if (typeof setState === "function") {
+      setState("login");
+      return;
     }
-    else if (resData.status === 201)
-    {
-      setSuccessMessage({
-        type: 'success',
-        message: "Registration successful! Please activate your account using the verification email before logging in."
-      });
-    }
-    // Clear any error messages
-    setShowBoxMessage(null);
+    router.push("/auth/login");
+  };
 
-    // Close modal after 3 seconds and optionally redirect
-    setTimeout(() => {
-      setOpenAuthModal(false);
-      // Uncomment if you want to redirect to home page
-      // router.push('/');
-    }, 5000);
+  // Registration and activation are separate states. Only claim that an
+  // activation email was sent when the API explicitly confirms delivery.
+  const handleSuccess = (resData) => {
+    const response = resData?.data || {};
+
+    if (resData?.status !== 200 && resData?.status !== 201) {
+      setShowBoxMessage({
+        type: "error",
+        message: response?.message || response?.error || "Registration failed. Please try again.",
+      });
+      return;
+    }
+
+    const emailDelivery = String(response?.delivery?.email || "unknown").toLowerCase();
+    const deliveryConfirmed = ["sent", "delivered", "queued"].includes(emailDelivery);
+    const activationRequired = response?.activationRequired !== false;
+    const submittedEmail = response?.user?.email;
+    const fallbackMessage = activationRequired
+      ? deliveryConfirmed
+        ? "Account created. Please activate it using the link sent to your email before logging in."
+        : "Account created, but activation email delivery could not be confirmed. Please contact support to resend it."
+      : "Registration completed successfully. You can now log in.";
+
+    setSuccessMessage({
+      type: activationRequired && !deliveryConfirmed ? "warning" : "success",
+      message: response?.message || fallbackMessage,
+      activationRequired,
+      deliveryConfirmed,
+      emailDelivery,
+      email: submittedEmail,
+    });
+    setShowBoxMessage(null);
   };
 
   // Custom error handler
@@ -111,7 +124,7 @@ const RegisterForm = () => {
   );
 
   // Handle Formik submit
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = (values) => {
     if (!checkboxChecked) {
       setTermsError(true);
       setShowBoxMessage({
@@ -128,18 +141,6 @@ const RegisterForm = () => {
     // Call the mutation
     mutate(values);
   };
-
-  // Reset form after success
-  useEffect(() => {
-    if (successMessage) {
-      // Auto-hide success message after 5 seconds
-      const timer = setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [successMessage]);
 
   return (
     <Formik
@@ -169,7 +170,7 @@ const RegisterForm = () => {
             <div role="alert" className={`success-toast-message ${successMessage.type}`}>
               <div className="toast-content">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="me-2">
-                  <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"
+                  <path d={successMessage.type === "warning" ? "M11 7H13V13H11V7ZM11 15H13V17H11V15ZM12 2L1 21H23L12 2Z" : "M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"}
                     fill="currentColor" />
                 </svg>
                 <span>{successMessage.message}</span>
@@ -533,7 +534,7 @@ const RegisterForm = () => {
               )}
             </Btn>
 
-            {/* Success redirect message */}
+            {/* Keep the result visible until the user chooses the next step. */}
             {successMessage && (
               <div className="success-redirect-message mt-3">
                 <div className="text-center">
@@ -541,9 +542,16 @@ const RegisterForm = () => {
                     <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"
                       fill="#10b981" />
                   </svg>
-                  <p className="text-muted small mb-0">
-                    {successMessage.type === "error" ? "Registration failed" : t("Registration CompleteMessage") || "Registration complete! Closing this window..."}
+                  <p className="text-muted small mb-2">
+                    {successMessage.activationRequired
+                      ? successMessage.deliveryConfirmed
+                        ? `Activation is required. Check ${successMessage.email || "your email"} for the activation link.`
+                        : "Activation is required. Delivery was not confirmed, so please request help before trying to register again."
+                      : "Your account is ready to use."}
                   </p>
+                  <button type="button" className="btn btn-sm btn-solid" onClick={openLogin}>
+                    {successMessage.activationRequired ? "Go to login after activation" : "Go to login"}
+                  </button>
                 </div>
               </div>
             )}

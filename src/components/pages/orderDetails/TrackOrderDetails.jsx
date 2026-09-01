@@ -43,44 +43,13 @@ import Loader from "@/layout/loader";
 import ConsumerDetails from "./common/ConsumerDetails";
 import StatusDetail from "./common/StatusDetails";
 import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { calculateOrderTotals } from "@/utils/pricing/orderTotals";
 
-const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
+const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData, onPaymentRecorded }) => {
   const searchParams = useSearchParams();
   const showLegacyView = searchParams.get("orderView") === "legacy";
-  /**
-   * Calculate product discounts and tax amounts for a specific order item
-   * @param {Object} product - Product data object
-   * @param {string} ordId - Order identifier
-   * @returns {Object} Calculated discount and tax details
-   */
-  function generateProductDiscount(product, ordId) {
-    let jsonData = product.jsonData;
-    let _dd = [];
-    
-    if (!jsonData) {
-      _dd = [{ discountPercentage: 0, discountAmount: 0, taxId: 0, taxAmount: 0, taxpercent: 0, totalPrice: 0 }];
-      let _taxId = Number(product?.tax);
-      let _taxpercent = taxData.filter((elm) => Number(elm.id) == _taxId);
-      _taxpercent = _taxpercent[0]?.value;
-      let _taxAmt = Number(product?.price) * Number(_taxpercent) / 100;
-      _dd[0].taxAmount = _taxAmt;
-      _dd[0].taxpercent = _taxpercent;
-      _dd[0].totalPrice = Number(product?.price) + _taxAmt;
-      return _dd[0];
-    } else {
-      _dd = jsonData.filter(el => el.orderId == ordId);
-      if (_dd.length > 0) {
-        let _taxId = Number(product?.tax);
-        let _taxpercent = taxData.filter((elm) => Number(elm.id) == _taxId);
-        _taxpercent = _taxpercent[0]?.value;
-        let _taxAmt = Number(_dd[0].sellingPrice) * Number(_taxpercent) / 100;
-        _dd[0].taxAmount = _taxAmt;
-        _dd[0].taxpercent = _taxpercent;
-        _dd[0].totalPrice = Number(_dd[0].sellingPrice) + _taxAmt;
-        return _dd[0];
-      }
-    }
-  }
+  const invoice = useMemo(() => calculateOrderTotals(data, taxData), [data, taxData]);
 
   // Show loader while data is loading
   if (isLoading) return <Loader />;
@@ -107,31 +76,23 @@ const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
           <h2 className="section-title">
             <i className="ri-shopping-bag-3-line me-2"></i>
             Products
-            <span className="item-count">({data?.items?.length || 0})</span>
+            <span className="item-count">({invoice.rows.length})</span>
           </h2>
         </div>
 
-        {data?.items?.length > 0 ? (
+        {invoice.rows.length > 0 ? (
           <div className="products-list">
-            {data.items.map((el, index) => {
-              const quantity = Number(el?.quantity || 0);
-              const price = Number(el?.product?.price || 0);
-              const amtDetails = generateProductDiscount(el?.product, el.orderId) || {};
-              const {
-                discountPercentage = 0,
-                discountAmount = 0,
-                taxpercent = 0,
-                taxAmount = 0,
-                totalPrice = price - discountAmount + taxAmount
-              } = amtDetails;
+            {invoice.rows.map((row) => {
+              const el = row.item;
+              const product = el?.product || {};
 
               return (
-                <div key={index} className="product-item">
+                <div key={row.id} className="product-item">
                   {/* Product Main Information */}
                   <div className="product-main">
                     <div className="product-image">
-                      {el?.product?.image ? (
-                        <OptimizedImage src={el.product.image} alt={el.product.name} />
+                      {product?.image ? (
+                        <OptimizedImage src={product.image} alt={row.name} />
                       ) : (
                         <div className="image-placeholder">
                           <i className="ri-image-line"></i>
@@ -139,21 +100,21 @@ const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
                       )}
                     </div>
                     <div className="product-info">
-                      <h3 className="product-name">{el?.product?.name}</h3>
+                      <h3 className="product-name">{row.name}</h3>
                       <div className="product-meta">
                         <span className="meta-item">
                           <i className="ri-price-tag-3-line"></i>
-                          ₹{price.toFixed(2)} × {quantity}
+                          ₹{row.unitPrice.toFixed(2)} × {row.quantity}
                         </span>
                         <span className="meta-item">
                           <i className="ri-barcode-line"></i>
-                          SKU: {el?.product?.sku || "N/A"}
+                          SKU: {product?.sku || "N/A"}
                         </span>
                       </div>
                     </div>
                     <div className="product-total">
                       <span className="total-label">Item Total</span>
-                      <span className="total-amount">₹{(quantity * totalPrice).toFixed(2)}</span>
+                      <span className="total-amount">₹{row.total.toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -166,15 +127,15 @@ const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
                         <div className="detail-items">
                           <div className="detail-item">
                             <span>Unit Price</span>
-                            <span>₹{price.toFixed(2)}</span>
+                            <span>₹{row.unitPrice.toFixed(2)}</span>
                           </div>
                           <div className="detail-item">
                             <span>Quantity</span>
-                            <span>{quantity}</span>
+                            <span>{row.quantity}</span>
                           </div>
                           <div className="detail-item">
                             <span>Subtotal</span>
-                            <span>₹{((price - discountAmount) * quantity).toFixed(2)}</span>
+                            <span>₹{row.netSubtotal.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -184,16 +145,16 @@ const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
                         <label className="detail-label">Discounts & Tax</label>
                         <div className="detail-items">
                           <div className="detail-item">
-                            <span>Discount ({discountPercentage}%)</span>
-                            <span className="text-success">-₹{(discountAmount * quantity).toFixed(2)}</span>
+                            <span>Discount ({row.discountPercentage.toFixed(2)}%)</span>
+                            <span className="text-success">-₹{row.discountAmount.toFixed(2)}</span>
                           </div>
                           <div className="detail-item">
-                            <span>Tax ({taxpercent}%)</span>
-                            <span className="text-primary">+₹{(taxAmount * quantity).toFixed(2)}</span>
+                            <span>Tax ({row.taxPercentage.toFixed(2)}%)</span>
+                            <span className="text-primary">+₹{row.taxAmount.toFixed(2)}</span>
                           </div>
                           <div className="detail-item total">
                             <span>Total</span>
-                            <span className="total-value">₹{(quantity * totalPrice).toFixed(2)}</span>
+                            <span className="total-value">₹{row.total.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -251,7 +212,7 @@ const TrackOrderDetails = ({ data, isLoading, orderNumber, taxData }) => {
 
       {/* Consumer Details Section */}
       <div className="consumer-section">
-        <ConsumerDetails data={data} taxData={taxData} />
+        <ConsumerDetails data={data} taxData={taxData} onPaymentRecorded={onPaymentRecorded} />
       </div>
     </div>
   );

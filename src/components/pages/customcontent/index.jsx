@@ -10,6 +10,7 @@ import { prodapiurl } from "@/utils/constants";
 import { useSearchParams } from 'next/navigation';
 
 const policyAnchors = {
+  "website policy": "website-policy",
   "website policies": "website-policy",
   "return policy": "return-policy",
   "replacement policy": "replacement-policy",
@@ -19,7 +20,7 @@ const policyAnchors = {
 
 const addPolicyAnchors = (html) =>
   html.replace(/<(h[1-3])([^>]*)>([\s\S]*?)<\/\1>/gi, (heading, tag, attributes, content) => {
-    const headingText = content.replace(/<[^>]*>/g, " ").replace(/&amp;/gi, "&").replace(/\s+/g, " ").trim().toLowerCase();
+    const headingText = content.replace(/<[^>]*>/g, " ").replace(/&(?:nbsp|amp);/gi, (value) => value.toLowerCase() === "&amp;" ? "&" : " ").replace(/\s+/g, " ").trim().toLowerCase();
     const anchor = policyAnchors[headingText];
     if (!anchor) return heading;
 
@@ -71,10 +72,14 @@ const CustomContent = () => {
     return () => window.cancelAnimationFrame(frame);
   }, [htmlContent]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
-
   if (isLoading) return <Loader />;
+  if (error) {
+    return (
+      <WrapperComponent classes={{ sectionClass: "about-page section-b-space", fluidClass: "container" }} noRowCol={true}>
+        <div className="policy-document policy-document--error" role="alert">{error}</div>
+      </WrapperComponent>
+    );
+  }
   return (
     <>
       {/* <Breadcrumbs title={pageid} subNavigation={[{ name: pageid }]} /> */}

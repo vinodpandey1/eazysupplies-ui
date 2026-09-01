@@ -13,6 +13,7 @@ import AccountHeading from "../common/AccountHeading";
 import Loader from "@/layout/loader";
 import Capitalize from "@/utils/customFunctions/Capitalize";
 import { useRouter } from "next/navigation";
+import { calculateOrderTotals } from "@/utils/pricing/orderTotals";
 
 /**
  * MyOrders Component
@@ -42,7 +43,7 @@ const MyOrders = ({ userId }) => {
    * Fetches orders for the current user from the API with pagination
    * Uses API URL from next.config.mjs
    */
-  const fetchOrders = async (page = 1, limit = itemsPerPage) => {
+  const fetchOrders = async (page = 1, limit = itemsPerPage, options = {}) => {
     // Skip if no user ID provided
     if (!userId) {
       setLoading(false);
@@ -50,7 +51,7 @@ const MyOrders = ({ userId }) => {
     }
 
     try {
-      setLoading(true);
+      if (!options.silent) setLoading(true);
       setError(null);
       
       // Keep the request relative so the shared Axios client applies the
@@ -94,9 +95,9 @@ const MyOrders = ({ userId }) => {
       
     } catch (err) {
       console.error('Error fetching orders:', err);
-      setError(err.message || 'Failed to fetch orders');
+      setError(err?.response?.data?.error || err?.response?.data?.message || err.message || 'Failed to fetch orders');
     } finally {
-      setLoading(false);
+      if (!options.silent) setLoading(false);
     }
   };
 
@@ -106,6 +107,24 @@ const MyOrders = ({ userId }) => {
       fetchOrders(currentPage, itemsPerPage);
     }
   }, [userId]);
+
+  // Keep My Orders current after checkout/payment without forcing a hard refresh.
+  useEffect(() => {
+    if (!userId) return;
+
+    const refreshVisibleOrders = () => {
+      if (document.visibilityState === "visible") {
+        fetchOrders(currentPage, itemsPerPage, { silent: true });
+      }
+    };
+
+    window.addEventListener("focus", refreshVisibleOrders);
+    document.addEventListener("visibilitychange", refreshVisibleOrders);
+    return () => {
+      window.removeEventListener("focus", refreshVisibleOrders);
+      document.removeEventListener("visibilitychange", refreshVisibleOrders);
+    };
+  }, [userId, currentPage, itemsPerPage]);
 
   /**
    * Handles page change for pagination
@@ -146,12 +165,8 @@ const MyOrders = ({ userId }) => {
    * @returns {number} Total order price
    */
 const calculatePrice = (order) => {
-  if (Array.isArray(order?.jsonOrderData) && order.jsonOrderData.length > 0) {
-    return order.jsonOrderData.reduce(
-      (sum, item) => sum + (Number(item?.totalPrice) || 0),
-      0
-    );
-  }
+  const calculated = calculateOrderTotals(order);
+  if (calculated.rows.length > 0) return calculated.grandTotal;
 
   // If backend already provides final total, use it directly
   if (order?.totalAmount) return order.totalAmount;

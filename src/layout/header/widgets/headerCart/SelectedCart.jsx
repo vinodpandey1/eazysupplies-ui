@@ -54,8 +54,8 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
     <>
       <div className="cart_media">
         <ul className="cart_product">
-          {cartProducts.map((elem, i) => (
-            <li className="product-box-contain" key={i}>
+          {cartProducts.map((elem) => (
+            <li className="product-box-contain" key={`${elem?.product_id}-${elem?.variation_id || "base"}`}>
               <div className="media">
                 <Link href={`/product/${elem?.product?.id}`}>
                 
@@ -66,7 +66,7 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
                     <h4 className="text-wrap text-break">{elem?.variation?.name ?? elem?.product?.name}</h4>
                   </Link>
                   <h4 className="quantity">
-                    <span>{convertCurrency(elem?.product?.price)}</span>
+                    <span>{convertCurrency(Number(elem?.variation?.price ?? elem?.product?.price ?? 0))} × {elem?.quantity}</span>
                   </h4>
                   {elem?.variation && <h5 className="gram">{elem?.variation?.attribute_values?.[0]?.value ? elem?.variation?.attribute_values?.[0]?.value : elem?.selected_variation}</h5>}
                   <HandleQuantity productObj={elem?.product} elem={elem} customIcon={<RiDeleteBinLine />} />
@@ -103,7 +103,8 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
                   href={"/checkout"}
                   className="btn checkout"
                   onClick={() => {
-                    setCartCanvas(false), handelCheckout;
+                    setCartCanvas(false);
+                    handelCheckout();
                   }}
                 >
                   {t("Checkout")}

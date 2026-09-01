@@ -1,18 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+
 export function useHeaderScroll(value) {
-  const [UpScroll, setUpScroll] = useState(value);
+  const [upScroll, setUpScroll] = useState(value);
+
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
+    let frameId = null;
+
+    const handleScroll = () => {
+      if (frameId) return;
+      frameId = window.requestAnimationFrame(() => {
+        // A meaningful threshold prevents the header flickering between states
+        // during tiny trackpad/touch movements at the top of the page.
+        setUpScroll((current) => {
+          const threshold = current ? 56 : 88;
+          return window.scrollY > threshold;
+        });
+        frameId = null;
+      });
     };
-  });
-  const handleScroll = () => {
-    if (window.scrollY > 8) {
-      setUpScroll(true);
-    } else {
-      setUpScroll(false);
-    }
-  };
-  return UpScroll;
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+  }, []);
+
+  return upScroll;
 }

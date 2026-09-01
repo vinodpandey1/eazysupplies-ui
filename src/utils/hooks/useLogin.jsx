@@ -28,7 +28,7 @@ const transformLocalStorageData = (localStorageData) => {
   return transformedData;
 };
 
-const LoginHandle = (responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal) => {
+const LoginHandle = async (responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal) => {
   if (responseData.status === 200 || responseData.status === 201) {
     Cookies.set("uat", responseData.data?.access_token, { path: "/", expires: new Date(Date.now() + 24 * 60 * 6000) });
     const ISSERVER = typeof window === "undefined";
@@ -37,9 +37,12 @@ const LoginHandle = (responseData, router, refetch, CallBackUrl, setShowBoxMessa
       localStorage.setItem("account", JSON.stringify(responseData.data));
       setShowBoxMessage(responseData.data?.message);
     }
+    // Refresh the canonical profile before rendering the destination. This is
+    // especially important immediately after an account activation, because
+    // the locally persisted login payload does not include current status.
+    await refetch();
     router.push(CallBackUrl);
-
-    refetch();
+    router.refresh();
     // compareRefetch();
     setOpenAuthModal(false);
     // cartRefetch();
@@ -73,7 +76,13 @@ const useHandleLogin = (setShowBoxMessage = () => {}) => {
       return response;
     },
     onSuccess: (responseData) => LoginHandle(responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal),
-    onError: (err) => setShowBoxMessage(err?.response?.data?.error || err?.message || "Unable to log in"),
+    onError: (err) => {
+      const response = err?.response?.data || {};
+      const message = response?.activationRequired || response?.code === "ACCOUNT_INACTIVE"
+        ? "Your account is awaiting activation. Activate it using your verification link, then log in again."
+        : response?.message || response?.error || err?.message || "Unable to log in";
+      setShowBoxMessage(message);
+    },
   });
 };
 

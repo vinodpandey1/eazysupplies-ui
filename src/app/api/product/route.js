@@ -4,7 +4,8 @@ import product from "./product.json";
 export async function GET(request) {
   const searchParams = request?.nextUrl?.searchParams;
   const queryCategory = searchParams.get("category");
-  const querySortBy = searchParams.get("sortBy");
+  const querySortBy = searchParams.get("sortBy") || searchParams.get("sort");
+  const queryField = searchParams.get("field") || "name";
   const queryBrand = searchParams.get("brand"); // brand slug or id
   const queryCategoryIds = searchParams.get("category_ids");
   const queryIds = searchParams.get("ids");
@@ -38,9 +39,13 @@ export async function GET(request) {
     }
     // Sort logic
     if (querySortBy === "asc") {
-      products = products.sort((a, b) => a.id - b.id);
+      products = products.sort((a, b) => queryField === "price"
+        ? Number(a.sale_price ?? a.price ?? 0) - Number(b.sale_price ?? b.price ?? 0)
+        : String(a.name || "").localeCompare(String(b.name || "")));
     } else if (querySortBy === "desc") {
-      products = products.sort((a, b) => b.id - a.id);
+      products = products.sort((a, b) => queryField === "price"
+        ? Number(b.sale_price ?? b.price ?? 0) - Number(a.sale_price ?? a.price ?? 0)
+        : String(b.name || "").localeCompare(String(a.name || "")));
     } else if (querySortBy === "a-z") {
       products = products.sort((a, b) => a.name.localeCompare(b.name));
     } else if (querySortBy === "z-a") {

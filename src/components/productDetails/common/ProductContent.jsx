@@ -14,6 +14,25 @@ import SizeModal from "./allModal/SizeModal";
 import ProductAttribute from "./productAttribute/ProductAttribute";
 import ProductDetailAction from "./ProductDetailAction";
 import Btn from "@/elements/buttons/Btn";
+import { getProductPricing, getUnitLabel } from "@/utils/pricing/productPricing";
+
+const cleanDescriptionText = (html = "") =>
+  String(html)
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const truncateAtWord = (value, maxLength = 280) => {
+  if (value.length <= maxLength) return value;
+  const shortened = value.slice(0, maxLength + 1);
+  return `${shortened.slice(0, shortened.lastIndexOf(" ") || maxLength).trim()}…`;
+};
 
 const ProductContent = ({ productState, setProductState, productAccordion, noDetails, noQuantityButtons, noModals }) => {
   const { t } = useTranslation("common");
@@ -21,6 +40,17 @@ const ProductContent = ({ productState, setProductState, productAccordion, noDet
   const { convertCurrency } = useContext(SettingContext);
   const { setCartCanvas, themeOption } = useContext(ThemeOptionContext);
   const router = useRouter();
+  const product = productState?.product || {};
+  const pricing = getProductPricing(product, productState?.selectedVariation);
+  const unitLabel = getUnitLabel(product);
+  const productSummary = truncateAtWord(
+    cleanDescriptionText(
+      productState?.selectedVariation?.short_description ||
+        product?.short_description ||
+        product?.description ||
+        "",
+    ),
+  );
 
   const openCartWithoutScrolling = () => {
     const scrollX = window.scrollX;
@@ -66,24 +96,16 @@ const ProductContent = ({ productState, setProductState, productAccordion, noDet
             </div>
           )}
           <div className="price-text">
-            <h3>
-              <span className="text-dark fw-normal">Price : </span>
-              {convertCurrency(productState?.product?.price)}
-               / {productState?.product?.skuType} 
-              {Number(productState?.product?.mrp) > Number(productState?.product?.price) && (
-                <del className="ms-2">{convertCurrency(productState.product.mrp)}</del>
-              )}
-              {productState?.selectedVariation?.discount || productState?.product?.discount ? <del>{productState?.selectedVariation ? convertCurrency(productState?.selectedVariation?.price) : convertCurrency(productState?.product?.price)}</del> : null}
-
-              {productState?.selectedVariation?.discount || productState?.product?.discount ? (
-                <span className="discounted-price">
-                  {productState?.selectedVariation ? productState?.selectedVariation?.discount : productState?.product?.discount} % {t("Off")}
-                </span>
-              ) : null}
+            <h3 className="product-price-display">
+              <span className="price-label">{t("Price")}:</span>
+              <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
+              {unitLabel && <span className="unit-label"> {unitLabel}</span>}
+              {pricing.hasOffer && <del className="regular-price">{convertCurrency(pricing.regularPrice)}</del>}
+              {pricing.hasOffer && <span className="discounted-price">{pricing.discountPercentage}% {t("Off")}</span>}
             </h3>
-            <span>{t("InclusiveAllTheTax")}</span>
+            <span className="tax-caption">{t("InclusiveAllTheTax")}</span>
           </div>
-          {productState?.product?.description && <p className="description-text">{productState?.product?.description}</p>}
+          {productSummary && <p className="description-text product-summary">{productSummary}</p>}
         </>
       )}
       {!noModals ? (
@@ -111,11 +133,6 @@ const ProductContent = ({ productState, setProductState, productAccordion, noDet
 
       {!noQuantityButtons && (
         <>
-          {productState?.selectedVariation?.short_description && (
-            <div className="product-contain">
-              <p>{productState?.selectedVariation?.short_description ?? productState?.product?.short_description}</p>
-            </div>
-          )}
           {productState?.product.status && !productAccordion && <>{productState?.product?.type == "classified" && <ProductAttribute productState={productState} setProductState={setProductState} />}</>}
         </>
       )}

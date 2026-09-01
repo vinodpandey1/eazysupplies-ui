@@ -66,7 +66,7 @@ const HeaderCartData = () => {
     <>
       <div id="cart_side" className={`${cartCanvas ? "open-side" : ""} ${cartStyle === "cart_mini" ? "show-div shopping-cart" : "add_to_cart right right-cart-box"}`}>
         <button type="button" className="overlay" aria-label={t("CloseCart")} onClick={() => setCartCanvas(false)} />
-        <div className="cart-inner">
+        <div className="cart-inner" role="dialog" aria-modal="true" aria-label={t("MyCart")}>
           <div className="cart_top">
             <h3>
               {t("MyCart")} <span>{`(${cartProducts?.length})`}</span>

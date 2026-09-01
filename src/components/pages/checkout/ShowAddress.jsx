@@ -62,7 +62,7 @@ const ShowAddress = ({ item, type, index, setFieldValue }) => {
                 <p className="text-content">
                   <span className="text-title">{t("Phone")}: </span>
                   {item?.country_code && `+${item?.country_code} `}
-                  {phone}
+                  {item?.phone || phone}
                 </p>
               </li>
 

@@ -49,7 +49,7 @@ const ProductSidebarLayout = ({ productState, setProductState, direction }) => {
         <ProductDetailsTab productState={productState} setProductState={setProductState} />
       </WrapperComponent>
 
-      {productState?.product?.related_products?.length > 0 && <RelatedProduct customContainerClass="section-t-space" productState={productState} setProductState={setProductState} />}
+      <RelatedProduct customContainerClass="section-t-space" productState={productState} setProductState={setProductState} />
     </WrapperComponent>
   );
 };

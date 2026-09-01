@@ -14,7 +14,7 @@ const AccountSidebar = ({ tabActive }) => {
   const [activeTab, setActiveTab] = useState({ id: tabActive });
   const { mobileSideBar, setMobileSideBar } = useContext(AccountContext);
   const handelCallback = () => {
-    setMobileSideBar(!mobileSideBar);
+    setMobileSideBar(false);
   };
   const { t } = useTranslation("common");
   const { isLoading } = useContext(ThemeOptionContext);

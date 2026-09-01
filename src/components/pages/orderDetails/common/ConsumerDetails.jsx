@@ -2,6 +2,7 @@ import { BASE_URL } from "@/utils/axiosUtils/API";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import axios from "axios";
+import { calculateOrderTotals } from "@/utils/pricing/orderTotals";
 
 const PAYMENT_METHODS = [
   { id: "NB", name: "Online Payment", description: "Pay securely through the online payment gateway", icon: "ri-bank-card-line" },
@@ -13,7 +14,7 @@ const money = (value) => {
   return Number.isFinite(number) ? number.toFixed(2) : "0.00";
 };
 
-const ConsumerDetails = ({ data, taxData }) => {
+const ConsumerDetails = ({ data, taxData, onPaymentRecorded }) => {
   const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,47 +26,14 @@ const ConsumerDetails = ({ data, taxData }) => {
   const isPaymentSuccess = paymentStatus === "SUCCESS";
   const isPaymentFailed = paymentStatus === "FAILED";
   const isOfflinePaymentRecorded = recordedPaymentMethod === "OFF";
-  const isOrderApproved = String(data?.status || "").toUpperCase() === "APPROVED";
+  const orderStatus = String(data?.status || "").toUpperCase();
+  const approvedValue = String(data?.approved).toLowerCase();
+  const approvedFlag = data?.approved === true || data?.approved === 1 || ["yes", "true", "1"].includes(approvedValue);
+  const isOrderApproved = approvedFlag || ["APPROVED", "COMPLETED", "SHIPPED", "DELIVERED"].includes(orderStatus);
+  const hasInvoice = Boolean(data?.invoicepath);
   const shouldShowPayment = isOrderApproved && !isPaymentSuccess && !isOfflinePaymentRecorded;
 
-  const invoice = useMemo(() => {
-    const approvedItems = Array.isArray(data?.jsonOrderData) ? data.jsonOrderData : [];
-    const sourceItems = Array.isArray(data?.items) ? data.items : [];
-    const rows = sourceItems.map((item) => {
-      const quantity = Math.max(Number(item?.quantity) || 0, 0);
-      const approved = approvedItems.find((row) => Number(row?.productId) === Number(item?.productId));
-      const unitPrice = Number(approved?.price ?? item?.price ?? item?.product?.price ?? 0) || 0;
-      const sellingPrice = Number(approved?.sellingPrice ?? unitPrice) || 0;
-      const discountPercentage = Number(approved?.discountPercentage ?? 0) || 0;
-      const calculatedDiscount = Math.max(unitPrice - sellingPrice, 0) * quantity;
-      const discountAmount = Number.isFinite(Number(approved?.discountAmount))
-        ? Math.max(Number(approved.discountAmount), calculatedDiscount)
-        : calculatedDiscount;
-      const taxId = Number(item?.product?.tax);
-      const fallbackTaxPercentage = Number((taxData || []).find((tax) => Number(tax.id) === taxId)?.value || 0);
-      const taxPercentage = Number(approved?.taxPercentage ?? approved?.taxpercent ?? fallbackTaxPercentage) || 0;
-      const taxableSubtotal = sellingPrice * quantity;
-      const taxAmount = Number.isFinite(Number(approved?.taxAmount))
-        ? Number(approved.taxAmount)
-        : taxableSubtotal * taxPercentage / 100;
-      const total = Number.isFinite(Number(approved?.totalPrice))
-        ? Number(approved.totalPrice)
-        : taxableSubtotal + taxAmount;
-      return {
-        id: item?.id || item?.productId,
-        name: approved?.name || item?.product?.name || item?.name || "Product",
-        quantity, unitPrice, discountPercentage, discountAmount, sellingPrice,
-        taxPercentage, taxAmount, total,
-      };
-    });
-    return {
-      rows,
-      grossSubtotal: rows.reduce((sum, row) => sum + row.unitPrice * row.quantity, 0),
-      totalDiscount: rows.reduce((sum, row) => sum + row.discountAmount, 0),
-      totalTax: rows.reduce((sum, row) => sum + row.taxAmount, 0),
-      grandTotal: rows.reduce((sum, row) => sum + row.total, 0),
-    };
-  }, [data, taxData]);
+  const invoice = useMemo(() => calculateOrderTotals(data, taxData), [data, taxData]);
 
   const selectPaymentMethod = (method) => {
     if (loading) return;
@@ -107,12 +75,19 @@ const ConsumerDetails = ({ data, taxData }) => {
       }
       if (paymentMethod === "OFF") {
         setPaymentNotice("Offline Payment has been selected and recorded for this order.");
+        await onPaymentRecorded?.();
         router.refresh();
         return;
       }
       setPaymentError("The payment gateway did not return a valid payment URL. Please try again.");
     } catch (error) {
-      setPaymentError(error?.response?.data?.error || error?.response?.data?.message || "Payment processing failed. Please try again.");
+      const responseError = error?.response?.data;
+      setPaymentError(
+        responseError?.error ||
+        responseError?.message ||
+        responseError?.details?.message ||
+        "Payment processing failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -142,13 +117,13 @@ const ConsumerDetails = ({ data, taxData }) => {
           {data?.user?.phone && <small>Phone: {data?.user?.countryCode} {data.user.phone}</small>}
         </div>
         <div className="order-invoice-actions">
-          {isOrderApproved ? (
+          {isOrderApproved && hasInvoice ? (
             <a href={`${BASE_URL}/api/file?file=performa-invoice${data?.id}.pdf`} target="_blank" rel="noreferrer">
               <i className="ri-file-download-line" aria-hidden="true"></i>Download invoice
             </a>
           ) : (
             <span className="is-disabled" aria-disabled="true" title="The invoice is generated after admin approval">
-              <i className="ri-time-line" aria-hidden="true"></i>Invoice available after admin approval
+              <i className="ri-time-line" aria-hidden="true"></i>{isOrderApproved ? "Invoice is being prepared" : "Invoice available after admin approval"}
             </span>
           )}
         </div>

@@ -23,19 +23,23 @@ const DeliveryAddress = ({
   modal,
   setModal,
   setFieldValue,
+  values,
   mutate,
   isLoading
 }) => {
   const { t } = useTranslation("common");
 
-  // Auto-select first address if present
+  const selectedAddressId = values?.[`${type}_address_id`];
+
+  // Auto-select only when the user has not already selected an address. API
+  // refreshes must never reset the shipping/billing choice back to row one.
   useEffect(() => {
-    if (address?.length > 0) {
+    if (address?.length > 0 && !selectedAddressId) {
       const firstVal = address[0].value || address[0].id;
-      setFieldValue(`${type}_address_id`, firstVal);
-      setFieldValue(`${type}_address`, address[0].full || address[0]);
+      setFieldValue(`${type}_address_id`, firstVal, false);
+      setFieldValue(`${type}_address`, address[0].full || address[0], false);
     }
-  }, [address]);
+  }, [address, selectedAddressId, setFieldValue, type]);
 
   return (
     <CheckoutCard icon={<RiMapPinLine />}>

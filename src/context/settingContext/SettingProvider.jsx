@@ -1,6 +1,6 @@
 import request from "@/utils/axiosUtils";
 import { SettingAPI } from "@/utils/axiosUtils/API";
-import useFetchQuery from "@/utils/hooks/useFetchQuery";;
+import useFetchQuery from "@/utils/hooks/useFetchQuery";
 import Cookies from "js-cookie";
 import { useCallback, useEffect, useState } from "react";
 import SettingContext from ".";
@@ -35,8 +35,12 @@ const SettingProvider = (props) => {
     (value) => {
       let position = selectedCurrency?.symbol_position ? selectedCurrency?.symbol_position : settingObj?.general?.default_currency?.symbol_position || "before_price";
       let symbol = selectedCurrency?.symbol ? selectedCurrency?.symbol : settingObj?.general?.default_currency?.symbol || "$";
-      let amount = Number(value);
-      amount = amount * (selectedCurrency?.exchange_rate ? selectedCurrency?.exchange_rate : settingObj?.general?.default_currency?.exchange_rate);
+      const numericValue = Number(value);
+      const configuredRate = Number(
+        selectedCurrency?.exchange_rate ?? settingObj?.general?.default_currency?.exchange_rate ?? 1
+      );
+      const amount = (Number.isFinite(numericValue) ? numericValue : 0) *
+        (Number.isFinite(configuredRate) && configuredRate > 0 ? configuredRate : 1);
       if (position == "before_price") {
         return `${symbol}${amount.toFixed(2)}`;
       } else return `${amount.toFixed(2)} ${symbol}`;

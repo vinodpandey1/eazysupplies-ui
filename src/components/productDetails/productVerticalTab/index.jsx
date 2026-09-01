@@ -40,7 +40,7 @@ const ProductVerticalTab = ({ productState, setProductState, customTab }) => {
           <VerticalProductDetails productState={productState} />
         </WrapperComponent>
       </Col>
-      {productState?.product?.related_products?.length > 0 && <RelatedProduct productState={productState} setProductState={setProductState} />}
+      <RelatedProduct productState={productState} setProductState={setProductState} />
     </WrapperComponent>
   );
 };

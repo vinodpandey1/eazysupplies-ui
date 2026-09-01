@@ -13,31 +13,32 @@ const ReactstrapSelectInput = ({ field, form: { touched, errors, setFieldValue }
   const { ref, isComponentVisible, setIsComponentVisible } = useOutsideDropdown();
   let error = errors[field.name];
   let touch = touched[field.name];
-  // On initial mount setting options data
-  useEffect(() => {
-    setList(props.inputprops.options);
-  }, []);
+  const options = useMemo(
+    () => Array.isArray(props?.inputprops?.options) ? props.inputprops.options : [],
+    [props?.inputprops?.options]
+  );
 
+  // Options commonly arrive after an API request. Keep the dropdown list in
+  // sync instead of permanently retaining the empty first-render value.
   useEffect(() => {
-    setList(props.inputprops.options);
+    setList(options);
     if (searchInput) {
       if (props.inputprops?.setsearch) {
         props.inputprops?.setsearch(searchInput);
       } else {
-        setList(props.inputprops.options.filter((item) => item.name.toLowerCase().includes(searchInput?.toLowerCase())));
+        setList(options.filter((item) => item?.name?.toLowerCase().includes(searchInput.toLowerCase())));
       }
     } else {
       props.inputprops?.setsearch && props.inputprops?.setsearch(searchInput);
     }
-  }, [searchInput]);
+  }, [options, searchInput]);
   // Memorized the value and update on option changes
-  const listOpt = useMemo(() => {
-    return props?.inputprops?.options;
-  }, [props?.inputprops?.options]);
+  const listOpt = options;
+  const visibleOptions = props.inputprops?.setsearch ? listOpt : list;
   useEffect(() => {
     setSearchInput();
-    setList(props.inputprops.options);
-  }, [isComponentVisible]);
+    setList(options);
+  }, [isComponentVisible, options]);
   // Selecting Values from dropdown
   const onSelectValue = (option) => {
     if (multiple && Array.isArray(field?.value)) {
@@ -74,7 +75,7 @@ const ReactstrapSelectInput = ({ field, form: { touched, errors, setFieldValue }
     } else {
       !Array.isArray(field?.value) && setSelectedItems && setSelectedItems(list.find((elem) => field?.value == elem[getValuesKey]));
     }
-  }, []);
+  }, [field?.value, list, listOpt, getValuesKey, props.inputprops?.setsearch]);
 
   const RemoveSelectedItem = (id, item) => {
     if (props?.inputprops?.close) {
@@ -125,13 +126,11 @@ const ReactstrapSelectInput = ({ field, form: { touched, errors, setFieldValue }
           )}
           {!Array.isArray(selectedItems) && <Input id={props.inputprops.id} {...field} {...props} placeholder="Search" className="form-control form-select" type="text" invalid={Boolean(touched[field.name] && errors[field.name])} disabled />}
           <p className="help-text">{props?.inputprops?.helpertext}</p>
-          {props.inputprops?.setsearch
-            ? listOpt?.length > 0
-            : list?.length > 0 && (
+          {visibleOptions.length > 0 && (
               <div className={`box-content custom-select ${isComponentVisible ? "open" : ""}`}>
                 <Input type="text" className="form-control" value={searchInput || ""} onChange={(e) => setSearchInput(e.target.value)} />
                 <ul className="intl-tel-input">
-                  {(props.inputprops?.setsearch ? listOpt : list)?.map((option, index) => (
+                  {visibleOptions.map((option, index) => (
                     <Fragment key={index}>
                       {option?.data ? (
                         <li

@@ -36,6 +36,9 @@ const MainHeaderMenu = () => {
     isLoading && refetch();
   }, [isLoading]);
 
+  const homeMenus = (headerMenu || []).filter((menu) => String(menu?.title || "").trim().toLowerCase() === "home");
+  const remainingMenus = (headerMenu || []).filter((menu) => String(menu?.title || "").trim().toLowerCase() !== "home");
+
   return (
     <>
       {isLoading ? (
@@ -50,12 +53,15 @@ const MainHeaderMenu = () => {
         </ul>
       ) : (
         <ul className={`navbar-nav ${isClosing ? "menu-closing" : ""}`} onMouseEnter={() => isClosing && setIsClosing(false)}>
+          {homeMenus.map((menu, i) => (
+            <MenuList menu={menu} key={`home-${i}`} customClass={`${!menu?.path ? "dropdown" : ""} nav-item `} level={0} isOpen={isOpen} setIsOpen={setIsOpen} closeMenus={closeMenus} />
+          ))}
           <li className="nav-item">
-            <Link onClick={closeMenus} className="dropdown-item" href="/collections?layout=collection_3_grid">
+            <Link onClick={closeMenus} className="dropdown-item" href="/collections?layout=collection_4_grid&paginate=100">
               All Products
             </Link>
           </li>
-          {headerMenu?.map((menu, i) => (
+          {remainingMenus.map((menu, i) => (
             <MenuList menu={menu} key={i} customClass={`${!menu?.path ? "dropdown" : ""} nav-item `} level={0} isOpen={isOpen} setIsOpen={setIsOpen} closeMenus={closeMenus} />
           ))}
         </ul>

@@ -28,8 +28,7 @@ const FilterPaginate = ({ filter, setFilter }) => {
         paginate: data.value,
       };
     });
-    window.scroll(0, 0);
-    router.replace(`${pathname}?${queryParams.toString()}`);
+    router.replace(`${pathname}?${queryParams.toString()}`, { scroll: false });
   };
   return (
     <div className="product-page-filter">

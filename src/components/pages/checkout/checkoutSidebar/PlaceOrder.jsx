@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
+import { calculateCartLine, calculateCartTotals } from "@/utils/pricing/orderTotals";
 
 const PlaceOrder = ({ values, addToCartData, errors }) => {
   const { t } = useTranslation("common");
@@ -27,7 +28,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
       // console.log(values, "addresssssss")
       setDisable(!(values["shipping_address"]));
     }
-  }, [access_token, values, errors]);
+  }, [access_token, accountData?.data?.id, values, errors]);
 
   const handleClick = async() => {
     if (submissionLock.current) return;
@@ -41,11 +42,12 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
     }
     // alert("llll")
     const tempProduct = []
-    cartProducts?.map((data, index) => {
+    cartProducts?.forEach((data) => {
+      const line = calculateCartLine(data);
       tempProduct?.push({
         "productId": data?.product_id,
-        "quantity": data?.quantity,
-        "price": data?.product?.price
+        "quantity": line.quantity,
+        "price": line.unitPrice
       })
     })
     // console.log(cartProducts,tempProduct, "uuuuu")
@@ -84,7 +86,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
           method: "CREDIT_CARD",
           status: "PENDING",
           ...(accountData?.data?.id ? { userId: accountData.data.id } : {}),
-          amount: tempProduct.reduce((sum, item) => sum + Number(item?.price || 0) * Number(item?.quantity || 0), 0)
+          amount: calculateCartTotals(cartProducts).subtotal
         },
         jsonData: {
           note: "First test order"
@@ -96,14 +98,16 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
       .then(res => {
         ToastNotification("success", access_token
           ? "Order placed successfully. You can track it in My Orders."
-          : `Order #${res?.data?.id} placed successfully. Confirmation has been sent to your email.`);
+          : `Order #${res?.data?.id} placed successfully. Save this order number for reference.`);
         clearCart();
         idempotencyKey.current = null;
-        router.push(access_token ? '/account/order' : '/');
+        router.push(access_token ? '/account/order' : '/', { scroll: true });
       })
       .catch(err => {
         console.log(err);
-        ToastNotification("error", err?.response?.data?.error || "We couldn't place the order. Your cart is still saved; please try again.");
+        const responseError = err?.response?.data;
+        const message = responseError?.error || responseError?.message || responseError?.details?.message;
+        ToastNotification("error", message || "We couldn't place the order. Your cart is still saved; please try again.");
       })
       .finally(() => {
         submissionLock.current = false;
@@ -147,7 +151,7 @@ const PlaceOrder = ({ values, addToCartData, errors }) => {
   };
   return (
     <div className="text-end">
-      <Btn className="order-btn" onClick={handleClick} disabled={disable || isSubmitting || cartProducts?.length === 0}>
+      <Btn type="button" className="order-btn" onClick={handleClick} disabled={disable || isSubmitting || cartProducts?.length === 0}>
         {isSubmitting ? "Placing order..." : t("PlaceRequest")}
       </Btn>
       {/* {addToCartData?.is_digital_only ? (

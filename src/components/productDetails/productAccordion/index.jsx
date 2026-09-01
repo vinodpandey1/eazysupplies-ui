@@ -49,7 +49,7 @@ const ProductAccordion = ({ productState, setProductState }) => {
             <ProductDetailsTab productState={productState} setProductState={setProductState} />
           </WrapperComponent>
         </Col>
-        {productState?.product?.related_products?.length > 0 && <RelatedProduct productState={productState} setProductState={setProductState} />}
+        <RelatedProduct productState={productState} setProductState={setProductState} />
       </WrapperComponent>
     </>
   );

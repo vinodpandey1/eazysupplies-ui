@@ -48,7 +48,7 @@ const ProductImageOutside = ({ productState, setProductState, direction }) => {
           <WrapperComponent classes={{ sectionClass: "tab-product product-details-contain m-0 section-b-space", fluidClass: "container" }} customCol={true}>
             <ProductDetailsTab productState={productState} setProductState={setProductState} />
           </WrapperComponent>
-          {productState?.product?.related_products?.length > 0 && <RelatedProduct productState={productState} setProductState={setProductState} />}
+          <RelatedProduct productState={productState} setProductState={setProductState} />
         </Row>
       </Container>
     </section>

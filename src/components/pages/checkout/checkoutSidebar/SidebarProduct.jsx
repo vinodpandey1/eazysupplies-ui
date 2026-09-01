@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import Avatar from "../../../widgets/Avatar";
+import { calculateCartLine } from "@/utils/pricing/orderTotals";
 
 const SidebarProduct = ({ values }) => {
   const { t } = useTranslation("common");
@@ -27,8 +28,10 @@ const SidebarProduct = ({ values }) => {
           <p>{t("SummaryOrderDescription")}</p>
         </div>
         <ul className="qty">
-          {cartProducts?.map((item, i) => (
-            <li key={i}>
+          {cartProducts?.map((item) => {
+            const line = calculateCartLine(item);
+            return (
+            <li key={`${item?.product_id}-${item?.variation_id || "base"}`}>
               {item && (
                 <div className="cart-image">
                   <Avatar customClass="product-image" customImageClass={"img-fluid"} data={getFirstOriginalUrl(item?.product?.productIcon)} placeHolder={getFirstOriginalUrl(item?.product?.productIcon)} name={item?.product?.name} />
@@ -39,13 +42,13 @@ const SidebarProduct = ({ values }) => {
                 <div>
                   <h4>{ item?.product?.name}</h4>
                   <h5 className="text-theme">
-                    {convertCurrency(item?.product?.price)} x {item.quantity}
+                    {convertCurrency(line.unitPrice)} × {line.quantity}
                   </h5>
                 </div>
-                <span className="text-theme">{convertCurrency(( item?.product?.price) * item.quantity)}</span>
+                <span className="text-theme">{convertCurrency(line.total)}</span>
               </div>
             </li>
-          ))}
+          )})}
         </ul>
       </div>
     </div>

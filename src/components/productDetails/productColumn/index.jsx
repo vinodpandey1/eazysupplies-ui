@@ -22,21 +22,16 @@ const ProductColumn = ({ productState, setProductState, direction }) => {
           <Col xl="5" lg="6">
             <ThumbnailProductImage productState={productState} slideToShow={3} />
           </Col>
-          <Col xl="4" lg="6">
-            <div className="product-right product-description-box product-page-details">
+          <Col xl="7" lg="6">
+            <div className="product-right product-description-box product-page-details pdp-purchase-panel">
               <CustomerOrderCount productState={productState} />
-              <ProductContent productState={productState} setProductState={setProductState} noQuantityButtons={true} productAccordion={true} />
-              <ProductInformation productState={productState} />
-              <ProductDeliveryInformation productState={productState} />
-              <PaymentOptions productState={productState} />
-            </div>
-          </Col>
-          <Col xl="3" lg="12">
-            <div className="product-right product-form-box product-page-details">
-              <ProductContent productState={productState} setProductState={setProductState} noDetails={true} noModals={true} />
+              <ProductContent productState={productState} setProductState={setProductState} />
               <ProductStatus productState={productState} />
               <WishlistCompareShare productState={productState} />
               {productState?.product.status && productState?.product?.sale_starts_at && productState?.product?.sale_expired_at && <OfferTimer productState={productState} />}
+              <ProductInformation productState={productState} />
+              <ProductDeliveryInformation productState={productState} />
+              <PaymentOptions productState={productState} />
               {productState?.product?.cross_sell_products?.length > 0 && <ProductBundle productState={productState} setProductState={setProductState} />}
             </div>
           </Col>

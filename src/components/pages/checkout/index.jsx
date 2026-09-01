@@ -23,10 +23,36 @@ import { useTranslation } from "react-i18next";
 import AddressContext from "@/context/addressContext";
 import CartContext from "@/context/cartContext";
 
+const AddressSelectionSync = ({ accessToken, addresses, selectedShippingId, selectedBillingId, setFieldValue }) => {
+  useEffect(() => {
+    if (!accessToken || addresses.length === 0) return;
+
+    const first = addresses[0];
+    const formatted = {
+      name: first.name,
+      address: first.address,
+      city: first.city,
+      zipcode: first.zipcode,
+      country_code: first.country_code || "91",
+      phone: first.phone
+    };
+
+    if (!selectedShippingId) {
+      setFieldValue("shipping_address", formatted, false);
+      setFieldValue("shipping_address_id", first.id, false);
+    }
+    if (!selectedBillingId) {
+      setFieldValue("billing_address", formatted, false);
+      setFieldValue("billing_address_id", first.id, false);
+    }
+  }, [accessToken, addresses, selectedShippingId, selectedBillingId, setFieldValue]);
+
+  return null;
+};
+
 const CheckoutContent = () => {
   const { accountData, refetch } = useContext(AccountContext);
   const { addressData } = useContext(AddressContext);
-  const { setOpenAuthModal } = useContext(ThemeOptionContext);
   const { settingData } = useContext(SettingContext);
   const { cartProducts } = useContext(CartContext);
 
@@ -177,40 +203,21 @@ const CheckoutContent = () => {
               billing_address: Yup.object().notRequired()
             })}
 
-            onSubmit={(value) => {
-              if (!accountData?.userId) {
-                setOpenAuthModal(true);
-              }
-              mutate(value);
-            }}
+            // Placing an order is handled explicitly by PlaceOrder. The outer
+            // Formik form must not also create an address or open auth when the
+            // user presses Enter/clicks the order button.
+            onSubmit={() => undefined}
           >
             {({ values, setFieldValue, errors }) => {
-
-              /**
-               * ⭐ Auto-select first address whenever address list updates
-               */
-              useEffect(() => {
-                if (accessToken && address.length > 0) {
-                  const first = address[0];
-
-                  const formatted = {
-                    name: first.name,
-                    address: first.address,
-                    city: first.city,
-                    zipcode: first.zipcode,
-                    country_code: first.country_code || "91",
-                    phone: first.phone
-                  };
-
-                  setFieldValue("shipping_address", formatted);
-                  setFieldValue("billing_address", formatted);
-                  setFieldValue("shipping_address_id", first.id);
-                  setFieldValue("billing_address_id", first.id);
-                }
-              }, [address]);
-
               return (
                 <Form className="checkout-form">
+                  <AddressSelectionSync
+                    accessToken={accessToken}
+                    addresses={address}
+                    selectedShippingId={values.shipping_address_id}
+                    selectedBillingId={values.billing_address_id}
+                    setFieldValue={setFieldValue}
+                  />
                   <Row className="g-sm-4 g-3">
 
                     {/* ------------- LEFT SIDE PANE ------------- */}
