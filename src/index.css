@@ -6337,7 +6337,8 @@ body.earthling-reference-theme .top-header {
 }
 
 body.earthling-reference-theme header {
-  background: transparent;
+  /* Keep the painted header surface stable before and after sticky mode. */
+  background: #fff;
   padding: 10px 0 0;
   transition: background-color 0.24s ease, box-shadow 0.24s ease, padding 0.24s ease;
 }
@@ -6673,6 +6674,10 @@ body.earthling-reference-theme .product-experience .product-description-box .mai
 }
 
 body.earthling-reference-theme .product-experience .description-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   color: #3d3833;
   font-size: 15px;
   line-height: 1.75;

@@ -1,7 +1,8 @@
-import { ImagePath } from "@/utils/constants";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+
+const PRODUCT_PLACEHOLDER = "/assets/images/placeholder/product.png";
 
 const ImageVariant = ({ item, variant = "image_zoom", thumbnail, gallery_images, product, width, height }) => {
   return (
@@ -9,7 +10,7 @@ const ImageVariant = ({ item, variant = "image_zoom", thumbnail, gallery_images,
       {variant === "image_slider" ? (
         <Slider {...customOptions} onMouseLeave={stopAutoplay} onMouseEnter={startAutoplay}>
           {product.product_galleries?.map((image, index) => (
-            <Image src={thumbnail?.original_url ? thumbnail?.original_url : `${ImagePath}/placeholder.png`} className="img-fluid bg-img" alt={product.name} />
+            <Image src={thumbnail?.original_url ? thumbnail?.original_url : PRODUCT_PLACEHOLDER} className="img-fluid bg-img" alt={product.name} />
           ))}
         </Slider>
       ) : variant === "image_flip" ? (
@@ -17,7 +18,7 @@ const ImageVariant = ({ item, variant = "image_zoom", thumbnail, gallery_images,
           {flipImage?.slice(0, 2)?.map((image, index) => (
             <div key={index} className={i == 0 ? "front" : "back"}>
               <Link href={`/product/${product.slug}`}>
-                <Image src={thumbnail?.original_url ? thumbnail?.original_url : `${ImagePath}/placeholder.png`} className="img-fluid bg-img" alt={product.name} />
+                <Image src={thumbnail?.original_url ? thumbnail?.original_url : PRODUCT_PLACEHOLDER} className="img-fluid bg-img" alt={product.name} />
               </Link>
             </div>
           ))}
@@ -25,12 +26,12 @@ const ImageVariant = ({ item, variant = "image_zoom", thumbnail, gallery_images,
       ) : variant === "image_zoom" ? (
         <div className="zoom">
           <Link href={`/product/${product?.slug}`}>
-            <Image src={thumbnail?.original_url ? thumbnail?.original_url : `${ImagePath}/placeholder.png`} className="img-fluid bg-img" alt={product?.name} width={width} height={height} />
+            <Image src={thumbnail?.original_url ? thumbnail?.original_url : PRODUCT_PLACEHOLDER} className="img-fluid bg-img" alt={product?.name} width={width} height={height} />
           </Link>
         </div>
       ) : (
         <Link href={`/product/${product.slug}`}>
-          <Image src={thumbnail?.original_url ? thumbnail?.original_url : `${ImagePath}/placeholder.png`} className="img-fluid bg-img" alt={product?.name} />
+          <Image src={thumbnail?.original_url ? thumbnail?.original_url : PRODUCT_PLACEHOLDER} className="img-fluid bg-img" alt={product?.name} />
         </Link>
       )}
     </>

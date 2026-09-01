@@ -63,7 +63,7 @@ const SearchDropDown = React.forwardRef((props, ref) => {
             {searchArr?.map((data, index) => (
               <li id={`searchItem_${index}`} className={` result-item ${selectedItemIndex == index ? " selected" : ""}`} key={index}>
                 <div className="suggestion-image">
-                  <Image height={50} width={50} src={data?.original_url ? data?.original_url : "/assets/images/placeholder.png"} alt="product image" />
+                  <Image height={50} width={50} src={data?.original_url || "/assets/images/placeholder/product.png"} alt="product image" />
                 </div>
                 <div className="suggestion-category">
                   <Link href={`/product/${data?.slug || data?.id}`}>{data?.name || data?.title}</Link>

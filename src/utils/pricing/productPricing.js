@@ -38,7 +38,18 @@ export const getProductPricing = (product, variation) => {
 
 export const getUnitLabel = (product) => {
   const unit = String(product?.skuType || "").trim();
-  if (!unit) return "";
-  return `/ ${unit.charAt(0).toUpperCase()}${unit.slice(1).toLowerCase()}`;
-};
+  if (unit) {
+    return `/ ${unit.charAt(0).toUpperCase()}${unit.slice(1).toLowerCase()}`;
+  }
 
+  // Older catalogue rows can have a blank skuType even though their pricing
+  // clearly describes a case: more than one packaged unit plus separate case
+  // and unit rates. Keep an explicit skuType authoritative (for example,
+  // BOTTLE), and only infer Case when all of that structured data is present.
+  const packageUnits = positiveNumber(product?.pkgUnit);
+  const caseRate = positiveNumber(product?.caseRate);
+  const unitRate = positiveNumber(product?.unitRate);
+  if (packageUnits > 1 && caseRate && unitRate) return "/ Case";
+
+  return "";
+};
