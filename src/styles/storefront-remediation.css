@@ -603,6 +603,11 @@ header .main-menu .main-nav .navbar-nav > li > a {
   line-height: 1.7;
 }
 
+/* The cart backdrop is a full-viewport control, not a pill-shaped button. */
+body.earthling-reference-theme #cart_side .overlay {
+  border-radius: 0;
+}
+
 @media (max-width: 1199.98px) {
   header .main-menu {
     min-height: 76px;
