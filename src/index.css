@@ -6511,6 +6511,11 @@ body.earthling-reference-theme .product-buttons .btn {
   font-weight: 650;
 }
 
+/* The cart backdrop is a full-viewport button, not a pill control. */
+body.earthling-reference-theme #cart_side .overlay {
+  border-radius: 0;
+}
+
 body.earthling-reference-theme .btn-solid,
 body.earthling-reference-theme .btn-theme,
 body.earthling-reference-theme .product-buttons .btn-solid,
