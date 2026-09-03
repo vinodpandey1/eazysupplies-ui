@@ -134,6 +134,12 @@ export const calculateCartLine = (cartItem) => {
   return {
     quantity,
     unitPrice,
+    regularUnitPrice: pricing.hasOffer ? pricing.regularPrice : null,
+    discountPercentage: pricing.hasOffer ? pricing.discountPercentage : 0,
+    hasOffer: pricing.hasOffer,
+    savings: pricing.hasOffer
+      ? Math.max((pricing.regularPrice - unitPrice) * quantity, 0)
+      : 0,
     total: unitPrice * quantity,
   };
 };
@@ -147,5 +153,10 @@ export const calculateCartTotals = (cartItems = []) => {
   return {
     rows,
     subtotal: rows.reduce((sum, row) => sum + row.total, 0),
+    regularSubtotal: rows.reduce(
+      (sum, row) => sum + (row.regularUnitPrice || row.unitPrice) * row.quantity,
+      0,
+    ),
+    totalSavings: rows.reduce((sum, row) => sum + row.savings, 0),
   };
 };

@@ -12,6 +12,9 @@ import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "reactstrap";
 import VariantDropDown from "./VariantDropDown";
+import { getProductPricing } from "@/utils/pricing/productPricing";
+import { calculateCartLine } from "@/utils/pricing/orderTotals";
+import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 
 const ProductBundle = ({ productState, setProductState }) => {
   const [crossSellProduct, setCrossSellProduct] = useState([]);
@@ -37,7 +40,10 @@ const ProductBundle = ({ productState, setProductState }) => {
   useEffect(() => {
     const selected = filteredProduct?.filter((elem) => selectedProductIds?.includes(elem?.id));
     setSelectedProducts(selected);
-    const newTotal = selected.reduce((sum, item) => sum + item.sale_price, 0);
+    const newTotal = selected.reduce(
+      (sum, item) => sum + getProductPricing(item).sellingPrice,
+      0,
+    );
     setTotal(newTotal);
   }, [selectedProductIds, filteredProduct]);
 
@@ -59,13 +65,16 @@ const ProductBundle = ({ productState, setProductState }) => {
           return false;
         }
         if (index !== -1) {
-          let temp = { ...cloneCart[index], quantity: cloneCart[index].quantity + qty, sub_total: (cloneCart[index].quantity + qty) * cloneCart[index]?.product?.sale_price };
+          let temp = { ...cloneCart[index], quantity: cloneCart[index].quantity + qty };
+          temp.sub_total = calculateCartLine(temp).total;
           setCartProducts((prev) => [...prev.filter((value) => value?.product_id !== cloneCart[index]?.product_id), temp]);
         } else {
-          let params = { product: elem, product_id: elem.id, quantity: qty, sub_total: elem?.sale_price };
+          let params = { product: elem, product_id: elem.id, quantity: qty, variation_id: null };
+          params.sub_total = calculateCartLine(params).total;
           setCartProducts((prev) => [...prev, params]);
         }
-        let obj = { product: elem, product_id: elem.id, quantity: qty, sub_total: elem?.sale_price, variation_id: null };
+        let obj = { product: elem, product_id: elem.id, quantity: qty, variation_id: null };
+        obj.sub_total = calculateCartLine(obj).total;
         isLogin && mutate(obj);
       });
     }
@@ -97,7 +106,7 @@ const ProductBundle = ({ productState, setProductState }) => {
                   {(elem.variations && elem.variations.length > 0 && elem.attributes.length > 0)?
                     <VariantDropDown product={elem} selectedOption={getSelectedVariant}></VariantDropDown>
                   :''}
-                  <h3>{convertCurrency(elem?.sale_price)}</h3>
+                  <h3>{convertCurrency(getProductPricing(elem).sellingPrice)}</h3>
                 </div>
               </div>
             </Col>

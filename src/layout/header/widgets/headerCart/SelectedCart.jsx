@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
+import { calculateCartLine } from "@/utils/pricing/orderTotals";
 
 const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
   const { convertCurrency } = useContext(SettingContext);
@@ -54,7 +55,9 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
     <>
       <div className="cart_media">
         <ul className="cart_product">
-          {cartProducts.map((elem) => (
+          {cartProducts.map((elem) => {
+            const line = calculateCartLine(elem);
+            return (
             <li className="product-box-contain" key={`${elem?.product_id}-${elem?.variation_id || "base"}`}>
               <div className="media">
                 <Link href={`/product/${elem?.product?.id}`}>
@@ -66,7 +69,10 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
                     <h4 className="text-wrap text-break">{elem?.variation?.name ?? elem?.product?.name}</h4>
                   </Link>
                   <h4 className="quantity">
-                    <span>{convertCurrency(Number(elem?.variation?.price ?? elem?.product?.price ?? 0))} × {elem?.quantity}</span>
+                    <span>
+                      {convertCurrency(line.unitPrice)} × {line.quantity}
+                      {line.hasOffer ? <del className="text-content ms-2">{convertCurrency(line.regularUnitPrice)}</del> : null}
+                    </span>
                   </h4>
                   {elem?.variation && <h5 className="gram">{elem?.variation?.attribute_values?.[0]?.value ? elem?.variation?.attribute_values?.[0]?.value : elem?.selected_variation}</h5>}
                   <HandleQuantity productObj={elem?.product} elem={elem} customIcon={<RiDeleteBinLine />} />
@@ -83,7 +89,7 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
                 </div>
               </div>
             </li>
-          ))}
+          )})}
         </ul>
         {cartProducts?.length ? (
           <ul className="cart_total ">

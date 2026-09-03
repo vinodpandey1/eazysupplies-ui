@@ -2,6 +2,7 @@ import Btn from "@/elements/buttons/Btn";
 import { useEffect, useState } from "react";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import { Input } from "reactstrap";
+import { getProductPricing } from "@/utils/pricing/productPricing";
 
 const VariationModalQty = ({ cloneVariation, setCloneVariation }) => {
   const [totalPrice, settotalPrice] = useState(0);
@@ -44,14 +45,16 @@ const VariationModalQty = ({ cloneVariation, setCloneVariation }) => {
       });
     } else if (wholesale && cloneVariation?.product.wholesale_price_type == "percentage") {
       setCloneVariation((prev) => {
-        return { ...prev, totalPrice: prev?.productQty * (prev?.selectedVariation ? prev?.selectedVariation.sale_price : prev?.product.sale_price) };
+        const unitPrice = getProductPricing(prev?.product, prev?.selectedVariation).sellingPrice;
+        return { ...prev, totalPrice: prev?.productQty * unitPrice };
       });
       setCloneVariation((prev) => {
         return { ...prev, totalPrice: prev?.totalPrice - prev?.totalPrice * (wholesale.value / 100) };
       });
     } else {
       setCloneVariation((prev) => {
-        return { ...prev, totalPrice: prev?.productQty * (prev?.selectedVariation ? prev?.selectedVariation.sale_price : prev?.product.sale_price) };
+        const unitPrice = getProductPricing(prev?.product, prev?.selectedVariation).sellingPrice;
+        return { ...prev, totalPrice: prev?.productQty * unitPrice };
       });
     }
     totalPrice;

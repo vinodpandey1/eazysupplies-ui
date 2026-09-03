@@ -10,12 +10,14 @@ import { RiCloseLine } from "react-icons/ri";
 import { Col, Row } from "reactstrap";
 import CartProductDetail from "./CartProductDetail";
 import HandleQuantity from "./HandleQuantity";
+import { calculateCartLine } from "@/utils/pricing/orderTotals";
 
 const CartData = ({ elem }) => {
   const { t } = useTranslation("common");
   const { removeCart } = useContext(CartContext);
   const { convertCurrency } = useContext(SettingContext);
   const { mutate } = useCreate(WishlistAPI, false);
+  const line = calculateCartLine(elem);
 
   const removeItem = () => {
     removeCart(elem?.variation_id ? elem?.variation_id : elem.product_id, elem?.id);
@@ -34,8 +36,8 @@ const CartData = ({ elem }) => {
           </Col>
           <Col className="table-price">
             <h2 className="td-color">
-              {convertCurrency(elem?.product?.price)}
-              {elem?.product?.discount || elem?.product?.discount ? <del className="text-content">{convertCurrency(elem?.product?.price)}</del> : null}
+              {convertCurrency(line.unitPrice)}
+              {line.hasOffer ? <del className="text-content">{convertCurrency(line.regularUnitPrice)}</del> : null}
             </h2>
           </Col>
           <Col>
@@ -47,12 +49,12 @@ const CartData = ({ elem }) => {
       </td>
       <td className="table-price">
         <h2>
-          {convertCurrency(elem?.product?.price)}
-          {elem?.product?.discount || elem?.product?.discount ? <del className="text-content">{convertCurrency(elem?.product?.price)}</del> : null}
+          {convertCurrency(line.unitPrice)}
+          {line.hasOffer ? <del className="text-content">{convertCurrency(line.regularUnitPrice)}</del> : null}
         </h2>
-        {elem?.product?.price - elem?.product?.price != 0 || elem?.product?.price - elem?.product?.price < 0 ? (
+        {line.savings > 0 ? (
           <h6 className="theme-color">
-            {t("YouSave")}: {convertCurrency(Math.abs(elem?.product?.price - elem?.product?.price).toFixed(2))}
+            {t("YouSave")}: {convertCurrency(line.savings)}
           </h6>
         ) : null}
       </td>
@@ -64,7 +66,7 @@ const CartData = ({ elem }) => {
       </td>
 
       <td className="subtotal">
-        <h2 className="td-color">{convertCurrency(elem?.sub_total)}</h2>
+        <h2 className="td-color">{convertCurrency(line.total)}</h2>
       </td>
 
       <td>

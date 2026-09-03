@@ -1,6 +1,7 @@
 import CartContext from "@/context/cartContext";
 import SettingContext from "@/context/settingContext";
 import ThemeOptionContext from "@/context/themeOptionsContext";
+import { usePathname } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiCloseFill } from "react-icons/ri";
@@ -17,20 +18,39 @@ const HeaderCartData = () => {
   const confettiItems = Array.from({ length: 150 }, (_, index) => index);
   const [modal, setModal] = useState(false);
   const [cartStyle, setCartStyle] = useState("");
+  const pathName = usePathname();
 
   useEffect(() => {
-    setCartStyle(themeOption?.general?.cart_style);
     const handleResize = () => {
-      if (window.innerWidth < 761) {
-        setCartStyle("cart_side");
-      }
+      setCartStyle(window.innerWidth < 761 ? "cart_side" : themeOption?.general?.cart_style);
     };
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
       setCartStyle(themeOption?.general?.cart_style);
     };
   }, [themeOption]);
+
+  useEffect(() => {
+    setCartCanvas(false);
+  }, [pathName, setCartCanvas]);
+
+  useEffect(() => {
+    if (!cartCanvas) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setCartCanvas(false);
+    };
+
+    document.body.classList.add("cart-canvas-open");
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.classList.remove("cart-canvas-open");
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [cartCanvas, setCartCanvas]);
 
   useEffect(() => {
     setShippingFreeAmt(settingData?.general?.min_order_free_shipping);

@@ -5,6 +5,7 @@ import React, { useContext, useEffect } from "react";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import { Input, InputGroup } from "reactstrap";
 import ProductWholesale from "./ProductWholesale";
+import { getProductPricing } from "@/utils/pricing/productPricing";
 
 const ProductDetailAction = ({ productState, setProductState, extraOption, isDisplay = true }) => {
   const { cartProducts } = useContext(CartContext);
@@ -19,13 +20,10 @@ const ProductDetailAction = ({ productState, setProductState, extraOption, isDis
   );
 
   const calculateTotal = (state, quantity) => {
-    const basePrice = Number(
-      state?.selectedVariation?.sale_price ??
-        state?.selectedVariation?.price ??
-        state?.product?.sale_price ??
-        state?.product?.price ??
-        0
-    );
+    const basePrice = getProductPricing(
+      state?.product,
+      state?.selectedVariation,
+    ).sellingPrice;
     const wholesale = state?.product?.wholesales?.find(
       (value) => Number(value?.min_qty) <= quantity && Number(value?.max_qty) >= quantity
     );

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CartContext from ".";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
-import { calculateCartTotals } from "@/utils/pricing/orderTotals";
+import { calculateCartLine, calculateCartTotals } from "@/utils/pricing/orderTotals";
 
 const CartProvider = (props) => {
   const [cartProducts, setCartProducts] = useState([]);
@@ -60,10 +60,12 @@ const CartProvider = (props) => {
   const handleIncDec = (qty, productObj, isProductQty, setIsProductQty, isOpenFun, cloneVariation) => {
     const updatedQty = (isProductQty ? isProductQty : 0) + qty;
     const cart = [...cartProducts];
+    const selectedVariation = cloneVariation?.selectedVariation || cloneVariation?.variation || null;
+    const variationId = selectedVariation?.id || cloneVariation?.variation_id || null;
     const index = cart.findIndex(
       (item) =>
         item.product_id === productObj?.id &&
-        item.variation_id === (cloneVariation?.selectedVariation?.id || null)
+        item.variation_id === variationId
     );
 
     // If not in cart → Add new product
@@ -72,11 +74,11 @@ const CartProvider = (props) => {
         id: Date.now(), // temporary unique id
         product: productObj,
         product_id: productObj?.id,
-        variation: cloneVariation?.selectedVariation || null,
-        variation_id: cloneVariation?.selectedVariation?.id || null,
+        variation: selectedVariation,
+        variation_id: variationId,
         quantity: cloneVariation?.productQty ? cloneVariation?.productQty : updatedQty,
-        sub_total: updatedQty * (cloneVariation?.selectedVariation?.price || productObj?.price),
       };
+      params.sub_total = calculateCartLine(params).total;
       setCartProducts((prev) => [...prev, params]);
     } else {
       // Update existing product
@@ -96,8 +98,8 @@ const CartProvider = (props) => {
       cart[index] = {
         ...cart[index],
         quantity: newQuantity,
-        sub_total: newQuantity * (cart[index]?.variation?.price || cart[index]?.product?.price),
       };
+      cart[index].sub_total = calculateCartLine(cart[index]).total;
       setCartProducts([...cart]);
     }
 
@@ -125,25 +127,25 @@ const CartProvider = (props) => {
       return false;
     }
 
-    const unitPrice = Number(selectedVariation?.price ?? productObj?.price ?? 0);
     if (index === -1) {
-      cart.push({
+      const nextItem = {
         id: Date.now(),
         product: productObj,
         product_id: productObj?.id,
         variation: selectedVariation,
         variation_id: variationId,
         quantity: desiredQuantity,
-        sub_total: desiredQuantity * unitPrice,
-      });
+      };
+      nextItem.sub_total = calculateCartLine(nextItem).total;
+      cart.push(nextItem);
     } else {
       cart[index] = {
         ...cart[index],
         product: productObj,
         variation: selectedVariation,
         quantity: desiredQuantity,
-        sub_total: desiredQuantity * unitPrice,
       };
+      cart[index].sub_total = calculateCartLine(cart[index]).total;
     }
 
     setCartProducts(cart);

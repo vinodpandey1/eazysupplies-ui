@@ -1,5 +1,6 @@
 import NoDataFound from "@/components/widgets/NoDataFound";
 import CategoryContext from "@/context/categoryContext";
+import ThemeOptionContext from "@/context/themeOptionsContext";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +8,7 @@ import { AccordionBody, Input, Label } from "reactstrap";
 
 const CollectionCategory = ({ filter, setFilter }) => {
   const { categoryData = [] } = useContext(CategoryContext);
+  const { setCollectionMobile } = useContext(ThemeOptionContext);
   const [showList, setShowList] = useState([]);
   const { t } = useTranslation("common");
 
@@ -73,6 +75,7 @@ const CollectionCategory = ({ filter, setFilter }) => {
     if (temp.length === 1) queryParams.set("title", temp[0] === slug ? name : findCategoryName(categoryData, temp[0]) || name);
     else if (temp.length > 1) queryParams.set("title", "Selected Categories");
     else queryParams.delete("title");
+    setCollectionMobile(false);
     router.push(`${pathname}?${queryParams.toString()}`, { scroll: false });
   };
 

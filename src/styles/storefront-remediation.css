@@ -10,7 +10,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scrollbar-gutter: stable;
 }
 
@@ -28,13 +28,6 @@ body {
 .theme-modal .modal-body {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-}
-
-.product-wrapper-grid,
-.search-product,
-.collection-product-wrapper {
-  content-visibility: auto;
-  contain-intrinsic-size: 900px;
 }
 
 .basic-product,
@@ -266,6 +259,16 @@ header .main-menu .main-nav .navbar-nav > li > a {
 .product-page-details,
 .pdp-description-panel,
 .related-products-section {
+  background: var(--storefront-surface);
+}
+
+body.earthling-reference-theme .product-experience {
+  background: #fdfcf9;
+}
+
+body.earthling-reference-theme .product-experience .product-page-details,
+body.earthling-reference-theme .product-experience .pdp-description-panel,
+body.earthling-reference-theme .product-experience .related-products-section {
   background: var(--storefront-surface);
 }
 
@@ -653,6 +656,10 @@ body.earthling-reference-theme #cart_side .overlay {
 }
 
 @media (max-width: 767.98px) {
+  body:not(.has-mobile-menu) {
+    padding-bottom: 0 !important;
+  }
+
   .basic-product.theme-product-1 .product-detail {
     padding: 12px 10px;
   }
@@ -672,13 +679,28 @@ body.earthling-reference-theme #cart_side .overlay {
     font-size: 12px;
   }
 
-  .thumbnail-image-slider .main-product-box,
-  .thumbnail-image-slider .main-product-box .slider-image {
-    min-height: min(90vw, 430px);
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box {
+    aspect-ratio: 1 / 1;
+    height: auto;
+    min-height: 0 !important;
+    padding: 16px;
   }
 
-  .thumbnail-image-slider .main-product-box .slider-image img {
-    height: min(84vw, 400px) !important;
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slick-slider,
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slick-list,
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slick-track,
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slick-slide,
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slick-slide > div,
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slider-image {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  body.earthling-reference-theme .product-experience .thumbnail-image-slider .main-product-box .slider-image img {
+    height: 100% !important;
+    max-height: none !important;
+    padding: 8px;
+    width: 100% !important;
   }
 
   .pdp-purchase-panel {
@@ -701,6 +723,20 @@ body.earthling-reference-theme #cart_side .overlay {
   .about-page .policy-document {
     padding: 20px 16px;
     border-radius: 10px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  body.collection-filter-open {
+    overflow: hidden;
+  }
+
+  .collection-filter.sticky-top-section {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
   }
 }
 

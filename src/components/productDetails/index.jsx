@@ -48,27 +48,6 @@ const ProductDetailContent = ({ params }) => {
     }
   }, [ProductData, setGetProductIds]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const button = document.querySelector(".scroll-button");
-      if (button) {
-        const buttonRect = button.getBoundingClientRect();
-        if (buttonRect.bottom < window.innerHeight && buttonRect.bottom < 0) {
-          document.body.classList.add("stickyCart");
-        } else {
-          document.body.classList.remove("stickyCart");
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      document.body.classList?.remove("stickyCart");
-    };
-  }, []);
-
   if (isLoading) return <Loader />;
 
   const showProductLayout = {

@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from "react";
 import ExitModal from "./exitModal";
 import Footers from "./footer";
 import Headers from "./header";
+import HeaderCartData from "./header/widgets/headerCart/HeaderCartData";
 import MobileMenu from "./header/widgets/MobileMenu";
 import NewsLetterModal from "./newsLetterModal";
 import RecentPurchase from "./recentPurchase";
@@ -146,6 +147,7 @@ const SubLayout = ({ children }) => {
   return (
     <>
       <Headers />
+      <HeaderCartData />
       {pathName?.split("/")[1].toLowerCase() != "product" && <MobileMenu />}
       {children}
       <AuthModal />

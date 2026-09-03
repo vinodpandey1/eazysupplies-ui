@@ -1,5 +1,5 @@
 import ThemeOptionContext from "@/context/themeOptionsContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiArrowLeftSLine } from "react-icons/ri";
 import { Accordion, AccordionHeader, AccordionItem } from "reactstrap";
@@ -16,6 +16,22 @@ const CollectionSidebar = ({ filter, setFilter, isOffcanvas, basicStoreCard, rig
       setOpen([...open, id]); // Open section
     }
   };
+
+  useEffect(() => {
+    if (!collectionMobile) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setCollectionMobile(false);
+    };
+
+    document.body.classList.add("collection-filter-open");
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.classList.remove("collection-filter-open");
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [collectionMobile, setCollectionMobile]);
   return (
     <>
       {collectionMobile && <div className="bg-overlay collection-overlay show" onClick={() => setCollectionMobile(false)} />}

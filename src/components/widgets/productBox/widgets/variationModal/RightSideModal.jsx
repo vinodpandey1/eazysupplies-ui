@@ -4,10 +4,12 @@ import { Href } from "@/utils/constants";
 import TextLimit from "@/utils/customFunctions/TextLimit";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { getProductPricing } from "@/utils/pricing/productPricing";
 
 const RightVariationModal = ({ cloneVariation }) => {
   const { convertCurrency } = useContext(SettingContext);
   const { t } = useTranslation("common");
+  const pricing = getProductPricing(cloneVariation?.product, cloneVariation?.selectedVariation);
   return (
     <>
 <h2 className="main-title text-break">{cloneVariation?.selectedVariation ? cloneVariation?.selectedVariation?.name : cloneVariation?.product?.name}</h2>
@@ -20,16 +22,9 @@ const RightVariationModal = ({ cloneVariation }) => {
       </div>
       <div className="price-text">
         <h3>
-          <span className="text-dark fw-normal">MRP:</span>
-          {cloneVariation?.selectedVariation ? convertCurrency(cloneVariation?.selectedVariation?.sale_price) : convertCurrency(cloneVariation?.product?.sale_price)}
-          {cloneVariation?.selectedVariation ? cloneVariation?.selectedVariation?.discount : cloneVariation?.product?.discount ? <del>{cloneVariation?.selectedVariation ? convertCurrency(cloneVariation?.selectedVariation?.price) : convertCurrency(cloneVariation?.product?.price)}</del> : null}
-          {cloneVariation?.selectedVariation ? (
-            cloneVariation?.selectedVariation?.discount
-          ) : cloneVariation?.product?.discount ? (
-            <span className="discounted-price">
-              {cloneVariation?.selectedVariation ? cloneVariation?.selectedVariation?.discount : cloneVariation?.product?.discount}% {t("Off")}
-            </span>
-          ) : null}
+          {convertCurrency(pricing.sellingPrice)}
+          {pricing.hasOffer ? <del>{convertCurrency(pricing.regularPrice)}</del> : null}
+          {pricing.hasOffer ? <span className="discounted-price">{pricing.discountPercentage}% {t("Off")}</span> : null}
         </h3>
         <span>{t("InclusiveAllTheText")} </span>
       </div>

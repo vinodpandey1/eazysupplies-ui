@@ -4,7 +4,7 @@ import { t } from "i18next";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { RiHeartLine, RiHome2Line, RiSearch2Line, RiShoppingBagLine, RiUserLine } from "react-icons/ri";
 
 const MobileMenu = () => {
@@ -21,6 +21,11 @@ const MobileMenu = () => {
     handleActive(4);
   };
   const [active, setActive] = useState(1);
+
+  useEffect(() => {
+    document.body.classList.add("has-mobile-menu");
+    return () => document.body.classList.remove("has-mobile-menu");
+  }, []);
   const handleActive = (num) => {
     setActive(num);
   };

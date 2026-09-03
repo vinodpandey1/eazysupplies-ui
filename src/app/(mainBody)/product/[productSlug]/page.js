@@ -3,8 +3,9 @@ import https from "https";
 
 import ProductDetailContent from "@/components/productDetails";
 export async function generateMetadata({ params }) {
+  const { productSlug } = await params;
   const productData = await axios
-    .get(`${process.env.API_PROD_URL}/product/slug/${params?.productSlug}`, {
+    .get(`${process.env.API_PROD_URL}/product/slug/${productSlug}`, {
       httpsAgent: new https.Agent({ rejectUnauthorized: false }),
     })
     .then((res) => res?.data)
@@ -20,8 +21,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-const ProductDetails = ({ params }) => {
-  return <ProductDetailContent params={params?.productSlug} />;
+const ProductDetails = async ({ params }) => {
+  const { productSlug } = await params;
+  return <ProductDetailContent params={productSlug} />;
 };
 
 export default ProductDetails;

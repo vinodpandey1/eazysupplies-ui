@@ -6339,14 +6339,19 @@ body.earthling-reference-theme .top-header {
 body.earthling-reference-theme header {
   /* Keep the painted header surface stable before and after sticky mode. */
   background: #fff;
-  padding: 10px 0 0;
-  transition: background-color 0.24s ease, box-shadow 0.24s ease, padding 0.24s ease;
+  left: 0;
+  padding: 0;
+  position: sticky !important;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  transition: background-color 0.24s ease, box-shadow 0.24s ease;
 }
 
 body.earthling-reference-theme header.sticky.fixed {
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 8px 26px rgba(55, 41, 29, 0.1);
-  padding-top: 0;
+  position: sticky !important;
 }
 
 body.earthling-reference-theme header .metro {
@@ -6867,7 +6872,7 @@ body.earthling-reference-theme footer.footer-light .sub-footer {
 }
 
 /* === Checkout/account/cart stability fixes (RR-008..RR-023) === */
-body:has(#cart_side.open-side) {
+body.cart-canvas-open {
   overflow: hidden;
 }
 
@@ -6905,7 +6910,7 @@ body:has(#cart_side.open-side) {
 }
 
 #cart_side .cart-inner > .cart_media .cart_product {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   max-height: min(54dvh, 520px);
   min-height: 0;
   overflow-x: hidden;
@@ -6982,6 +6987,11 @@ body:has(#cart_side.open-side) {
 }
 
 @media (max-width: 991px) {
+  .checkout-right-box {
+    position: static !important;
+    top: auto !important;
+  }
+
   .user-dashboard-section .dashboard-sidebar {
     position: fixed;
     top: 0;
@@ -6996,6 +7006,7 @@ body:has(#cart_side.open-side) {
 
 @media (max-width: 575px) {
   #cart_side .cart-inner > .cart_media .cart_product {
+    flex-basis: 0;
     max-height: none;
   }
 
