@@ -36,6 +36,30 @@ body {
   backface-visibility: hidden;
 }
 
+/* Product cards must render at full opacity immediately. Keep the subtle
+   border/lift hover feedback, but remove legacy fade-in/fade-out animations. */
+.product-wrapper-grid .basic-product,
+.search-product .basic-product,
+.related-products-section .basic-product,
+.product-wrapper-grid .basic-product .img-wrapper,
+.search-product .basic-product .img-wrapper,
+.related-products-section .basic-product .img-wrapper,
+.product-wrapper-grid .basic-product .img-wrapper img,
+.search-product .basic-product .img-wrapper img,
+.related-products-section .basic-product .img-wrapper img {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+.product-wrapper-grid .basic-product .cart-info button,
+.product-wrapper-grid .basic-product .cart-info a,
+.search-product .basic-product .cart-info button,
+.search-product .basic-product .cart-info a,
+.related-products-section .basic-product .cart-info button,
+.related-products-section .basic-product .cart-info a {
+  animation: none !important;
+}
+
 /* Header: one stable surface and geometry before and after sticky activation. */
 header,
 header.sticky,
