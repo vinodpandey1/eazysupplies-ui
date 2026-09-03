@@ -1,12 +1,11 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import CartButton from "./widgets/CartButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import BrandBadge from "@/components/widgets/BrandBadge";
+import ProductPrice from "./widgets/ProductPrice";
 
 const getProductThumbnail = (product) => {
   if (product?.product_thumbnail?.original_url) return product.product_thumbnail;
@@ -20,14 +19,11 @@ const getProductThumbnail = (product) => {
 };
 
 const ProductBox11 = ({ productState, setProductState, listView = false }) => {
-  const { convertCurrency } = useContext(SettingContext);
-  const { t } = useTranslation("common");
   const product = productState?.product;
   const selectedVariation = productState?.selectedVariation;
   const productPath = product?.slug || product?.id;
   const normalizedProduct = product ? { ...product, slug: productPath } : product;
   const thumbnail = selectedVariation?.variation_image || getProductThumbnail(product);
-  const displayPrice = selectedVariation?.sale_price ?? selectedVariation?.price ?? product?.sale_price ?? product?.price;
 
   return (
     <>
@@ -59,27 +55,7 @@ const ProductBox11 = ({ productState, setProductState, listView = false }) => {
             </p>
           )}
 
-          <h4 className="price">
-            {displayPrice != null ? convertCurrency(displayPrice) : null}
-            {Number(product?.mrp) > Number(displayPrice) && <del className="ms-2">{convertCurrency(product.mrp)}</del>}
-            {productState?.selectedVariation ? (
-              productState?.selectedVariation.discount ? (
-                <>
-                  {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                  <span className="discounted-price">
-                    {productState?.selectedVariation.discount}% {t("Off")}
-                  </span>
-                </> 
-              ) : null
-            ) : productState?.product?.discount ? (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                <span className="discounted-price">
-                  {productState?.product?.discount}% {t("Off")}
-                </span>
-              </>
-            ) : null}
-          </h4>
+          <ProductPrice product={product} variation={selectedVariation} />
 
           <ProductBoxVariantAttribute productBox11={true} productState={productState} setProductState={setProductState} showVariableType={["dropdown"]} />
         </div>

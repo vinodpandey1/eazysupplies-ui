@@ -2,23 +2,26 @@ import { useContext } from "react";
 import ProductBox1Rating from "@/Components/Widgets/ProductBox/ProductBox1/ProductBox1Rating";
 import SettingContext from "@/context/settingContext";
 import { useTranslation } from "react-i18next";
+import { getProductPricing, getUnitLabel } from "@/utils/pricing/productPricing";
 
 const ProductDetails = ({ productState }) => {
   const { t } = useTranslation("common");
   const { convertCurrency } = useContext(SettingContext);
+  const pricing = getProductPricing(productState?.product, productState?.selectedVariation);
+  const unitLabel = getUnitLabel(productState?.product);
   return (
     <>
       <h2 className="name">{productState?.selectedVariation?.name ?? productState?.product?.name}</h2>
       <div className="price-rating">
-        <h3 className="theme-color price">
-          {productState?.selectedVariation?.sale_price ? convertCurrency(productState?.selectedVariation?.sale_price) : convertCurrency(productState?.product?.sale_price)}
-          {productState?.selectedVariation?.discount || productState?.product?.discount ? <del className="text-content">{productState?.selectedVariation ? convertCurrency(productState?.selectedVariation?.price) : convertCurrency(productState?.product?.price)}</del> : null}
-          {productState?.selectedVariation?.discount || productState?.product?.discount ? <del className="text-content">{productState?.selectedVariation ? convertCurrency(productState?.selectedVariation?.price) : convertCurrency(productState?.product?.price)}</del> : null}{" "}
-          {productState?.selectedVariation?.discount || productState?.product?.discount ? (
-            <span className="offer-top">
-              {productState?.selectedVariation ? productState?.selectedVariation?.discount : productState?.product?.discount}% {t("Off")}
+        <h3 className="theme-color price product-price-display">
+          <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
+          {unitLabel && <span className="unit-label"> {unitLabel}</span>}
+          {pricing.hasOffer && <del className="regular-price text-content">{convertCurrency(pricing.regularPrice)}</del>}
+          {pricing.hasOffer && (
+            <span className="offer-top discounted-price">
+              {pricing.discountPercentage}% {t("Off")}
             </span>
-          ) : null}
+          )}
         </h3>
         <div className="product-rating custom-rate">
           <ProductBox1Rating totalRating={productState?.selectedVariation?.rating_count ?? productState?.product?.rating_count} />

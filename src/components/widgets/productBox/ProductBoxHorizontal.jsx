@@ -1,14 +1,13 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React from "react";
 import ProductRating from "../productRating";
 import CartButton from "./widgets/CartButton";
 import ImageVariant from "./widgets/ImageVariant";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBoxHorizontal = ({ productState, style }) => {
-  const { convertCurrency } = useContext(SettingContext);
   return (
     <>
       {style == "single_product" ? (
@@ -42,16 +41,7 @@ const ProductBoxHorizontal = ({ productState, style }) => {
             <Link href={`/product/${productState?.product?.slug}`}>
               <h6>{productState?.product?.name}</h6>
             </Link>
-            <h4>
-              {productState?.product?.discount ? (
-                <>
-                  {convertCurrency(productState?.product?.sale_price)}
-                  {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                </>
-              ) : (
-                convertCurrency(productState?.product?.price)
-              )}
-            </h4>
+            <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           </div>
         </div>
       )}
