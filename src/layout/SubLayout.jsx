@@ -106,6 +106,16 @@ const SubLayout = ({ children }) => {
     }
   }, [themeColor, themeColor2]);
 
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove("modal-open");
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("padding-right");
+      document.documentElement.style.removeProperty("overflow");
+      document.querySelectorAll(".modal-backdrop, .offcanvas-backdrop").forEach((element) => element.remove());
+    };
+  }, [pathName]);
+
   // useEffect(() => {
   //   const message = themeOption?.general?.taglines;
   //   let timer;

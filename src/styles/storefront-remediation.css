@@ -9,6 +9,40 @@
   --storefront-accent: var(--theme-color, #76b900);
 }
 
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.offcanvas,
+.offcanvas-body,
+.cart-box,
+.cart-list,
+.search-suggestion-box,
+.dropdown-menu,
+.theme-modal .modal-body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.product-wrapper-grid,
+.search-product,
+.collection-product-wrapper {
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
+}
+
+.basic-product,
+.basic-product .img-wrapper,
+.basic-product img {
+  backface-visibility: hidden;
+}
+
 /* Header: one stable surface and geometry before and after sticky activation. */
 header,
 header.sticky,
