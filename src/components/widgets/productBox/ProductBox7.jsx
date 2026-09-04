@@ -1,14 +1,13 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import CartButton from "./widgets/CartButton";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import ProductRatingBox from "./widgets/ProductRatingBox";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox7 = ({ productState }) => {
-  const { convertCurrency } = useContext(SettingContext);
   const { t } = useTranslation("common");
   return (
     <>
@@ -40,15 +39,7 @@ const ProductBox7 = ({ productState }) => {
             </div>
             <span>({productState?.product?.reviews_count})</span>
           </div>
-          <h4 className="price">
-            {convertCurrency(productState?.product?.sale_price)}{" "}
-            {productState?.product?.discount && (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                <span className="discounted-price">{productState?.product?.discount}% Off</span>
-              </>
-            )}
-          </h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           <div className="addtocart_btn">
             <CartButton productState={productState} selectedVariation={productState.selectedVariation} quantity={true} classes="add-button add_cart" text="Add to cart" />
           </div>

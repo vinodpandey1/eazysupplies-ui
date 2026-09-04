@@ -1,18 +1,15 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import CartButton from "./widgets/CartButton";
 import CompareButton from "./widgets/hoverButton/CompareButton";
 import QuickViewButton from "./widgets/hoverButton/QuickViewButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductRatingBox from "./widgets/ProductRatingBox";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox3 = ({ productState, setProductState }) => {
-  const { convertCurrency } = useContext(SettingContext);
-  const { t } = useTranslation("common");
   return (
     <>
       <div className={`basic-product theme-product-2 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
@@ -45,24 +42,7 @@ const ProductBox3 = ({ productState, setProductState }) => {
             <div className="color-panel color-lg">
               <ProductBoxVariantAttribute productState={productState} setProductState={setProductState} showVariableType={["color"]} />
             </div>
-            <h4 className="price">
-              {productState?.selectedVariation ? convertCurrency(productState?.selectedVariation.sale_price) : convertCurrency(productState?.product?.sale_price)}{" "}
-              {productState?.selectedVariation ? (
-                <>
-                  {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                  <span className="discounted-price">
-                    {productState?.selectedVariation.discount}% {t("Off")}
-                  </span>
-                </>
-              ) : (
-                <>
-                  {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                  <span className="discounted-price">
-                    {productState?.product?.discount}% {t("Off")}
-                  </span>
-                </>
-              )}
-            </h4>
+            <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           </div>
         </div>
         <ul className="cart-detail">

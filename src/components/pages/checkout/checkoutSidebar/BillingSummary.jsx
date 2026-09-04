@@ -13,7 +13,8 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
   const { convertCurrency } = useContext(SettingContext);
   const { cartProducts } = useContext(CartContext);
   const { t } = useTranslation("common");
-  const { subtotal } = calculateCartTotals(cartProducts);
+  const { subtotal, regularSubtotal, totalSavings, hasCustomerOffer } = calculateCartTotals(cartProducts);
+  const hasSavings = totalSavings > 0;
 
   useEffect(() => {
     // console.log(cartProducts, "jjj")
@@ -34,8 +35,20 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
                 </div>
               )} */}
               <ul className="sub-total">
+                {hasSavings && (
+                  <li>
+                    Regular subtotal
+                    <span className="count checkout-regular-total">{convertCurrency(regularSubtotal)}</span>
+                  </li>
+                )}
+                {hasSavings && (
+                  <li className="checkout-offer-savings">
+                    {t("YouSave")}
+                    <span className="count">-{convertCurrency(totalSavings)}</span>
+                  </li>
+                )}
                 <li>
-                  {t("Subtotal")}
+                  {hasSavings ? (hasCustomerOffer ? "Customer offer subtotal" : "Offer subtotal") : t("Subtotal")}
                   <span className="count">{convertCurrency(subtotal)}</span>
                 </li>
                 <li>
@@ -62,7 +75,11 @@ const BillingSummary = ({ data, values, setFieldValue, isLoading, mutate, storeC
                 </li>
               </ul>
               <p className="checkout-pricing-note">
-                Discounts, tax and the final payable total are confirmed when the order is reviewed.
+                {hasCustomerOffer
+                  ? "Your customer offer is applied. Tax and the final payable total are confirmed when the order is reviewed."
+                  : hasSavings
+                    ? "The displayed catalogue saving is applied. Tax and the final payable total are confirmed when the order is reviewed."
+                  : "Tax and the final payable total are confirmed when the order is reviewed."}
               </p>
               <PlaceOrder values={values} errors={errors} />
             </div>

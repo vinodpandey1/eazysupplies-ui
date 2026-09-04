@@ -1,17 +1,16 @@
 import RatingBox from "@/components/collection/collectionSidebar/RatingBox";
 import ImageLink from "@/components/themes/widgets/imageLink";
-import SettingContext from "@/context/settingContext";
 import request from "@/utils/axiosUtils";
 import { ProductAPI } from "@/utils/axiosUtils/API";
 import useFetchQuery from "@/utils/hooks/useFetchQuery";;
 import Link from "next/link";
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Media } from "reactstrap";
+import ProductPrice from "@/components/widgets/productBox/widgets/ProductPrice";
 
 const TrendingProduct = ({ productState }) => {
   const { t } = useTranslation("common");
-  const { convertCurrency } = useContext(SettingContext);
   const categoryId = useMemo(() => {
     return productState?.product?.categories?.map((elem) => elem?.id);
   }, [productState?.product?.categories]);
@@ -36,9 +35,7 @@ const TrendingProduct = ({ productState }) => {
               <Link href={`/product/${elem?.slug}`}>
                 <h6>{elem?.name}</h6>
               </Link>
-              <h4>
-                {convertCurrency(elem?.sale_price)} <del> {convertCurrency(elem?.price)} </del>
-              </h4>
+              <ProductPrice product={elem} />
             </Media>
           </Media>
         ))}

@@ -1,7 +1,6 @@
 import RatingBox from "@/components/collection/collectionSidebar/RatingBox";
 import NoDataFound from "@/components/widgets/NoDataFound";
 import CompareContext from "@/context/compareContext";
-import SettingContext from "@/context/settingContext";
 import { compareSlider } from "@/data/sliderSetting/SliderSetting";
 import Btn from "@/elements/buttons/Btn";
 import { CompareAPI } from "@/utils/axiosUtils/API";
@@ -14,10 +13,11 @@ import { RiCloseLine } from "react-icons/ri";
 import Slider from "react-slick";
 import CompareAction from "./CompareAction";
 import CompareWrapper from "./CompareWrapper";
+import ProductPrice from "@/components/widgets/productBox/widgets/ProductPrice";
+import { getProductPricing } from "@/utils/pricing/productPricing";
 
 const CompareData = () => {
   const { setCompareState, compareState, refetch } = useContext(CompareContext);
-  const { convertCurrency } = useContext(SettingContext);
   const { data, mutate: compareMutate, isLoading: compareLoading } = useDelete(CompareAPI, `/compare`);
   useEffect(() => {
     if (data?.status == 200 || data?.status == 201) {
@@ -45,8 +45,10 @@ const CompareData = () => {
                     <h5 className="text-title">{product?.name}</h5>
                   </Link>
                 </div>
-                <CompareWrapper data={{ title: "Discount", value: product?.discount ? product?.discount : "-" }} />
-                <CompareWrapper data={{ title: "Price", value: convertCurrency(product?.sale_price) }} />
+                <CompareWrapper data={{ title: "Discount", value: getProductPricing(product).hasOffer ? `${getProductPricing(product).discountPercentage}%` : "-" }} />
+                <CompareWrapper data={{ title: "Price" }}>
+                  <ProductPrice product={product} showUnit={false} className="compare-price" />
+                </CompareWrapper>
                 <CompareWrapper data={{ title: "Availability", value: ModifyString(product?.stock_status) }} />
                 <CompareWrapper data={{ title: "Rating" }}>
                   <div className="compare-rating">

@@ -77,11 +77,11 @@ export async function GET(request) {
             if (!Number.isInteger(orderid)) {
                 return NextResponse.json({ error: "Payment response is missing the order reference" }, { status: 400 });
             }
-                let data = JSON.stringify({
-                "transectionid": transectionids,
-                 "orderId": orderid,
-                "status": jsonObject.transactionStatus === 'PAID' ? "SUCCESS" : "FAILED"
-                });
+                // Forward BenePay's authenticated opaque response to the API.
+                // Rebuilding a reduced callback payload here discards the GCM
+                // authentication tag and prevents the API from verifying that
+                // the payment status and amount really came from BenePay.
+                let data = JSON.stringify({ response: paymentResponse });
                 let config = {
                 method: 'put',
                 maxBodyLength: Infinity,

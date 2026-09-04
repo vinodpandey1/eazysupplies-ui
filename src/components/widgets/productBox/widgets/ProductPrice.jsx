@@ -12,13 +12,26 @@ const ProductPrice = ({ product, variation, className = "price", showUnit = true
   if (!pricing.sellingPrice) return null;
 
   return (
-    <h4 className={`${className} product-price-display`}>
+    <h4
+      className={`${className} product-price-display`}
+      data-offer-type={pricing.offerType || "standard"}
+      aria-label={`Price ${convertCurrency(pricing.sellingPrice)}${pricing.hasOffer ? `, was ${convertCurrency(pricing.regularPrice)}, ${pricing.discountPercentage}% off` : ""}`}
+    >
       <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
       {unitLabel && <span className="unit-label"> {unitLabel}</span>}
-      {pricing.hasOffer && <del className="regular-price">{convertCurrency(pricing.regularPrice)}</del>}
       {pricing.hasOffer && (
-        <span className="discounted-price">
+        <del className="regular-price" aria-label={`Regular price ${convertCurrency(pricing.regularPrice)}`}>
+          {convertCurrency(pricing.regularPrice)}
+        </del>
+      )}
+      {pricing.hasOffer && (
+        <span className="discounted-price" aria-label={`${pricing.discountPercentage}% ${t("Off")}`}>
           {pricing.discountPercentage}% {t("Off")}
+        </span>
+      )}
+      {pricing.hasOffer && pricing.discountAmount > 0 && (
+        <span className="discount-amount" aria-label={`${t("Save")} ${convertCurrency(pricing.discountAmount)}`}>
+          {t("Save")} {convertCurrency(pricing.discountAmount)}
         </span>
       )}
     </h4>

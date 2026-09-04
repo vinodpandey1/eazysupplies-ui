@@ -3,11 +3,11 @@ import ProductBox from "@/components/widgets/productBox";
 import ProductSkeleton from "@/components/widgets/skeletonLoader/ProductSkeleton";
 import Pagination from "@/components/widgets/Pagination";
 import ThemeOptionContext from "@/context/themeOptionsContext";
+import request from "@/utils/axiosUtils";
 import { ProductAPI } from "@/utils/axiosUtils/API";
 import React, { useContext, useEffect, useState } from "react";
 import { Col, Row } from "reactstrap";
 import ListProductBox from "./ListProductBox";
-import axios from "axios";
 
 const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
   const { themeOption } = useContext(ThemeOptionContext);
@@ -28,8 +28,9 @@ const CollectionProducts = ({ filter, grid, infiniteScroll, categorySlug }) => {
     setIsProductsLoading(true);
     setProducts([]);
 
-    axios
-      .get(ProductAPI, {
+    request({
+        url: ProductAPI,
+        method: "get",
         params: {
           status: 1,
           page,

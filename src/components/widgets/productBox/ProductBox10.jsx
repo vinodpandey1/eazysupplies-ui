@@ -1,16 +1,13 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
-import { RiDiscountPercentFill, RiStarFill } from "react-icons/ri";
+import React from "react";
+import { RiStarFill } from "react-icons/ri";
 import CartButton from "./widgets/CartButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import { useRouter } from "next/navigation";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox10 = ({ productState }) => {
-  const { convertCurrency } = useContext(SettingContext);
-  const { t } = useTranslation("common");
   const router = useRouter();
 
   return (
@@ -54,19 +51,10 @@ const ProductBox10 = ({ productState }) => {
             </div>
 
             <div className="price-vertical">
-              {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-              <h4>{productState?.selectedVariation ? convertCurrency(productState?.selectedVariation.sale_price) : convertCurrency(productState?.product?.sale_price)}</h4>
+              <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
             </div>
           </div>
 
-          {productState?.product?.discount ? (
-            <div className="discount-value">
-              <span className="offer-icon me-2">
-                <RiDiscountPercentFill />
-              </span>
-              {t("SaveUpto")} {productState?.product?.discount}% {t("Off")}
-            </div>
-          ) : null}
         </div>
       </div>
     </>

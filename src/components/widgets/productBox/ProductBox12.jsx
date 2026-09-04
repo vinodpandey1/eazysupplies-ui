@@ -1,16 +1,13 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import ProductRating from "../productRating";
 import CartButton from "./widgets/CartButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox12 = ({ productState, setProductState }) => {
-  const { convertCurrency } = useContext(SettingContext);
-  const { t } = useTranslation("common");
   return (
     <>
       <div className="basic-product theme-product-11">
@@ -30,19 +27,7 @@ const ProductBox12 = ({ productState, setProductState }) => {
             </Link>
           )}
           <h6>{productState?.product?.name}</h6>
-          <h4 className="price">
-            {productState?.selectedVariation ? convertCurrency(Number(productState?.selectedVariation.sale_price).toFixed(2)) : convertCurrency(Number(productState?.product?.sale_price))}
-            {productState?.selectedVariation
-              ? productState?.selectedVariation.discount
-              : productState?.product?.discount && (
-                  <>
-                    {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                    <span className="discounted-price">
-                      {productState?.selectedVariation ? productState?.selectedVariation.discount : productState?.product?.discount}% {t("Off")}
-                    </span>
-                  </>
-                )}
-          </h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           <div className="rating-w-count mb-0 mt-2">
             <ProductRating totalRating={productState?.product?.rating_count || 0} />
             <span>({productState?.product?.reviews_count})</span>
@@ -55,19 +40,7 @@ const ProductBox12 = ({ productState, setProductState }) => {
                 {productState?.product?.brand.name}
               </Link>
             )}
-            <h4 className="price">
-              {productState?.selectedVariation ? convertCurrency(Number(productState?.selectedVariation.sale_price).toFixed(2)) : convertCurrency(Number(productState?.product?.sale_price).toFixed(2))}
-              {productState?.selectedVariation
-                ? productState?.selectedVariation.discount
-                : productState?.product?.discount && (
-                    <>
-                      {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                      <span className="discounted-price">
-                        {productState?.selectedVariation ? productState?.selectedVariation.discount : productState?.product?.discount}% {t("Off")}
-                      </span>
-                    </>
-                  )}
-            </h4>
+            <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           </div>
           <ProductBoxVariantAttribute productState={productState} setProductState={setProductState} showVariableType={["color", "rectangle", "circle", "radio", "dropdown", "image"]} />
           <CartButton productState={productState} selectedVariation={productState?.selectedVariation} text="Add To Cart" iconClass="" classes="add-cart-btn" />

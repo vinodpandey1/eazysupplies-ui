@@ -96,13 +96,27 @@ const ProductContent = ({ productState, setProductState, productAccordion, noDet
             </div>
           )}
           <div className="price-text">
-            <h3 className="product-price-display">
+            <h3
+              className="product-price-display"
+              data-offer-type={pricing.offerType || "standard"}
+              aria-label={`Price ${convertCurrency(pricing.sellingPrice)}${pricing.hasOffer ? `, was ${convertCurrency(pricing.regularPrice)}, ${pricing.discountPercentage}% off` : ""}`}
+            >
               <span className="price-label">{t("Price")}:</span>
               <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
               {unitLabel && <span className="unit-label"> {unitLabel}</span>}
-              {pricing.hasOffer && <del className="regular-price">{convertCurrency(pricing.regularPrice)}</del>}
+              {pricing.hasOffer && (
+                <del className="regular-price" aria-label={`Regular price ${convertCurrency(pricing.regularPrice)}`}>
+                  {convertCurrency(pricing.regularPrice)}
+                </del>
+              )}
               {pricing.hasOffer && <span className="discounted-price">{pricing.discountPercentage}% {t("Off")}</span>}
+              {pricing.hasOffer && pricing.discountAmount > 0 && (
+                <span className="discount-amount">{t("Save")} {convertCurrency(pricing.discountAmount)}</span>
+              )}
             </h3>
+            {pricing.hasOffer && pricing.offerName && (
+              <span className="customer-offer-name">{pricing.offerName}</span>
+            )}
             <span className="tax-caption">{t("InclusiveAllTheTax")}</span>
           </div>
           {productSummary && <p className="description-text product-summary">{productSummary}</p>}

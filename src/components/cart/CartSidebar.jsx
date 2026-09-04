@@ -8,13 +8,15 @@ import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { RiArrowLeftLine } from "react-icons/ri";
 import { Col } from "reactstrap";
+import { calculateCartTotals } from "@/utils/pricing/orderTotals";
 
 const CartSidebar = () => {
-  const { cartProducts, getTotal } = useContext(CartContext);
+  const { cartProducts } = useContext(CartContext);
   const { convertCurrency } = useContext(SettingContext);
   const { setOpenAuthModal } = useContext(ThemeOptionContext);
   const { t } = useTranslation("common");
   const isAuth = Cookies.get("uat");
+  const { subtotal, regularSubtotal, totalSavings } = calculateCartTotals(cartProducts);
   return (
     <Col xxl={3} xl={4}>
       <div className="summery-box p-sticky">
@@ -24,9 +26,21 @@ const CartSidebar = () => {
 
         <div className="summery-contain">
           <ul>
+            {totalSavings > 0 && (
+              <li>
+                <h4>Regular subtotal</h4>
+                <h4 className="price cart-regular-total">{convertCurrency(regularSubtotal)}</h4>
+              </li>
+            )}
+            {totalSavings > 0 && (
+              <li className="cart-offer-savings">
+                <h4>{t("YouSave")}</h4>
+                <h4 className="price">-{convertCurrency(totalSavings)}</h4>
+              </li>
+            )}
             <li>
               <h4>{t("Subtotal")}</h4>
-              <h4 className="price">{convertCurrency(getTotal(cartProducts)?.toFixed(2))}</h4>
+              <h4 className="price">{convertCurrency(subtotal)}</h4>
             </li>
 
             <li className="align-items-start">
@@ -44,7 +58,7 @@ const CartSidebar = () => {
         <ul className="summery-total">
           <li className="list-total border-top-0">
             <h4>{t("Total")}</h4>
-            <h4 className="price theme-color">{convertCurrency(getTotal(cartProducts)?.toFixed(2))}</h4>
+            <h4 className="price theme-color">{convertCurrency(subtotal)}</h4>
           </li>
         </ul>
 

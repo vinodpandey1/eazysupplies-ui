@@ -1,16 +1,15 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useContext } from "react";
+import React from "react";
 import CartButton from "./widgets/CartButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import ProductRatingBox from "./widgets/ProductRatingBox";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox4 = ({ productState }) => {
   const router = useRouter();
-  const { convertCurrency } = useContext(SettingContext);
   return (
     <>
       <div className={`basic-product theme-product-3 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
@@ -34,9 +33,7 @@ const ProductBox4 = ({ productState }) => {
             </div>
             <span>({productState?.product?.reviews_count})</span>
           </div>
-          <h4 className="price">
-            {convertCurrency(productState?.product?.sale_price)} {productState?.product?.discount && <>{productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}</>}
-          </h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           <div className="add-cart-button">
             <CartButton productState={productState} selectedVariation={productState.selectedVariation} classes="add-cart-btn" text="Add to cart" />
           </div>

@@ -1,16 +1,13 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import CartButton from "./widgets/CartButton";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import ProductRatingBox from "./widgets/ProductRatingBox";
 import OfferTimer from "@/components/productDetails/common/OfferTimer";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox6 = ({ productState }) => {
-  const { convertCurrency } = useContext(SettingContext);
-  const { t } = useTranslation("common");
   return (
     <>
       <div className="basic-product theme-product-5">
@@ -40,24 +37,7 @@ const ProductBox6 = ({ productState }) => {
             </div>
           </div>
           <h6>{productState?.product?.name}</h6>
-          <h4 className="price">
-            {productState?.selectedVariation ? convertCurrency(productState?.selectedVariation?.sale_price) : convertCurrency(productState?.product?.sale_price)}{" "}
-            {productState?.selectedVariation ? (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || productState?.product?.price != productState?.product?.sale_price ? <del>{convertCurrency(productState?.selectedVariation?.price)}</del> : ""}
-                <span className="discounted-price">
-                  {productState?.selectedVariation?.discount} % {t("Off")}
-                </span>
-              </>
-            ) : (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del> }
-                <span className="discounted-price">
-                  {productState?.product?.discount} % {t("Off")}
-                </span>
-              </>
-            )}
-          </h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
         </div>
       </div>
     </>

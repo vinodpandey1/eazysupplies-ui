@@ -3,36 +3,131 @@ const positiveNumber = (value) => {
   return Number.isFinite(number) && number > 0 ? number : null;
 };
 
+const firstPositiveNumber = (...values) => {
+  for (const value of values) {
+    const number = positiveNumber(value);
+    if (number !== null) return number;
+  }
+  return null;
+};
+
+const firstDefined = (...values) => values.find((value) => value !== undefined && value !== null);
+
+const normaliseBoolean = (value) => {
+  if (value === true || value === 1 || value === "1" || value === "true") return true;
+  if (value === false || value === 0 || value === "0" || value === "false") return false;
+  return null;
+};
+
+const roundMoney = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+const percentageBetween = (regularPrice, sellingPrice) => (
+  Math.round((((regularPrice - sellingPrice) / regularPrice) * 100 + Number.EPSILON) * 100) / 100
+);
+
 /**
  * Normalises storefront pricing without manufacturing an offer.
  *
- * The API currently uses `price` as the selling price and may optionally send
- * `sale_price`, `mrp`, and `discount`. A crossed-out value is only valid when
- * it is genuinely greater than the amount the customer will pay.
+ * Customer offers are calculated by the API. In that case the API's
+ * regular_price/price is deliberately used as the strike price: `mrp` is a
+ * separate catalogue concept and must not be combined with the customer
+ * offer's percentage or amount. Legacy catalogue markdowns are still shown,
+ * but their saving and percentage are always derived from the prices shown.
  */
 export const getProductPricing = (product, variation) => {
-  const source = variation || product || {};
-  const productPrice = positiveNumber(product?.price);
-  const sourcePrice = positiveNumber(source?.price) || productPrice || 0;
-  const salePrice = positiveNumber(source?.sale_price ?? product?.sale_price);
-  const mrp = positiveNumber(source?.mrp ?? product?.mrp);
+  const baseProduct = product || {};
+  const source = variation || baseProduct;
+  const serverPricing = source?.pricing || baseProduct?.pricing || {};
+  const offerFlag = normaliseBoolean(firstDefined(
+    source?.has_offer,
+    serverPricing?.has_offer,
+    baseProduct?.has_offer,
+  ));
+  const customerDiscount = firstPositiveNumber(
+    source?.customer_discount,
+    serverPricing?.discount_percentage,
+    baseProduct?.customer_discount,
+  );
+  const offerId = firstDefined(
+    source?.applied_offer?.id,
+    serverPricing?.offer_id,
+    baseProduct?.applied_offer?.id,
+  );
+  const offerName = firstDefined(
+    source?.applied_offer?.name,
+    serverPricing?.offer_name,
+    baseProduct?.applied_offer?.name,
+  );
+  const hasCustomerOfferSignal = offerFlag === false
+    ? false
+    : Boolean(offerFlag === true || customerDiscount || offerId || offerName);
 
-  const sellingPrice = salePrice && salePrice < sourcePrice ? salePrice : sourcePrice;
-  const regularCandidate = Math.max(sourcePrice || 0, mrp || 0);
-  const regularPrice = regularCandidate > sellingPrice ? regularCandidate : null;
-  const explicitDiscount = positiveNumber(source?.discount ?? product?.discount);
-  const calculatedDiscount = regularPrice
-    ? Math.round(((regularPrice - sellingPrice) / regularPrice) * 100)
-    : 0;
-  const discountPercentage = regularPrice
-    ? Math.min(100, Math.round(explicitDiscount || calculatedDiscount))
-    : 0;
+  const apiRegularPrice = firstPositiveNumber(
+    source?.regular_price,
+    serverPricing?.regular_price,
+    baseProduct?.regular_price,
+    source?.price,
+    baseProduct?.price,
+  ) || 0;
+  const apiEffectivePrice = firstPositiveNumber(
+    source?.effective_price,
+    serverPricing?.effective_price,
+    baseProduct?.effective_price,
+    source?.sale_price,
+    baseProduct?.sale_price,
+  );
+
+  if (
+    hasCustomerOfferSignal &&
+    apiRegularPrice > 0 &&
+    apiEffectivePrice &&
+    apiEffectivePrice < apiRegularPrice
+  ) {
+    const discountAmount = roundMoney(apiRegularPrice - apiEffectivePrice);
+    return {
+      sellingPrice: apiEffectivePrice,
+      regularPrice: apiRegularPrice,
+      discountPercentage: percentageBetween(apiRegularPrice, apiEffectivePrice),
+      discountAmount,
+      hasOffer: true,
+      isCustomerOffer: true,
+      isCatalogMarkdown: false,
+      offerType: "customer",
+      offerId,
+      offerName,
+    };
+  }
+
+  // Catalogue markdowns pre-date customer offers. Show them only when the
+  // strike/selling pair is real, and derive all labels from that same pair.
+  const cataloguePrice = firstPositiveNumber(
+    source?.price,
+    baseProduct?.price,
+    source?.regular_price,
+    baseProduct?.regular_price,
+  ) || 0;
+  const catalogueSalePrice = firstPositiveNumber(source?.sale_price, baseProduct?.sale_price);
+  const sellingPrice = catalogueSalePrice && catalogueSalePrice < cataloguePrice
+    ? catalogueSalePrice
+    : cataloguePrice;
+  const mrp = firstPositiveNumber(source?.mrp, baseProduct?.mrp);
+  const regularPrice = mrp && mrp > sellingPrice
+    ? mrp
+    : catalogueSalePrice && catalogueSalePrice < cataloguePrice
+      ? cataloguePrice
+      : null;
+  const hasCatalogMarkdown = Boolean(regularPrice && sellingPrice > 0 && regularPrice > sellingPrice);
 
   return {
     sellingPrice,
-    regularPrice,
-    discountPercentage,
-    hasOffer: Boolean(regularPrice && discountPercentage > 0),
+    regularPrice: hasCatalogMarkdown ? regularPrice : null,
+    discountPercentage: hasCatalogMarkdown ? percentageBetween(regularPrice, sellingPrice) : 0,
+    discountAmount: hasCatalogMarkdown ? roundMoney(regularPrice - sellingPrice) : 0,
+    hasOffer: hasCatalogMarkdown,
+    isCustomerOffer: false,
+    isCatalogMarkdown: hasCatalogMarkdown,
+    offerType: hasCatalogMarkdown ? "catalogue" : null,
+    offerId: null,
+    offerName: null,
   };
 };
 

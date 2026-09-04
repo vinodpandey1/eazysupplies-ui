@@ -1,7 +1,6 @@
 import CustomModal from "@/components/widgets/CustomModal";
 import SimpleInputField from "@/components/widgets/inputFields/SimpleInputField";
 import { placeHolderImage } from "@/components/widgets/Placeholder";
-import SettingContext from "@/context/settingContext";
 import ThemeOptionContext from "@/context/themeOptionsContext";
 import Btn from "@/elements/buttons/Btn";
 import { Form, Formik } from "formik";
@@ -11,11 +10,11 @@ import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiCloseLine } from "react-icons/ri";
 import { ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import ProductPrice from "@/components/widgets/productBox/widgets/ProductPrice";
 
 const QuestionAnswerModal = ({ modal, setModal, productState, update, refetch }) => {
   const { t } = useTranslation("common");
   const [message, setShowBoxMessage] = useState();
-  const { convertCurrency } = useContext(SettingContext);
   const { setOpenAuthModal } = useContext(ThemeOptionContext);
   const isAuth = Cookies.get("uat");
   const toggle = () => {
@@ -62,7 +61,7 @@ const QuestionAnswerModal = ({ modal, setModal, productState, update, refetch })
                     <h5 className="name">{productState?.product?.name}</h5>
                     <div className="product-review-rating">
                       <div className="product-rating">
-                        <h6 className="price-number">{convertCurrency(productState?.product?.sale_price)}</h6>
+                        <ProductPrice product={productState?.product} variation={productState?.selectedVariation} className="price-number" />
                       </div>
                     </div>
                   </div>

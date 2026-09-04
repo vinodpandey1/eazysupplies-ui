@@ -3,7 +3,7 @@ import CartContext from "@/context/cartContext";
 import CompareContext from "@/context/compareContext";
 import ThemeOptionContext from "@/context/themeOptionsContext";
 import WishlistContext from "@/context/wishlistContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
@@ -28,7 +28,7 @@ const transformLocalStorageData = (localStorageData) => {
   return transformedData;
 };
 
-const LoginHandle = async (responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal) => {
+const LoginHandle = async (responseData, router, refetch, queryClient, CallBackUrl, setShowBoxMessage, setOpenAuthModal) => {
   if (responseData.status === 200 || responseData.status === 201) {
     Cookies.set("uat", responseData.data?.access_token, { path: "/", expires: new Date(Date.now() + 24 * 60 * 6000) });
     const ISSERVER = typeof window === "undefined";
@@ -41,6 +41,10 @@ const LoginHandle = async (responseData, router, refetch, CallBackUrl, setShowBo
     // especially important immediately after an account activation, because
     // the locally persisted login payload does not include current status.
     await refetch();
+    await queryClient.invalidateQueries();
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("customer-pricing-changed"));
+    }
     router.push(CallBackUrl);
     router.refresh();
     // compareRefetch();
@@ -69,13 +73,14 @@ const useHandleLogin = (setShowBoxMessage = () => {}) => {
   // const { refetch: cartRefetch } = useContext(CartContext);
   // const { refetch: compareRefetch } = useContext(CompareContext);
   const router = useRouter();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
       const response = await request({ url: BASE_URL + LoginAPI, method: "post", data, withCredentials: true });
       if (response?.response) throw response;
       return response;
     },
-    onSuccess: (responseData) => LoginHandle(responseData, router, refetch, CallBackUrl, setShowBoxMessage, setOpenAuthModal),
+    onSuccess: (responseData) => LoginHandle(responseData, router, refetch, queryClient, CallBackUrl, setShowBoxMessage, setOpenAuthModal),
     onError: (err) => {
       const response = err?.response?.data || {};
       const message = response?.activationRequired || response?.code === "ACCOUNT_INACTIVE"

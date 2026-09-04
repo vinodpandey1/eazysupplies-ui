@@ -46,26 +46,65 @@ export const calculateOrderTotals = (order) => {
       toFiniteNumber(snapshot?.quantity ?? item?.quantity, 0),
       0,
     );
+    const pricingSource = snapshot?.pricing || item?.pricing || item?.product?.pricing || {};
     const unitPrice = Math.max(
-      toFiniteNumber(snapshot?.price ?? item?.price ?? item?.product?.price, 0),
+      toFiniteNumber(
+        snapshot?.regular_price ??
+          pricingSource?.regular_price ??
+          snapshot?.price ??
+          item?.regular_price ??
+          item?.price ??
+          item?.product?.regular_price ??
+          item?.product?.price,
+        0,
+      ),
       0,
     );
-    const discountPercentage = Math.max(
-      toFiniteNumber(snapshot?.discountPercentage, 0),
-      0,
+    const explicitSellingPrice = toFiniteNumber(
+      snapshot?.effective_price ??
+        snapshot?.sellingPrice ??
+        snapshot?.sale_price ??
+        pricingSource?.effective_price ??
+        item?.effective_price ??
+        item?.sale_price ??
+        item?.product?.effective_price ??
+        item?.product?.sale_price,
+      NaN,
     );
-    const unitDiscount = Math.max(
-      snapshot && Number.isFinite(Number(snapshot?.discountAmount))
-        ? Number(snapshot.discountAmount)
-        : unitPrice * discountPercentage / 100,
-      0,
+    const explicitUnitDiscount = toFiniteNumber(
+      snapshot?.discount_amount ??
+        snapshot?.discountAmount ??
+        pricingSource?.discount_amount ??
+        item?.discount_amount ??
+        item?.product?.discount_amount,
+      NaN,
     );
     const sellingPrice = Math.max(
-      snapshot && Number.isFinite(Number(snapshot?.sellingPrice))
-        ? Number(snapshot.sellingPrice)
-        : unitPrice - unitDiscount,
+      Number.isFinite(explicitSellingPrice) && explicitSellingPrice <= unitPrice
+        ? explicitSellingPrice
+        : Number.isFinite(explicitUnitDiscount)
+          ? unitPrice - explicitUnitDiscount
+          : unitPrice,
       0,
     );
+    const unitDiscount = Math.max(unitPrice - sellingPrice, 0);
+    const explicitDiscountPercentage = toFiniteNumber(
+      snapshot?.customer_discount ??
+        snapshot?.discountPercentage ??
+        snapshot?.discount_percentage ??
+        pricingSource?.discount_percentage ??
+        item?.customer_discount ??
+        item?.discount_percentage ??
+        item?.product?.customer_discount ??
+        item?.product?.discount_percentage,
+      0,
+    );
+    const discountPercentage = unitDiscount > 0
+      ? Math.max(
+          explicitDiscountPercentage || Math.round((unitDiscount / unitPrice) * 100),
+          0,
+        )
+      : 0;
     const taxPercentage = Math.max(
       toFiniteNumber(
         snapshot?.taxPercentage ?? snapshot?.taxpercent,
@@ -136,7 +175,12 @@ export const calculateCartLine = (cartItem) => {
     unitPrice,
     regularUnitPrice: pricing.hasOffer ? pricing.regularPrice : null,
     discountPercentage: pricing.hasOffer ? pricing.discountPercentage : 0,
+    discountAmount: pricing.hasOffer ? pricing.discountAmount : 0,
+    offerName: pricing.hasOffer ? pricing.offerName : null,
     hasOffer: pricing.hasOffer,
+    isCustomerOffer: pricing.isCustomerOffer,
+    isCatalogMarkdown: pricing.isCatalogMarkdown,
+    offerType: pricing.offerType,
     savings: pricing.hasOffer
       ? Math.max((pricing.regularPrice - unitPrice) * quantity, 0)
       : 0,
@@ -150,6 +194,8 @@ export const calculateCartTotals = (cartItems = []) => {
     ...calculateCartLine(item),
   }));
 
+  const totalSavings = rows.reduce((sum, row) => sum + row.savings, 0);
+
   return {
     rows,
     subtotal: rows.reduce((sum, row) => sum + row.total, 0),
@@ -157,6 +203,8 @@ export const calculateCartTotals = (cartItems = []) => {
       (sum, row) => sum + (row.regularUnitPrice || row.unitPrice) * row.quantity,
       0,
     ),
-    totalSavings: rows.reduce((sum, row) => sum + row.savings, 0),
+    totalSavings,
+    hasCustomerOffer: rows.some((row) => row.isCustomerOffer && row.savings > 0),
+    hasCatalogMarkdown: rows.some((row) => row.isCatalogMarkdown && row.savings > 0),
   };
 };

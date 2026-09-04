@@ -1,8 +1,6 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import { RiDiscountPercentFill, RiStarSFill } from "react-icons/ri";
 import { placeHolderImage } from "../Placeholder";
 import CartButton from "./widgets/CartButton";
@@ -10,10 +8,9 @@ import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import BrandBadge from "@/components/widgets/BrandBadge";
-import { getProductPricing, getUnitLabel } from "@/utils/pricing/productPricing";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox2 = ({ productState, setProductState, onNavigate }) => {
-  const { t } = useTranslation("common");
   const getFirstOriginalUrl = (filesString) => {
     if (!filesString) return null;
     const [firstFile] = filesString.split(",");
@@ -30,9 +27,6 @@ const ProductBox2 = ({ productState, setProductState, onNavigate }) => {
   };
 
   const originalUrl = getFirstOriginalUrl(productState?.product?.productImage);
-  const { convertCurrency } = useContext(SettingContext);
-  const pricing = getProductPricing(productState?.product, productState?.selectedVariation);
-  const unitLabel = getUnitLabel(productState?.product);
   const ratingCount = Number(productState?.product?.reviews_count);
   return (
     <div className={`basic-product theme-product-1 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
@@ -70,19 +64,7 @@ const ProductBox2 = ({ productState, setProductState, onNavigate }) => {
               </div>
             </div>
             <BrandBadge brand={productState?.product?.brand} compact className="mb-2" />
-            <h4 className="price product-price-display">
-              <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
-              {unitLabel && <span className="unit-label"> {unitLabel}</span>}
-              {pricing.hasOffer && <del className="regular-price">{convertCurrency(pricing.regularPrice)}</del>}
-              {pricing.hasOffer && <span className="discounted-price">{pricing.discountPercentage}% {t("Off")}</span>}
-              {/* {productState?.selectedVariation ? convertCurrency(productState?.selectedVariation.sale_price) : convertCurrency(productState?.product?.sale_price)} Adjust currencySymbol based on your implementation
-              {(productState?.selectedVariation ? productState?.selectedVariation.discount : productState?.product?.discount) ? (
-                <>
-                  {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                  <span className="discounted-price">{productState?.selectedVariation ? productState?.selectedVariation.discount : productState?.product?.discount}% Off</span>
-                </>
-              ) : null} */}
-            </h4>
+            <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
             <div className="product-card-cart-action"><CartButton productState={productState} text={"Add to Cart"} selectedVariation={productState.selectedVariation} /></div>
           </div>
           {/* <ul className="offer-panel">

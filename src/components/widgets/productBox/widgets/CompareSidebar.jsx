@@ -1,5 +1,4 @@
 import CompareContext from "@/context/compareContext";
-import SettingContext from "@/context/settingContext";
 import Btn from "@/elements/buttons/Btn";
 import { CompareAPI } from "@/utils/axiosUtils/API";
 import { Href } from "@/utils/constants";
@@ -10,11 +9,11 @@ import { useRouter } from "next/navigation";
 import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Media } from "reactstrap";
+import ProductPrice from "./ProductPrice";
 
 const CompareSidebar = () => {
   const { t } = useTranslation("common");
   const { compareState, setCompareState, refetch, setOpenCompareSidebar, openCompareSidebar } = useContext(CompareContext);
-  const { convertCurrency } = useContext(SettingContext);
   const { data, mutate: compareMutate, isLoading: compareLoading } = useDelete(CompareAPI, `/compare`);
   useEffect(() => {
     if (data?.status == 200 || data?.status == 201) {
@@ -55,9 +54,7 @@ const CompareSidebar = () => {
                       <a href={Href}>
                         <h4>{item?.name}</h4>
                       </a>
-                      <h4>
-                        <span>{convertCurrency(item?.sale_price)}</span>
-                      </h4>
+                      <ProductPrice product={item} showUnit={false} />
                     </Media>
                   </Media>
                   <div className="close-circle">

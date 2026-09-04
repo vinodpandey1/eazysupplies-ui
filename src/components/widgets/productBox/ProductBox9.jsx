@@ -1,19 +1,16 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import CartButton from "./widgets/CartButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import ProductRatingBox from "./widgets/ProductRatingBox";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox9 = ({ productState, setProductState }) => {
   const router = useRouter();
-  const { t } = useTranslation("common");
-  const { convertCurrency } = useContext(SettingContext);
   return (
     <>
       <div className={`basic-product theme-product-8 ${productState?.product?.stock_status === "out-of-stock" ? "sold-out" : ""}`}>
@@ -35,17 +32,7 @@ const ProductBox9 = ({ productState, setProductState }) => {
           <Link href={`/product/${productState?.product?.slug}`} className="product-title">
             {productState?.product?.name}
           </Link>
-          <h4 className="price">
-            {convertCurrency(productState?.product?.sale_price)}{" "}
-            {productState?.product?.discount && (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                <span className="discounted-price">
-                  {productState?.product?.discount}% {t("Off")}
-                </span>
-              </>
-            )}
-          </h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           <div className="rating-w-count mb-0">
             <div className="rating">
               <ProductRatingBox ratingCount={productState?.rating_count} />

@@ -6,12 +6,14 @@ import { useTranslation } from "react-i18next";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { Nav, NavItem, NavLink } from "reactstrap";
 import ConfirmationModal from "./ConfirmationModal";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NavTabTitles = ({ classes = {}, activeTab, setActiveTab, titleList, isLogout, callBackFun }) => {
   const router = useRouter();
   const [modal, setModal] = useState(false);
   const { setAccountData } = useContext(AccountContext);
   const { t } = useTranslation("common");
+  const queryClient = useQueryClient();
   const checkType = (value, index) => {
     if (typeof activeTab == "object") {
       return activeTab.id == value.id;
@@ -28,15 +30,22 @@ const NavTabTitles = ({ classes = {}, activeTab, setActiveTab, titleList, isLogo
 }
 
   const handleLogout = () => {
+    const storedCart = localStorage.getItem("cart");
     clearAllCookies();
-    router.push(`/`);
     setAccountData();
     Cookies.remove("authToken");
     Cookies.remove("ue");
     Cookies.remove("account");
     Cookies.remove("CookieAccept");
     localStorage.clear();
+    if (storedCart) localStorage.setItem("cart", storedCart);
     Cookies.remove("uat", { path: "/" });
+    queryClient.clear();
+    // CartProvider now refetches these rows without an auth cookie and writes
+    // the resulting public prices back to state/localStorage.
+    window.dispatchEvent(new Event("customer-pricing-changed"));
+    router.push(`/`);
+    router.refresh();
     setModal(false);
   };
 

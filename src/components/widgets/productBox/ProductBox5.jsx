@@ -1,17 +1,18 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
+import { useRouter } from "next/navigation";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import CartButton from "./widgets/CartButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import ProductRatingBox from "./widgets/ProductRatingBox";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox5 = ({ productState, setProductState }) => {
-  const { convertCurrency } = useContext(SettingContext);
   const { t } = useTranslation("common");
+  const router = useRouter();
   return (
     <>
       <div className={`basic-product theme-product-4 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
@@ -49,24 +50,7 @@ const ProductBox5 = ({ productState, setProductState }) => {
             <span>({productState?.product?.reviews_count})</span>
           </div>
 
-          <h4 className="price">
-            {productState?.selectedVariation ? convertCurrency(productState?.selectedVariation.sale_price) : convertCurrency(productState?.product?.sale_price)}{" "}
-            {productState?.selectedVariation ? (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                <span className="discounted-price">
-                  {productState?.selectedVariation.discount}% {t("Off")}
-                </span>
-              </>
-            ) : (
-              <>
-                {productState?.selectedVariation?.price != productState?.selectedVariation?.sale_price || (productState?.product?.price != productState?.product?.sale_price && <del>{convertCurrency(productState?.product?.price)}</del>)}
-                <span className="discounted-price">
-                  {productState?.product?.discount}% {t("Off")}
-                </span>
-              </>
-            )}
-          </h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
         </div>
       </div>
     </>

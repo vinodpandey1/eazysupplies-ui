@@ -1,6 +1,5 @@
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { RiStarSFill } from "react-icons/ri";
 import CartButton from "./widgets/CartButton";
@@ -8,13 +7,10 @@ import ImageVariant from "./widgets/ImageVariant";
 import ProductBoxVariantAttribute from "./widgets/ProductBoxVariantAttributes";
 import ProductHoverButton from "./widgets/ProductHoverButton";
 import BrandBadge from "@/components/widgets/BrandBadge";
-import { getProductPricing, getUnitLabel } from "@/utils/pricing/productPricing";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox1 = ({ productState, setProductState }) => {
-  const { convertCurrency } = useContext(SettingContext);
   const { t } = useTranslation("common");
-  const pricing = getProductPricing(productState?.product, productState?.selectedVariation);
-  const unitLabel = getUnitLabel(productState?.product);
 
   return (
     <div className={`basic-product ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
@@ -50,12 +46,7 @@ const ProductBox1 = ({ productState, setProductState }) => {
           <h6>{productState?.selectedVariation ? productState?.selectedVariation?.name : productState?.product?.name}</h6>
         </Link>
 
-        <h4 className="price product-price-display">
-          <span className="selling-price">{convertCurrency(pricing.sellingPrice)}</span>
-          {unitLabel && <span className="unit-label"> {unitLabel}</span>}
-          {pricing.hasOffer && <del className="regular-price">{convertCurrency(pricing.regularPrice)}</del>}
-          {pricing.hasOffer && <span className="discounted-price">{pricing.discountPercentage}% {t("Off")}</span>}
-        </h4>
+        <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
 
         <ProductBoxVariantAttribute setProductState={setProductState} productState={productState} showVariableType={["color", "rectangle", "circle", "radio", "dropdown", "image"]} />
       </div>

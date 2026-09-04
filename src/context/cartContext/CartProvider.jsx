@@ -2,6 +2,27 @@ import React, { useEffect, useMemo, useState } from "react";
 import CartContext from ".";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 import { calculateCartLine, calculateCartTotals } from "@/utils/pricing/orderTotals";
+import request from "@/utils/axiosUtils";
+import { ProductAPI } from "@/utils/axiosUtils/API";
+
+const withoutAccountPricing = (value) => {
+  if (!value || typeof value !== "object") return value;
+
+  const cleanValue = { ...value };
+  [
+    "pricing",
+    "regular_price",
+    "effective_price",
+    "sale_price",
+    "customer_discount",
+    "discount_percentage",
+    "discount_amount",
+    "discount",
+    "has_offer",
+    "applied_offer",
+  ].forEach((key) => delete cleanValue[key]);
+  return cleanValue;
+};
 
 const CartProvider = (props) => {
   const [cartProducts, setCartProducts] = useState([]);
@@ -16,6 +37,70 @@ const CartProvider = (props) => {
       setCartProducts(isCartAvailable?.items);
       setCartTotal(isCartAvailable?.total);
     }
+  }, []);
+
+  // Product prices can change when a customer signs in and becomes eligible
+  // for an account offer. Refresh only with the API's authoritative product
+  // payload; never calculate an offer in the browser.
+  useEffect(() => {
+    let active = true;
+
+    const refreshCustomerPricing = async () => {
+      let storedItems = [];
+      try {
+        storedItems = JSON.parse(localStorage.getItem("cart"))?.items || [];
+      } catch {
+        storedItems = [];
+      }
+
+      const productIds = Array.from(
+        new Set(storedItems.map((item) => item?.product_id || item?.product?.id).filter(Boolean)),
+      );
+      if (!productIds.length) return;
+
+      try {
+        const response = await request({
+          url: ProductAPI,
+          method: "get",
+          params: { ids: productIds.join(","), status: 1, paginate: productIds.length },
+        });
+        const products = Array.isArray(response?.data?.data) ? response.data.data : [];
+        if (!active || !products.length) return;
+
+        const productsById = new Map(products.map((product) => [Number(product?.id), product]));
+        setCartProducts((currentItems) => {
+          const sourceItems = currentItems.length ? currentItems : storedItems;
+          return sourceItems.map((item) => {
+            const freshProduct = productsById.get(Number(item?.product_id || item?.product?.id));
+            if (!freshProduct) return item;
+
+            const variationId = Number(item?.variation_id || item?.variation?.id);
+            const freshVariation = Array.isArray(freshProduct?.variations)
+              ? freshProduct.variations.find((variation) => Number(variation?.id) === variationId)
+              : null;
+            return {
+              ...item,
+              // Public product responses intentionally omit personalised
+              // pricing. Remove old account-only fields before merging so a
+              // logout cannot leave a discounted cart price behind.
+              product: { ...withoutAccountPricing(item?.product), ...freshProduct },
+              variation: freshVariation
+                ? { ...withoutAccountPricing(item?.variation), ...freshVariation }
+                : withoutAccountPricing(item?.variation),
+            };
+          });
+        });
+      } catch (error) {
+        console.error("Unable to refresh customer cart pricing", error);
+      }
+    };
+
+    refreshCustomerPricing();
+    window.addEventListener("customer-pricing-changed", refreshCustomerPricing);
+    return () => {
+      active = false;
+      window.removeEventListener("customer-pricing-changed", refreshCustomerPricing);
+    };
   }, []);
 
   // ✅ Store cart in localStorage whenever cart changes

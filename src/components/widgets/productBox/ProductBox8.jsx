@@ -1,14 +1,13 @@
 import OptimizedImage from "@/components/widgets/OptimizedImage";
-import SettingContext from "@/context/settingContext";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React from "react";
 import CartButton from "./widgets/CartButton";
 import QuickViewButton from "./widgets/hoverButton/QuickViewButton";
 import WishlistButton from "./widgets/hoverButton/WishlistButton";
 import ProductRatingBox from "./widgets/ProductRatingBox";
+import ProductPrice from "./widgets/ProductPrice";
 
 const ProductBox8 = ({ productState }) => {
-  const { convertCurrency } = useContext(SettingContext);
   return (
     <>
       <div className={`basic-product theme-product-7 ${productState?.product?.stock_status === "out_of_stock" ? "sold-out" : ""}`}>
@@ -22,7 +21,7 @@ const ProductBox8 = ({ productState }) => {
           <Link href={`/product/${productState?.product?.slug}`} className="product-title mb-2">
             {productState?.product?.name}
           </Link>
-          <h4 className="price">{convertCurrency(productState?.product?.sale_price)}</h4>
+          <ProductPrice product={productState?.product} variation={productState?.selectedVariation} />
           <div className="rating-w-count mb-0">
             <div className="rating">
               <ProductRatingBox ratingCount={productState?.rating_count} />

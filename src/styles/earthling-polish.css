@@ -1211,3 +1211,128 @@ body.earthling-reference-theme .mobile-menu ul li > button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Customer pricing and PDP treatment. Kept under the Earthling body class so
+   the classic storefront remains visually unchanged. */
+body.earthling-reference-theme .product-price-display {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  justify-content: center;
+}
+
+body.earthling-reference-theme .product-price-display .selling-price {
+  color: #744122;
+  font-weight: 800;
+}
+
+body.earthling-reference-theme .product-price-display .regular-price {
+  color: #879086;
+  font-size: 0.72em;
+  font-weight: 500;
+}
+
+body.earthling-reference-theme .product-price-display .discounted-price,
+body.earthling-reference-theme .product-price-display .discount-amount,
+body.earthling-reference-theme .customer-offer-name {
+  background: #e9f7d8;
+  border: 1px solid rgba(107, 177, 17, 0.28);
+  border-radius: 999px;
+  color: #37720a;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1;
+  padding: 7px 10px;
+}
+
+body.earthling-reference-theme .pdp-v2 > .container > .row {
+  background: linear-gradient(135deg, #ffffff 0%, #f7fceb 52%, #fff8ed 100%);
+  border: 1px solid rgba(105, 160, 57, 0.22);
+  border-radius: 30px;
+  box-shadow: 0 22px 60px rgba(55, 78, 48, 0.1);
+  margin-inline: 0;
+  overflow: hidden;
+  padding: clamp(16px, 2.5vw, 34px);
+}
+
+body.earthling-reference-theme .pdp-v2 .main-product-box {
+  background: radial-gradient(circle at 50% 38%, #ffffff 0%, #fbfff6 58%, #eef8df 100%);
+  border: 1px solid rgba(116, 184, 22, 0.22);
+  border-radius: 24px;
+  min-height: 100%;
+  padding: clamp(12px, 2vw, 26px);
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(116, 184, 22, 0.25);
+  border-radius: 24px;
+  box-shadow: 0 15px 36px rgba(79, 103, 48, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 3vw, 44px);
+  text-align: center;
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .main-title,
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .price-text,
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .product-summary {
+  margin-inline: auto;
+  max-width: 720px;
+  text-align: center;
+  width: 100%;
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .main-title {
+  color: #173d2a;
+  font-weight: 850;
+  justify-content: center;
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .main-title::after {
+  display: none;
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .product-buttons,
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .size-delivery-info {
+  justify-content: center;
+  width: 100%;
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .btn-solid,
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel .btn-animation {
+  background: linear-gradient(135deg, #79c800, #4c9d0c) !important;
+  border-color: transparent !important;
+  box-shadow: 0 12px 24px rgba(91, 159, 18, 0.22);
+}
+
+body.earthling-reference-theme .pdp-v2 .product-specifications {
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(116, 184, 22, 0.17);
+  border-radius: 20px;
+  margin-top: 22px;
+  padding: clamp(18px, 2.5vw, 30px);
+}
+
+body.earthling-reference-theme .product-wrapper-grid .basic-product .product-detail {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  body.earthling-reference-theme .pdp-v2 > .container > .row {
+    border-radius: 20px;
+    padding: 12px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .main-product-box,
+  body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel {
+    border-radius: 18px;
+    padding: 18px 14px;
+  }
+}
