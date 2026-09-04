@@ -1694,3 +1694,333 @@ body.earthling-reference-theme .product-wrapper-grid .basic-product .product-det
     padding: 18px 14px;
   }
 }
+
+/* Account centre ---------------------------------------------------------
+ * The account routes still inherit the original marketplace skin.  Keep
+ * their structure, but make every account screen part of the Earthling
+ * green/cream system used by the storefront and PDP.
+ */
+body.earthling-reference-theme .user-dashboard-section {
+  background:
+    radial-gradient(circle at 10% 5%, rgba(116, 184, 22, 0.1), transparent 28%),
+    linear-gradient(180deg, #fbfff6 0%, #fffaf0 100%);
+  padding-block: clamp(28px, 4vw, 58px);
+}
+
+body.earthling-reference-theme .user-dashboard-section > .container > .row {
+  align-items: flex-start;
+  row-gap: 24px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--earthling-line);
+  border-radius: 24px;
+  box-shadow: 0 18px 44px rgba(24, 60, 43, 0.09);
+  overflow: hidden;
+  padding: 0 0 16px;
+  top: 116px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-top {
+  background: linear-gradient(135deg, #f2fae8 0%, #fff8e8 100%);
+  border-bottom: 1px solid var(--earthling-line);
+  gap: 14px;
+  margin: 0 0 12px;
+  padding: 22px 18px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-image,
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-image .user-round,
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-image img {
+  border-radius: 16px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-image {
+  border: 2px solid rgba(116, 184, 22, 0.26);
+  box-shadow: 0 8px 18px rgba(41, 84, 40, 0.1);
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-detail h5 {
+  color: var(--earthling-forest);
+  font-size: 15px;
+  font-weight: 750;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .profile-detail h6 {
+  color: var(--earthling-muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs {
+  background: transparent;
+  display: grid;
+  gap: 5px;
+  padding: 4px 12px 0;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs .nav-link {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: #43554a;
+  font-size: 14px;
+  font-weight: 620;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs .nav-link svg {
+  background: #f4f8f1;
+  border: 1px solid #e4ece0;
+  border-radius: 10px;
+  color: #53705c;
+  height: 38px;
+  padding: 9px;
+  width: 38px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs .nav-link:hover {
+  background: #f6fbf1;
+  border-color: #dcebcf;
+  color: var(--earthling-leaf-dark);
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #eaf7dc 0%, #fff8e9 100%);
+  border-color: rgba(116, 184, 22, 0.3);
+  color: var(--earthling-forest);
+  box-shadow: 0 7px 16px rgba(81, 137, 30, 0.08);
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs .nav-link.active svg {
+  background: linear-gradient(135deg, #78c414, #4f9610);
+  border-color: transparent;
+  box-shadow: 0 7px 15px rgba(80, 149, 16, 0.2);
+  color: #fff;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .logout-cls {
+  border-top-color: var(--earthling-line);
+  margin-top: 8px;
+  padding: 15px 0 0;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-sidebar .faq-tab .logout-cls .loagout-btn {
+  background: linear-gradient(135deg, #244d38, #173d2a);
+  border: 0;
+  border-radius: 13px;
+  box-shadow: 0 10px 22px rgba(24, 60, 43, 0.16);
+  color: #fff;
+  min-height: 46px;
+}
+
+body.earthling-reference-theme .dashboard-section .dashboard-right-sidebar,
+body.earthling-reference-theme .dashboard-section .counter-section,
+body.earthling-reference-theme .dashboard-section .faq-content .card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--earthling-line);
+  border-radius: 24px;
+  box-shadow: 0 18px 44px rgba(24, 60, 43, 0.08);
+}
+
+body.earthling-reference-theme .dashboard-section .counter-section,
+body.earthling-reference-theme .dashboard-section .faq-content .card-body {
+  padding: clamp(22px, 3vw, 38px);
+}
+
+body.earthling-reference-theme .user-dashboard-section .welcome-msg {
+  border-bottom: 1px solid #e7eee2;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+}
+
+body.earthling-reference-theme .user-dashboard-section .welcome-msg h4 {
+  color: var(--earthling-forest);
+  font-size: clamp(22px, 2.2vw, 31px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+}
+
+body.earthling-reference-theme .user-dashboard-section .welcome-msg p {
+  color: var(--earthling-muted);
+  font-size: 14px;
+  margin: 0;
+  max-width: 720px;
+}
+
+body.earthling-reference-theme .dashboard-section .counter-box {
+  background: linear-gradient(135deg, #f1fae7 0%, #fff9ed 100%);
+  border: 1px solid rgba(116, 184, 22, 0.26);
+  border-left: 4px solid var(--earthling-leaf);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(49, 98, 39, 0.07);
+  min-height: 112px;
+  padding: 20px;
+}
+
+body.earthling-reference-theme .dashboard-section .counter-box img {
+  filter: hue-rotate(34deg) saturate(0.85);
+  margin-right: 16px;
+}
+
+body.earthling-reference-theme .dashboard-section .counter-box h3 {
+  color: var(--earthling-leaf-dark);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+body.earthling-reference-theme .dashboard-section .counter-box h5 {
+  color: var(--earthling-muted);
+  font-size: 14px;
+  font-weight: 620;
+}
+
+body.earthling-reference-theme .user-dashboard-section .box-account.box-info {
+  margin-top: 24px;
+}
+
+body.earthling-reference-theme .user-dashboard-section .box-account.box-info > .row > div > .box-account {
+  background: #fbfdf9;
+  border: 1px solid #e2eadf;
+  border-radius: 18px;
+  padding: clamp(18px, 2.4vw, 28px);
+}
+
+body.earthling-reference-theme .user-dashboard-section .box-head h4,
+body.earthling-reference-theme .dashboard-section .order-title {
+  color: var(--earthling-forest);
+  font-size: 18px;
+  font-weight: 760;
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+}
+
+body.earthling-reference-theme .user-dashboard-section .box-content {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+body.earthling-reference-theme .user-dashboard-section .box-content li {
+  background: #fff;
+  border: 1px solid #e8eee5;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+body.earthling-reference-theme .user-dashboard-section .box-content h6,
+body.earthling-reference-theme .user-dashboard-section .box h6 {
+  color: #506158;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+body.earthling-reference-theme .dashboard-section .show-btn {
+  background: linear-gradient(135deg, #78c414, #4f9610);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(80, 149, 16, 0.18);
+}
+
+body.earthling-reference-theme .dashboard-section .table-responsive,
+body.earthling-reference-theme .dashboard-section .dashboard-table,
+body.earthling-reference-theme .dashboard-section .address-box,
+body.earthling-reference-theme .dashboard-section .payment-box,
+body.earthling-reference-theme .dashboard-section .order-box,
+body.earthling-reference-theme .dashboard-section .notification-list li {
+  background: #fff;
+  border: 1px solid #e1eadc;
+  border-radius: 16px;
+  box-shadow: 0 9px 22px rgba(24, 60, 43, 0.055);
+  overflow: hidden;
+}
+
+body.earthling-reference-theme .dashboard-section .table thead th {
+  background: #eff8e8;
+  color: var(--earthling-forest);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+body.earthling-reference-theme .dashboard-section .table tbody td {
+  border-color: #edf1eb;
+  color: #536158;
+}
+
+body.earthling-reference-theme .dashboard-section .address-book-section .select-box .address-box {
+  border-radius: 16px;
+  padding: 18px;
+}
+
+body.earthling-reference-theme .dashboard-section .address-book-section .select-box .address-box .top h6 span {
+  background: #e8f6d9;
+  border-radius: 999px;
+  color: #3f7d0b;
+  padding: 4px 11px;
+}
+
+body.earthling-reference-theme .dashboard-section .address-book-section .select-box .address-box .bottom .bottom_btn,
+body.earthling-reference-theme .dashboard-section .btn-solid,
+body.earthling-reference-theme .dashboard-section .btn-animation {
+  border-radius: 10px;
+}
+
+body.earthling-reference-theme .dashboard-section input,
+body.earthling-reference-theme .dashboard-section textarea,
+body.earthling-reference-theme .dashboard-section select,
+body.earthling-reference-theme .dashboard-section .form-control,
+body.earthling-reference-theme .dashboard-section .form-select {
+  background-color: #fff;
+  border-color: #dfe8da;
+  border-radius: 12px;
+  color: var(--earthling-forest);
+}
+
+body.earthling-reference-theme .dashboard-section input:focus,
+body.earthling-reference-theme .dashboard-section textarea:focus,
+body.earthling-reference-theme .dashboard-section select:focus,
+body.earthling-reference-theme .dashboard-section .form-control:focus,
+body.earthling-reference-theme .dashboard-section .form-select:focus {
+  border-color: var(--earthling-leaf);
+  box-shadow: 0 0 0 4px rgba(116, 184, 22, 0.12);
+}
+
+@media (max-width: 991px) {
+  body.earthling-reference-theme .dashboard-section .dashboard-sidebar {
+    border-radius: 0 24px 24px 0;
+    box-shadow: 16px 0 42px rgba(24, 60, 43, 0.18);
+    top: 0;
+  }
+
+  body.earthling-reference-theme .dashboard-section .dashboard-sidebar .back-btn {
+    background: #f7fbf4;
+    border-bottom-color: var(--earthling-line);
+    color: var(--earthling-forest);
+  }
+}
+
+@media (max-width: 767px) {
+  body.earthling-reference-theme .user-dashboard-section {
+    padding-block: 24px 38px;
+  }
+
+  body.earthling-reference-theme .dashboard-section .dashboard-right-sidebar,
+  body.earthling-reference-theme .dashboard-section .counter-section,
+  body.earthling-reference-theme .dashboard-section .faq-content .card {
+    border-radius: 18px;
+  }
+
+  body.earthling-reference-theme .dashboard-section .counter-section,
+  body.earthling-reference-theme .dashboard-section .faq-content .card-body {
+    padding: 18px;
+  }
+
+  body.earthling-reference-theme .dashboard-section .counter-box {
+    min-height: 96px;
+  }
+}
