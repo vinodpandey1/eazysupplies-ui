@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
+import { RiDeleteBinLine, RiPencilLine, RiSubtractLine } from "react-icons/ri";
 import { calculateCartLine } from "@/utils/pricing/orderTotals";
 
 const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
@@ -25,21 +25,25 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
   };
   const total = useMemo(() => {
     return getTotal(cartProducts);
-  }, [cartProducts, modal]);
+  }, [cartProducts, getTotal, modal]);
 
   const handelCheckout = () => {
     Cookies.set("CallBackUrl", "/checkout");
   };
 
-    const getFirstOriginalUrl = (filesString) => {
-      if (!filesString) return null;
-      const [firstFile] = filesString.split(",");
-      if (!firstFile) return null;
-      const trimmedFile = firstFile.trim();
-      const url = new URL(process.env.NEXT_PUBLIC_FILE_API_URL);
+  const getFirstOriginalUrl = (filesString) => {
+    if (!filesString) return null;
+    const [firstFile] = filesString.split(",");
+    if (!firstFile) return null;
+    const trimmedFile = firstFile.trim();
+    try {
+      const url = new URL(process.env.NEXT_PUBLIC_FILE_API_URL || "https://api.eazysupplies.com/api/file");
       url.searchParams.set("file", trimmedFile);
       return url.toString();
-};
+    } catch {
+      return null;
+    }
+  };
 
   useEffect(() => {
     cartProducts?.filter((elem) => {
@@ -75,7 +79,7 @@ const SelectedCart = ({ modal, setSelectedVariation, setModal }) => {
                     </span>
                   </h4>
                   {elem?.variation && <h5 className="gram">{elem?.variation?.attribute_values?.[0]?.value ? elem?.variation?.attribute_values?.[0]?.value : elem?.selected_variation}</h5>}
-                  <HandleQuantity productObj={elem?.product} elem={elem} customIcon={<RiDeleteBinLine />} />
+                  <HandleQuantity productObj={elem?.product} elem={elem} customIcon={<RiSubtractLine />} />
                   <div className="close-circle">
                     {elem?.variation && (
                       <Btn className="close_button delete-button edit-button" color="transparent" onClick={() => onEdit(elem)}>

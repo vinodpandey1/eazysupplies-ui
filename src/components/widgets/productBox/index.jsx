@@ -15,7 +15,7 @@ import ProductBox8 from "./ProductBox8";
 import ProductBox9 from "./ProductBox9";
 import ProductBoxHorizontal from "./ProductBoxHorizontal";
 
-const ProductBox = ({ style = "vertical", product, boxStyle }) => {
+const ProductBox = ({ style = "vertical", product, boxStyle, variantOverride }) => {
   const path = useSearchParams();
   const theme = path.get("theme");
   const { themeOption, setVariant, variant } = useContext(ThemeOptionContext);
@@ -23,11 +23,13 @@ const ProductBox = ({ style = "vertical", product, boxStyle }) => {
 
   useEffect(() => {
     if (product) {
-      setProductState({ ...productState, product: product });
+      setProductState((currentState) => ({ ...currentState, product }));
     }
   }, [product]);
 
   useEffect(() => {
+    if (variantOverride) return;
+
     if (theme == "fashion_one" || theme == "fashion_two" || theme == "fashion_three" || theme == "furniture_two" || theme == "watch" || theme == "christmas") {
       setVariant("product_box_one");
     } else if (theme == "fashion_four" || theme == "fashion_seven" || theme == "tools") {
@@ -57,10 +59,12 @@ const ProductBox = ({ style = "vertical", product, boxStyle }) => {
     } else {
       setVariant(themeOption?.product ? themeOption?.product?.product_box_variant : "product_box_one");
     }
-  }, [theme]);
+  }, [setVariant, theme, themeOption, variantOverride]);
+
+  const activeVariant = variantOverride || variant;
 
   return <>
-  {style == "vertical" && variant == "product_box_one" ? <ProductBox1 productState={productState} setProductState={setProductState} /> : style == "vertical" && variant == "product_box_two" ? <ProductBox2 productState={productState} setProductState={setProductState} /> : style == "vertical" && variant == "product_box_three" ? <ProductBox3 productState={productState} setProductState={setProductState} /> : style == "vertical" && variant == "product_box_four" ? <ProductBox4 productState={productState} /> : style == "vertical" && variant == "product_box_five" ? <ProductBox5 productState={productState} setProductState={setProductState} /> : style == "vertical" && variant == "product_box_six" ? <ProductBox6 productState={productState} /> : style == "vertical" && variant == "product_box_seven" ? <ProductBox7 productState={productState} /> : style == "vertical" && variant == "product_box_eight" ? <ProductBox8 productState={productState} /> : style == "vertical" && variant == "product_box_nine" ? <ProductBox9 productState={productState} setProductState={setProductState} /> : style == "vertical" && variant == "product_box_ten" ? <ProductBox10 productState={productState} /> : style == "vertical" && variant == "product_box_eleven" ? <ProductBox11 productState={productState} setProductState={setProductState} /> : style == "vertical" && variant == "product_box_twelve" ? <ProductBox12 setProductState={setProductState} productState={productState} /> : style == "horizontal" && <ProductBoxHorizontal productState={productState} style={boxStyle} />}</>;
+  {style == "vertical" && activeVariant == "product_box_one" ? <ProductBox1 productState={productState} setProductState={setProductState} /> : style == "vertical" && activeVariant == "product_box_two" ? <ProductBox2 productState={productState} setProductState={setProductState} /> : style == "vertical" && activeVariant == "product_box_three" ? <ProductBox3 productState={productState} setProductState={setProductState} /> : style == "vertical" && activeVariant == "product_box_four" ? <ProductBox4 productState={productState} /> : style == "vertical" && activeVariant == "product_box_five" ? <ProductBox5 productState={productState} setProductState={setProductState} /> : style == "vertical" && activeVariant == "product_box_six" ? <ProductBox6 productState={productState} /> : style == "vertical" && activeVariant == "product_box_seven" ? <ProductBox7 productState={productState} /> : style == "vertical" && activeVariant == "product_box_eight" ? <ProductBox8 productState={productState} /> : style == "vertical" && activeVariant == "product_box_nine" ? <ProductBox9 productState={productState} setProductState={setProductState} /> : style == "vertical" && activeVariant == "product_box_ten" ? <ProductBox10 productState={productState} /> : style == "vertical" && activeVariant == "product_box_eleven" ? <ProductBox11 productState={productState} setProductState={setProductState} /> : style == "vertical" && activeVariant == "product_box_twelve" ? <ProductBox12 setProductState={setProductState} productState={productState} /> : style == "horizontal" && <ProductBoxHorizontal productState={productState} style={boxStyle} />}</>;
 };
 
 export default ProductBox;

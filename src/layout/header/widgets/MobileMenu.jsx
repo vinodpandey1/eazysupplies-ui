@@ -1,9 +1,7 @@
 import ThemeOptionContext from "@/context/themeOptionsContext";
-import { Href } from "@/utils/constants";
 import { t } from "i18next";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import { RiHeartLine, RiHome2Line, RiSearch2Line, RiShoppingBagLine, RiUserLine } from "react-icons/ri";
 
@@ -11,15 +9,6 @@ const MobileMenu = () => {
   const { setOpenAuthModal, setCartCanvas } = useContext(ThemeOptionContext);
 
   const isAuthenticated = Cookies.get("uat");
-  const router = useRouter();
-  const handleProfileClick = (path) => {
-    isAuthenticated ? router.push("/account/dashboard") : setOpenAuthModal(true);
-    handleActive(5);
-  };
-  const handleWishlist = () => {
-    isAuthenticated ? router.push("/wishlist") : setOpenAuthModal(true);
-    handleActive(4);
-  };
   const [active, setActive] = useState(1);
 
   useEffect(() => {
@@ -28,6 +17,14 @@ const MobileMenu = () => {
   }, []);
   const handleActive = (num) => {
     setActive(num);
+  };
+  const handleProtectedNavigation = (event, num) => {
+    handleActive(num);
+    setCartCanvas(false);
+    if (!isAuthenticated) {
+      event.preventDefault();
+      setOpenAuthModal(true);
+    }
   };
   return (
     <div className="mobile-menu d-md-none d-block mobile-cart">
@@ -45,22 +42,22 @@ const MobileMenu = () => {
           </Link>
         </li>
         <li className={active == "3" ? "active" : ""}>
-          <a href={"/cart"} onClick={() => setCartCanvas(true)}>
+          <button type="button" aria-label={t("Cart")} aria-controls="cart_side" aria-haspopup="dialog" onClick={() => { handleActive(3); setCartCanvas(true); }}>
             <RiShoppingBagLine />
             <span>{t("Cart")}</span>
-          </a>
+          </button>
         </li>
         <li className={active == "4" ? "active" : ""}>
-          <a href={"/account/order"} onClick={() => handleWishlist()}>
+          <Link href="/account/order" onClick={(event) => handleProtectedNavigation(event, 4)}>
             <RiHeartLine />
             <span>{t("Order") ? t("Order") : "Order"}</span>
-          </a>
+          </Link>
         </li>
-        <li className={active == "5" ? "active" : ""} onClick={() => handleProfileClick()}>
-          <a href={"account/dashboard"}>
+        <li className={active == "5" ? "active" : ""}>
+          <Link href="/account/dashboard" onClick={(event) => handleProtectedNavigation(event, 5)}>
             <RiUserLine />
             <span>{t("User")}</span>
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

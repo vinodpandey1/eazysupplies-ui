@@ -2,9 +2,8 @@ import { useContext, useMemo, useState } from "react";
 import { Progress } from "reactstrap";
 import CartContext from "@/context/cartContext";
 import SettingContext from "@/context/settingContext";
-import { Href } from "@/utils/constants";
 import { useTranslation } from "react-i18next";
-import { RiShoppingCartLine, RiTruckLine } from "react-icons/ri";
+import { RiDeleteBin6Line, RiShoppingBag3Line, RiShoppingCartLine, RiTruckLine } from "react-icons/ri";
 import CartVariationModal from "./CartVariationModal";
 import SelectedCart from "./SelectedCart";
 
@@ -17,6 +16,10 @@ const HeaderCartBottom = ({ modal, setModal, shippingFreeAmt, shippingCal }) => 
   const total = useMemo(() => {
     return getTotal(cartProducts);
   }, [cartProducts, modal]);
+  const cartQuantity = useMemo(
+    () => cartProducts?.reduce((sum, item) => sum + Math.max(0, Number(item?.quantity) || 0), 0) || 0,
+    [cartProducts],
+  );
 
   return (
     <>
@@ -55,9 +58,10 @@ const HeaderCartBottom = ({ modal, setModal, shippingFreeAmt, shippingCal }) => 
             </Progress>
           </div>
           <div className="sidebar-title">
-            <a href={Href} onClick={clearCart}>
-              {t("ClearCart")}
-            </a>
+            <span><RiShoppingBag3Line /> {cartQuantity} {cartQuantity === 1 ? "item" : "items"}</span>
+            <button type="button" className="clear-cart-button" onClick={clearCart}>
+              <RiDeleteBin6Line /> {t("ClearCart")}
+            </button>
           </div>
           <SelectedCart setSelectedVariation={setSelectedVariation} setModal={setModal} modal={modal} />
         </>

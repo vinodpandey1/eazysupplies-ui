@@ -115,7 +115,7 @@ const EarthlingHome = () => {
             <h2>{classicLatest.title && classicLatest.title !== "Latest Drops" ? classicLatest.title : "Latest Eats"}</h2>
             {classicLatest.description && <p>{classicLatest.description}</p>}
           </header>
-          <div className="earthling-featured__grid">{latestProducts.map((product) => <ProductBox key={`latest-${product.id}`} product={product} style="vertical" />)}</div>
+          <div className="earthling-featured__grid">{latestProducts.map((product) => <ProductBox key={`latest-${product.id}`} product={product} style="vertical" variantOverride="product_box_two" />)}</div>
         </section>}
 
         <section className="earthling-story">
@@ -136,7 +136,7 @@ const EarthlingHome = () => {
       <Container>
         <section className="earthling-expert"><header><h2>{config.expert.title}</h2></header><div className="earthling-expert__grid"><OptimizedImage src={config.expert.image} alt={config.expert.name} loading="lazy" /><blockquote><p>“{config.expert.quote}”</p><strong>{config.expert.name}</strong><span>{config.expert.role}</span></blockquote></div></section>
 
-        {selectedProducts.length > 0 && <section className="earthling-featured"><header><h2>{config.featured.title}</h2><Link href="/collections">View all</Link></header><div className="earthling-featured__grid">{selectedProducts.map((product) => <ProductBox key={product.id} product={product} style="vertical" />)}</div></section>}
+        {selectedProducts.length > 0 && <section className="earthling-featured"><header><h2>{config.featured.title}</h2><Link href="/collections">View all</Link></header><div className="earthling-featured__grid">{selectedProducts.map((product) => <ProductBox key={product.id} product={product} style="vertical" variantOverride="product_box_two" />)}</div></section>}
 
         {selectedCategories.length > 0 && <section className="earthling-categories"><header><span>All Categories</span><h2>{config.categories.title}</h2></header><div className="earthling-categories__grid">{selectedCategories.map((category) => {
           const isDefaultCategory = String(category.name || "").trim().toLowerCase() === "default";

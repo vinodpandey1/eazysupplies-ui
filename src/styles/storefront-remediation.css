@@ -765,3 +765,30 @@ body.earthling-reference-theme #cart_side .overlay {
 }
 
 /* END RR storefront visual/navigation remediation. */
+
+/* Semantic cart controls replace links but must retain the legacy visual geometry. */
+.header-cart-trigger,
+.mobile-menu ul li > button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+.header-cart-trigger {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  position: relative;
+}
+
+.mobile-menu ul li > button {
+  display: inline-block;
+  position: relative;
+}

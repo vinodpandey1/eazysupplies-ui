@@ -2,7 +2,7 @@ import CartContext from "@/context/cartContext";
 import SettingContext from "@/context/settingContext";
 import ThemeOptionContext from "@/context/themeOptionsContext";
 import { usePathname } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiCloseFill } from "react-icons/ri";
 import HeaderCartBottom from "./HeaderCartBottom";
@@ -19,6 +19,10 @@ const HeaderCartData = () => {
   const [modal, setModal] = useState(false);
   const [cartStyle, setCartStyle] = useState("");
   const pathName = usePathname();
+  const cartQuantity = useMemo(
+    () => cartProducts?.reduce((total, item) => total + Math.max(0, Number(item?.quantity) || 0), 0) || 0,
+    [cartProducts],
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -63,9 +67,8 @@ const HeaderCartData = () => {
 
   useEffect(() => {
     const total = getTotal(cartProducts);
-    
-    const shippingFreeAmount = settingData?.general?.min_order_free_shipping || shippingFreeAmt;
-    const tempCal = (total * 100) / shippingFreeAmount;
+    const shippingFreeAmount = Number(settingData?.general?.min_order_free_shipping || shippingFreeAmt || 0);
+    const tempCal = shippingFreeAmount > 0 ? (total * 100) / shippingFreeAmount : 100;
 
     if (tempCal > 100) {
       setShippingCal(100);
@@ -80,7 +83,7 @@ const HeaderCartData = () => {
       setShippingCal(tempCal);
       setConfetti(0);
     }
-  }, [ settingData, shippingFreeAmt, getTotal(cartProducts )]);
+  }, [cartProducts, confetti, getTotal, settingData, shippingFreeAmt]);
 
   return (
     <>
@@ -89,7 +92,7 @@ const HeaderCartData = () => {
         <div className="cart-inner" role="dialog" aria-modal="true" aria-label={t("MyCart")}>
           <div className="cart_top">
             <h3>
-              {t("MyCart")} <span>{`(${cartProducts?.length})`}</span>
+              {t("MyCart")} <span>{`(${cartQuantity})`}</span>
             </h3>
             <button type="button" className="close-cart" aria-label={t("CloseCart")} onClick={() => setCartCanvas(false)}>
               <RiCloseFill />

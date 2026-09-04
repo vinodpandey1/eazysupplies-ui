@@ -1,0 +1,1213 @@
+/*
+ * Earthling storefront visual polish
+ *
+ * This file intentionally stays scoped to the Earthling theme. It is loaded
+ * after the legacy theme CSS so the refresh can coexist with ?theme=classic.
+ */
+
+body.earthling-reference-theme {
+  --earthling-leaf: #74b816;
+  --earthling-leaf-dark: #4f8f12;
+  --earthling-forest: #183c2b;
+  --earthling-forest-soft: #28543e;
+  --earthling-coral: #f28a4b;
+  --earthling-cream: #fffaf0;
+  --earthling-mint: #eff9e9;
+  --earthling-surface: #ffffff;
+  --earthling-line: #dfe9d8;
+  --earthling-text: #18241d;
+  --earthling-muted: #69746d;
+  --earthling-shadow: 0 18px 45px rgba(33, 73, 48, 0.1);
+  background: #fbfdf8;
+  color: var(--earthling-text);
+  overflow-x: clip;
+}
+
+body.earthling-reference-theme header.sticky {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid rgba(116, 184, 22, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+body.earthling-reference-theme header.sticky .metro {
+  border-color: rgba(76, 121, 42, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(29, 67, 43, 0.08);
+}
+
+body.earthling-reference-theme header.sticky .navbar-nav .nav-item > a::after {
+  background: var(--earthling-leaf);
+}
+
+body.earthling-reference-theme header.sticky .icon-nav .onhover-div > a,
+body.earthling-reference-theme header.sticky .icon-nav .onhover-div > div > a,
+body.earthling-reference-theme header.sticky .header-cart-trigger {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e1eadc;
+  border-radius: 50%;
+  color: var(--earthling-forest);
+  cursor: pointer;
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  padding: 0;
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  width: 44px;
+}
+
+body.earthling-reference-theme header.sticky .icon-nav .onhover-div > a:hover,
+body.earthling-reference-theme header.sticky .icon-nav .onhover-div > div > a:hover,
+body.earthling-reference-theme header.sticky .header-cart-trigger:hover {
+  background: var(--earthling-mint);
+  border-color: var(--earthling-leaf);
+  box-shadow: 0 8px 18px rgba(78, 142, 22, 0.16);
+  transform: translateY(-2px);
+}
+
+body.earthling-reference-theme header.sticky .header-cart-trigger img,
+body.earthling-reference-theme header.sticky .header-cart-trigger svg {
+  height: 22px;
+  object-fit: contain;
+  width: 22px;
+}
+
+body.earthling-reference-theme header.sticky .cart_qty_cls {
+  background: var(--earthling-coral);
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(242, 138, 75, 0.3);
+}
+
+/* Never let the site-header sticky rule capture content-section headers. */
+body.earthling-reference-theme .earthling-homepage section > header {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  inset: auto;
+  padding: 0;
+  position: static !important;
+  width: auto;
+  z-index: auto;
+}
+
+/* Homepage */
+body.earthling-reference-theme .earthling-homepage {
+  background:
+    radial-gradient(circle at 4% 7%, rgba(176, 224, 108, 0.13), transparent 25rem),
+    linear-gradient(180deg, #ffffff 0%, #fbfdf8 42%, #ffffff 100%);
+  color: var(--earthling-text);
+}
+
+body.earthling-reference-theme .earthling-homepage .home-slider {
+  background: #f5f9f0;
+  border-radius: 0 0 30px 30px;
+  box-shadow: 0 18px 46px rgba(33, 73, 48, 0.09);
+  overflow: hidden;
+}
+
+body.earthling-reference-theme .earthling-latest {
+  background:
+    radial-gradient(circle at 95% 0%, rgba(242, 138, 75, 0.13), transparent 25rem),
+    linear-gradient(135deg, #f5fbeF 0%, #fffaf0 100%);
+  border: 1px solid #e3ecd9;
+  border-radius: 32px;
+  box-shadow: var(--earthling-shadow);
+  margin-top: clamp(46px, 6vw, 76px);
+  padding: clamp(34px, 5vw, 62px) !important;
+  position: relative;
+}
+
+body.earthling-reference-theme .earthling-latest > header,
+body.earthling-reference-theme .earthling-categories > header {
+  margin-bottom: clamp(28px, 4vw, 42px);
+}
+
+body.earthling-reference-theme .earthling-latest > header > span,
+body.earthling-reference-theme .earthling-categories > header > span,
+body.earthling-reference-theme .earthling-story__content > span {
+  color: var(--earthling-leaf-dark);
+}
+
+body.earthling-reference-theme .earthling-latest > header > span {
+  background: rgba(116, 184, 22, 0.12);
+  border: 1px solid rgba(79, 143, 18, 0.18);
+  border-radius: 999px;
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 7px 13px;
+}
+
+body.earthling-reference-theme .earthling-latest h2,
+body.earthling-reference-theme .earthling-story h1,
+body.earthling-reference-theme .earthling-expert h2,
+body.earthling-reference-theme .earthling-featured h2,
+body.earthling-reference-theme .earthling-categories h2 {
+  color: var(--earthling-forest);
+}
+
+body.earthling-reference-theme .earthling-latest h2::after {
+  background: linear-gradient(90deg, var(--earthling-leaf), var(--earthling-coral));
+  border-radius: 999px;
+  content: "";
+  display: block;
+  height: 4px;
+  margin: 14px auto 0;
+  width: 68px;
+}
+
+body.earthling-reference-theme .earthling-latest > header p {
+  color: var(--earthling-muted);
+  font-size: clamp(15px, 1.25vw, 17px);
+}
+
+body.earthling-reference-theme .earthling-featured__grid {
+  align-items: stretch;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 {
+  background: #fff;
+  border: 1px solid #e1eadc;
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(38, 75, 50, 0.08);
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 > .overflow-hidden {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: visible !important;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper {
+  align-items: center;
+  aspect-ratio: 1 / 0.88;
+  background:
+    radial-gradient(circle at center, #ffffff 0 42%, transparent 72%),
+    linear-gradient(145deg, #f4faef, #fff8ed);
+  border-bottom: 1px solid #e8eee4;
+  display: flex;
+  justify-content: center;
+  min-height: 225px;
+  overflow: hidden;
+  padding: clamp(18px, 2.4vw, 34px);
+  position: relative;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper > a {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper img {
+  height: 100% !important;
+  max-height: 250px;
+  max-width: 100%;
+  object-fit: contain !important;
+  width: 100% !important;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .cart-info {
+  display: none !important;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .product-detail {
+  align-items: stretch;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfef8 100%);
+  border-top: 0;
+  display: flex;
+  flex: 1 1 auto;
+  padding: clamp(18px, 1.8vw, 22px);
+  text-align: center;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .product-detail > div {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-title-highlight {
+  -webkit-line-clamp: unset;
+  color: var(--earthling-forest) !important;
+  display: block;
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 750 !important;
+  line-height: 1.45;
+  min-height: 44px;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-transform: none;
+  white-space: normal !important;
+  width: 100%;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .brand-w-color {
+  margin-bottom: 11px;
+  width: 100%;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-detail > div > .d-inline-flex {
+  background: #fff !important;
+  border-color: #e0e9da !important;
+  box-shadow: 0 5px 14px rgba(38, 75, 50, 0.08) !important;
+  margin-bottom: 12px !important;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-price-display {
+  align-items: baseline;
+  color: var(--earthling-forest);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 18px;
+  gap: 4px 8px;
+  justify-content: center;
+  margin: 0;
+  min-height: 50px;
+  width: 100%;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-price-display .selling-price {
+  color: var(--earthling-forest);
+  font-weight: 800;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-price-display .unit-label {
+  color: var(--earthling-muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-price-display .regular-price {
+  color: #9aa39d;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-price-display .discounted-price {
+  background: #fff0e5;
+  border-radius: 999px;
+  color: #bb5d25;
+  font-size: 11px;
+  font-weight: 750;
+  padding: 4px 8px;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 14px;
+  width: 100%;
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action .btn,
+body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action button {
+  background: linear-gradient(135deg, var(--earthling-leaf), #5aa313) !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  box-shadow: 0 10px 20px rgba(90, 163, 19, 0.2);
+  color: #fff !important;
+  min-height: 46px;
+  width: min(100%, 210px);
+}
+
+body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action .btn:hover,
+body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action button:hover {
+  background: linear-gradient(135deg, #66a913, #467f0e) !important;
+  box-shadow: 0 12px 24px rgba(79, 143, 18, 0.28);
+}
+
+body.earthling-reference-theme .earthling-latest--after-hero + .earthling-story {
+  padding-top: clamp(66px, 8vw, 104px);
+}
+
+body.earthling-reference-theme .earthling-story__media,
+body.earthling-reference-theme .earthling-expert__grid > img {
+  border: 8px solid #fff;
+  border-radius: 30px;
+  box-shadow: var(--earthling-shadow);
+}
+
+body.earthling-reference-theme .earthling-story__content {
+  background: linear-gradient(145deg, #fff 0%, #f5fbeF 100%);
+  border: 1px solid #e1eadc;
+  border-radius: 28px;
+  box-shadow: 0 14px 36px rgba(33, 73, 48, 0.08);
+  padding: clamp(30px, 4vw, 58px);
+}
+
+body.earthling-reference-theme .earthling-home-btn {
+  background: linear-gradient(135deg, var(--earthling-leaf), #579b12);
+  box-shadow: 0 12px 24px rgba(87, 155, 18, 0.24);
+}
+
+body.earthling-reference-theme .earthling-stats {
+  background: var(--earthling-forest);
+  border: 0;
+  border-radius: 26px;
+  box-shadow: var(--earthling-shadow);
+  margin-bottom: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+body.earthling-reference-theme .earthling-stats > div {
+  border-color: rgba(255, 255, 255, 0.14);
+  padding: 34px 18px;
+}
+
+body.earthling-reference-theme .earthling-stats strong {
+  color: #aee06d;
+}
+
+body.earthling-reference-theme .earthling-stats span {
+  color: #fff;
+}
+
+body.earthling-reference-theme .earthling-expert blockquote {
+  background: linear-gradient(145deg, #eaf8df 0%, #fff7e9 100%);
+  border: 1px solid #dce9d2;
+  box-shadow: 0 16px 40px rgba(33, 73, 48, 0.09);
+}
+
+body.earthling-reference-theme .earthling-categories__grid a {
+  background: linear-gradient(145deg, #fff 0%, #f2f9ec 100%);
+  border-color: #dfe9d8;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(33, 73, 48, 0.06);
+}
+
+body.earthling-reference-theme .earthling-categories__grid a:hover {
+  border-color: var(--earthling-leaf);
+  box-shadow: 0 14px 30px rgba(33, 73, 48, 0.12);
+}
+
+/* PDP gallery and purchase area */
+body.earthling-reference-theme .pdp-v2 {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(174, 224, 109, 0.13), transparent 30rem),
+    #fbfdf8;
+}
+
+body.earthling-reference-theme .pdp-v2 > .container > .row {
+  --bs-gutter-x: 0;
+  background: #fff;
+  border: 1px solid #e1eadc;
+  border-radius: 30px;
+  box-shadow: var(--earthling-shadow);
+  margin-left: 0;
+  margin-right: 0;
+  padding: clamp(18px, 3vw, 42px);
+  width: 100%;
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box {
+  aspect-ratio: 1 / 1;
+  background:
+    radial-gradient(circle at center, #fff 0 45%, transparent 73%),
+    linear-gradient(145deg, #f2faec, #fff8eb);
+  border: 1px solid #dde8d6;
+  border-radius: 26px;
+  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.58);
+  min-height: 0 !important;
+  overflow: hidden;
+  padding: clamp(8px, 1.2vw, 16px);
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slick-slider,
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slick-list,
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slick-track,
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slick-slide,
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slick-slide > div,
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slider-image {
+  height: 100%;
+  min-height: 0 !important;
+  width: 100%;
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slider-image {
+  align-items: center;
+  display: flex !important;
+  justify-content: center;
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slider-image img {
+  height: 100% !important;
+  max-height: 540px !important;
+  object-fit: contain !important;
+  padding: clamp(14px, 2.5vw, 30px);
+  width: 100% !important;
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-slider-box {
+  margin-top: 12px;
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-slider-box .slider-image {
+  background: #fff;
+  border-color: #dfe8da;
+  border-radius: 14px;
+  box-shadow: 0 5px 16px rgba(33, 73, 48, 0.05);
+  height: 92px;
+}
+
+body.earthling-reference-theme .pdp-v2 .thumbnail-slider-box .slick-current .slider-image {
+  border-color: var(--earthling-leaf);
+  box-shadow: 0 0 0 3px rgba(116, 184, 22, 0.16);
+}
+
+body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel {
+  background: linear-gradient(145deg, #fff 0%, #fbfdf8 100%);
+  border: 1px solid #e2eadf;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(33, 73, 48, 0.07);
+  height: 100% !important;
+  padding: clamp(24px, 3vw, 38px);
+}
+
+body.earthling-reference-theme .pdp-v2 .product-buttons .product-buy-btn-group .btn {
+  background: linear-gradient(135deg, var(--earthling-leaf), #579b12) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 22px rgba(87, 155, 18, 0.24);
+  color: #fff !important;
+  min-height: 50px;
+  padding-inline: 24px;
+}
+
+body.earthling-reference-theme .pdp-v2 .product-buttons .product-buy-btn-group .btn:hover {
+  background: linear-gradient(135deg, #68ad14, #467f0e) !important;
+  box-shadow: 0 13px 27px rgba(79, 143, 18, 0.3);
+  transform: translateY(-2px);
+}
+
+body.earthling-reference-theme .pdp-v2 .product-page-details .main-title,
+body.earthling-reference-theme .pdp-v2 .product-page-details h2 {
+  color: var(--earthling-forest);
+}
+
+body.earthling-reference-theme .pdp-v2 .price-text h3,
+body.earthling-reference-theme .pdp-v2 .product-price-display .selling-price {
+  color: var(--earthling-forest);
+}
+
+body.earthling-reference-theme .pdp-v2 .tab-product,
+body.earthling-reference-theme .pdp-v2 .product-details-contain,
+body.earthling-reference-theme .pdp-v2 .related-products-section {
+  background: #fff;
+  border: 1px solid #e1eadc;
+  border-radius: 24px;
+  box-shadow: 0 14px 34px rgba(33, 73, 48, 0.07);
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section {
+  margin-top: 28px;
+  padding: clamp(22px, 3vw, 38px);
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .row {
+  align-items: stretch;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .row > [class*="col"] {
+  display: flex;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 {
+  border-color: #e1eadc;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(33, 73, 48, 0.06);
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 > .overflow-hidden {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .img-wrapper {
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(145deg, #f2faec, #fff8ed);
+  border-bottom: 1px solid #e7eee2;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .img-wrapper img {
+  height: 100% !important;
+  max-height: 230px;
+  object-fit: contain !important;
+  padding: 16px;
+  width: 100% !important;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .product-detail {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .product-card-cart-action {
+  margin-top: auto;
+}
+
+body.earthling-reference-theme .pdp-v2 .related-products-section .product-card-cart-action .btn,
+body.earthling-reference-theme .pdp-v2 .related-products-section .product-card-cart-action button {
+  background: linear-gradient(135deg, var(--earthling-leaf), #579b12) !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  min-height: 43px;
+}
+
+/* Bright, compact cart drawer */
+body.earthling-reference-theme.cart-canvas-open {
+  overflow: hidden;
+}
+
+body.earthling-reference-theme #cart_side.add_to_cart.right {
+  background: transparent;
+  max-width: min(510px, 100vw);
+  pointer-events: none;
+  right: 0 !important;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.32s ease;
+  visibility: hidden;
+  width: min(510px, 100vw);
+  z-index: 1100;
+}
+
+body.earthling-reference-theme #cart_side.add_to_cart.right.open-side {
+  pointer-events: auto;
+  transform: translateX(0);
+  visibility: visible;
+}
+
+body.earthling-reference-theme #cart_side .overlay {
+  background: rgba(16, 43, 31, 0.62);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+body.earthling-reference-theme #cart_side .cart-inner {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(178, 225, 113, 0.18), transparent 23rem),
+    #f8fbf5;
+  box-shadow: -22px 0 58px rgba(11, 35, 23, 0.24);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+  z-index: 9;
+}
+
+body.earthling-reference-theme #cart_side .cart_top {
+  background: linear-gradient(135deg, var(--earthling-forest), var(--earthling-forest-soft));
+  border: 0;
+  margin: 0;
+  min-height: 86px;
+  padding: 22px 24px;
+}
+
+body.earthling-reference-theme #cart_side .cart_top h3 {
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+body.earthling-reference-theme #cart_side .cart_top h3 span {
+  color: #bce584;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+body.earthling-reference-theme #cart_side .cart_top .close-cart {
+  background: rgba(255, 255, 255, 0.13) !important;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 50% !important;
+  height: 40px;
+  width: 40px;
+}
+
+body.earthling-reference-theme #cart_side .cart_top .close-cart:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+body.earthling-reference-theme #cart_side .cart_top .close-cart svg {
+  color: #fff;
+  font-size: 22px;
+}
+
+body.earthling-reference-theme #cart_side .pere-text-box {
+  background: linear-gradient(135deg, #e9f8dd, #fff7e8);
+  border: 0;
+  border-bottom: 1px solid #dce8d6;
+  margin: 0;
+  padding: 16px 24px 18px;
+}
+
+body.earthling-reference-theme #cart_side .pere-text-box p {
+  color: var(--earthling-forest);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+body.earthling-reference-theme #cart_side .pere-text-box .shipping {
+  color: var(--earthling-leaf-dark);
+  font-weight: 800;
+}
+
+body.earthling-reference-theme #cart_side .pere-text-box .progress {
+  background: rgba(24, 60, 43, 0.12);
+  border-radius: 999px;
+  height: 7px;
+  margin: 14px 8px 0 0;
+  overflow: visible;
+}
+
+body.earthling-reference-theme #cart_side .pere-text-box .progress-bar {
+  background: linear-gradient(90deg, var(--earthling-leaf), #9bd64b);
+  border-radius: 999px;
+  height: 7px;
+}
+
+body.earthling-reference-theme #cart_side .pere-text-box .progress-icon {
+  background: var(--earthling-leaf-dark) !important;
+  box-shadow: 0 4px 10px rgba(79, 143, 18, 0.25);
+}
+
+body.earthling-reference-theme #cart_side .sidebar-title {
+  align-items: center;
+  color: var(--earthling-forest);
+  display: flex;
+  font-size: 14px;
+  font-weight: 750;
+  justify-content: space-between;
+  padding: 16px 24px 10px;
+  text-align: left;
+}
+
+body.earthling-reference-theme #cart_side .sidebar-title span {
+  align-items: center;
+  display: inline-flex;
+  gap: 7px;
+}
+
+body.earthling-reference-theme #cart_side .clear-cart-button {
+  align-items: center;
+  background: #fff !important;
+  border: 1px solid #f0c8b4;
+  border-radius: 999px !important;
+  color: #b45128;
+  display: inline-flex;
+  font-size: 12px;
+  gap: 5px;
+  padding: 7px 11px;
+}
+
+body.earthling-reference-theme #cart_side .clear-cart-button:hover {
+  background: #fff0e8 !important;
+  border-color: var(--earthling-coral);
+}
+
+body.earthling-reference-theme #cart_side .cart_media {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+body.earthling-reference-theme #cart_side .cart_product {
+  flex: 1 1 auto;
+  margin: 0;
+  max-height: none;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 18px 18px;
+  scrollbar-color: #a8c990 transparent;
+  scrollbar-width: thin;
+}
+
+body.earthling-reference-theme #cart_side .cart_product > li.product-box-contain {
+  background: #fff;
+  border: 1px solid #e1eadc;
+  border-radius: 17px;
+  box-shadow: 0 7px 20px rgba(33, 73, 48, 0.065);
+  margin: 10px 0 0;
+  padding: 14px !important;
+}
+
+body.earthling-reference-theme #cart_side .cart_product > li.product-box-contain + li {
+  border-top: 1px solid #e1eadc;
+  margin-top: 12px;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .media {
+  align-items: center;
+  gap: 14px;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .media > a {
+  align-items: center;
+  background: linear-gradient(145deg, #f2f9ec, #fff8ed);
+  border: 1px solid #e2eadf;
+  border-radius: 13px;
+  display: flex;
+  flex: 0 0 82px;
+  height: 82px;
+  justify-content: center;
+  overflow: hidden;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .media > a img {
+  background: transparent;
+  border: 0;
+  height: 76px;
+  object-fit: contain;
+  padding: 6px;
+  width: 76px;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .media-body {
+  min-height: 100px;
+  min-width: 0;
+  padding: 2px 0 34px;
+  width: calc(100% - 96px);
+}
+
+body.earthling-reference-theme #cart_side .cart_product .media-body > a h4 {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--earthling-forest);
+  display: -webkit-box;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.38;
+  margin: 0 58px 7px 0;
+  overflow: hidden;
+  white-space: normal;
+  width: auto;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .quantity {
+  color: var(--earthling-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .quantity span {
+  color: var(--earthling-forest-soft);
+  font-weight: 700;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .qty-box {
+  background: #f1f7ed;
+  border: 1px solid #d9e7d2;
+  border-radius: 999px;
+  bottom: 0;
+  padding: 4px 8px;
+  right: 0;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .qty-box .input-group {
+  align-items: center;
+  gap: 4px;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .qty-box button {
+  align-items: center;
+  border-radius: 50% !important;
+  color: var(--earthling-forest);
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .qty-box .form-control {
+  color: var(--earthling-forest);
+  font-size: 13px;
+  font-weight: 750;
+  width: 30px;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .close-circle {
+  gap: 5px;
+  right: 0;
+  top: 0;
+}
+
+body.earthling-reference-theme #cart_side .cart_product .close-circle button {
+  background: #fff5ef !important;
+  border: 1px solid #f0d5c7;
+  border-radius: 50% !important;
+  color: #b45128;
+  height: 28px;
+  width: 28px;
+}
+
+body.earthling-reference-theme #cart_side .cart_total {
+  background: #fff;
+  border: 0;
+  box-shadow: 0 -12px 30px rgba(33, 73, 48, 0.1);
+  inset: auto !important;
+  margin: 0;
+  max-width: none;
+  padding: 16px 20px 20px;
+  position: static !important;
+  width: 100%;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .total {
+  padding: 0 0 14px;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .total h5 {
+  color: var(--earthling-muted);
+  font-size: 16px;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .total h5 span {
+  color: var(--earthling-forest);
+  font-size: 21px;
+  font-weight: 850;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .buttons {
+  gap: 10px;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .buttons a {
+  border-radius: 13px;
+  min-height: 47px;
+  padding: 12px 16px;
+  text-align: center;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .buttons .view-cart {
+  background: #fff !important;
+  border-color: var(--earthling-leaf) !important;
+  color: var(--earthling-leaf-dark) !important;
+}
+
+body.earthling-reference-theme #cart_side .cart_total .buttons .checkout {
+  background: linear-gradient(135deg, var(--earthling-leaf), #559a12) !important;
+  border-color: transparent !important;
+  box-shadow: 0 10px 20px rgba(85, 154, 18, 0.23);
+}
+
+body.earthling-reference-theme #cart_side .empty-cart {
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+}
+
+body.earthling-reference-theme #cart_side .empty-cart-box .icon {
+  background: var(--earthling-mint);
+  border-color: #dbe8d5;
+  color: var(--earthling-leaf-dark);
+  height: 70px;
+  margin-bottom: 16px;
+  width: 70px;
+}
+
+/* Make the mobile navigation cart control behave like the neighbouring links. */
+body.earthling-reference-theme .mobile-menu ul li > button {
+  align-items: center;
+  background: transparent !important;
+  border: 0;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  gap: 3px;
+  justify-content: center;
+  min-width: 54px;
+  padding: 5px;
+  position: relative;
+}
+
+@media (min-width: 1200px) {
+  body.earthling-reference-theme .pdp-v2 > .container > .row > .col-xl-5 {
+    flex: 0 0 48%;
+    width: 48%;
+  }
+
+  body.earthling-reference-theme .pdp-v2 > .container > .row > .col-xl-7 {
+    flex: 0 0 52%;
+    width: 52%;
+  }
+}
+
+@media (max-width: 991px) {
+  body.earthling-reference-theme header.sticky .metro {
+    border-radius: 0;
+    max-width: 100%;
+  }
+
+  body.earthling-reference-theme .earthling-latest {
+    border-radius: 24px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel {
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 575px) {
+  body.earthling-reference-theme .earthling-homepage .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  body.earthling-reference-theme .earthling-latest {
+    border-radius: 20px;
+    margin-top: 28px;
+    padding: 26px 14px !important;
+  }
+
+  body.earthling-reference-theme .earthling-latest > header p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid {
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 {
+    border-radius: 16px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper {
+    aspect-ratio: 1 / 1;
+    min-height: 150px;
+    padding: 12px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper img {
+    max-height: 156px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .product-detail {
+    padding: 13px 12px 14px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .product-title-highlight {
+    font-size: 12px;
+    line-height: 1.35;
+    min-height: 34px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .brand-w-color {
+    margin-bottom: 7px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .product-detail > div > .d-inline-flex {
+    margin-bottom: 8px !important;
+    max-height: 34px;
+    max-width: 78px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .product-price-display {
+    font-size: 14px;
+    gap: 3px 5px;
+    min-height: 42px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .product-price-display .unit-label,
+  body.earthling-reference-theme .earthling-featured__grid .product-price-display .regular-price {
+    font-size: 10px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action {
+    padding-top: 9px;
+  }
+
+  body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action .btn,
+  body.earthling-reference-theme .earthling-featured__grid .product-card-cart-action button {
+    font-size: 11px;
+    min-height: 42px;
+    padding: 9px 6px;
+  }
+
+  body.earthling-reference-theme .earthling-story__content {
+    border-radius: 22px;
+    padding: 26px 22px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 > .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 > .container > .row {
+    border-radius: 22px;
+    padding: 12px 8px 18px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box {
+    aspect-ratio: 4 / 3;
+    border-radius: 20px;
+    max-height: 310px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .thumbnail-image-slider .main-product-box .slider-image img {
+    max-height: 272px !important;
+    padding: 10px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .thumbnail-slider-box .slider-image {
+    height: 70px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .pdp-purchase-panel {
+    border-radius: 20px;
+    height: auto !important;
+    padding: 22px 18px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section {
+    padding: 22px 14px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .row {
+    margin-left: -6px;
+    margin-right: -6px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .row > .col {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 {
+    border-radius: 15px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .img-wrapper {
+    min-height: 148px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .img-wrapper img {
+    max-height: 150px;
+    padding: 12px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .product-detail {
+    padding: 12px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .product-title-highlight {
+    font-size: 12px;
+    line-height: 1.35;
+    min-height: 34px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .product-price-display {
+    font-size: 14px;
+  }
+
+  body.earthling-reference-theme .pdp-v2 .related-products-section .product-card-cart-action .btn,
+  body.earthling-reference-theme .pdp-v2 .related-products-section .product-card-cart-action button {
+    font-size: 11px;
+    min-height: 40px;
+    padding: 8px 5px;
+  }
+
+  body.earthling-reference-theme #cart_side.add_to_cart.right {
+    width: 100vw;
+  }
+
+  body.earthling-reference-theme #cart_side .cart_top {
+    min-height: 76px;
+    padding: 17px 18px;
+  }
+
+  body.earthling-reference-theme #cart_side .pere-text-box {
+    padding: 14px 18px 16px;
+  }
+
+  body.earthling-reference-theme #cart_side .sidebar-title {
+    padding: 14px 17px 8px;
+  }
+
+  body.earthling-reference-theme #cart_side .cart_product {
+    padding: 4px 11px 14px;
+  }
+
+  body.earthling-reference-theme #cart_side .cart_product > li.product-box-contain {
+    border-radius: 15px;
+    padding: 12px !important;
+  }
+
+  body.earthling-reference-theme #cart_side .cart_product .media > a {
+    flex-basis: 66px;
+    height: 66px;
+  }
+
+  body.earthling-reference-theme #cart_side .cart_product .media > a img {
+    height: 60px;
+    width: 60px;
+  }
+
+  body.earthling-reference-theme #cart_side .cart_product .media-body {
+    min-height: 94px;
+    width: calc(100% - 78px);
+  }
+
+  body.earthling-reference-theme #cart_side .cart_total {
+    padding: 14px 13px max(16px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1:hover {
+    border-color: rgba(116, 184, 22, 0.55);
+    box-shadow: 0 18px 40px rgba(38, 75, 50, 0.14);
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.earthling-reference-theme *,
+  body.earthling-reference-theme *::before,
+  body.earthling-reference-theme *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

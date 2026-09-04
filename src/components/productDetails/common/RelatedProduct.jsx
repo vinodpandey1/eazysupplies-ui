@@ -4,6 +4,7 @@ import ProductIdsContext from "@/context/productIdsContext";
 import request from "@/utils/axiosUtils";
 import { ProductAPI } from "@/utils/axiosUtils/API";
 import useFetchQuery from "@/utils/hooks/useFetchQuery";
+import { useSearchParams } from "next/navigation";
 import { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "reactstrap";
@@ -17,8 +18,10 @@ const normalizeRelatedIds = (value) => {
 
 const RelatedProduct = ({ productState, customContainerClass }) => {
   const { t } = useTranslation("common");
+  const searchParams = useSearchParams();
   const { filteredProduct } = useContext(ProductIdsContext);
   const product = productState?.product;
+  const relatedProductVariant = searchParams.get("theme") === "classic" ? undefined : "product_box_two";
   const relatedIds = useMemo(() => normalizeRelatedIds(product?.related_products), [product?.related_products]);
 
   const { data: categoryProducts } = useFetchQuery(
@@ -84,7 +87,7 @@ const RelatedProduct = ({ productState, customContainerClass }) => {
       <Row className="row-cols-lg-4 row-cols-sm-2 row-cols-1 g-4">
         {relatedProducts.map((relatedProduct) => (
           <Col key={relatedProduct.id}>
-            <ProductBox product={relatedProduct} style="vertical" />
+            <ProductBox product={relatedProduct} style="vertical" variantOverride={relatedProductVariant} />
           </Col>
         ))}
       </Row>

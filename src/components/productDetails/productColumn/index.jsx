@@ -16,7 +16,7 @@ import ThumbnailProductImage from "../productThumbnail/ThumbnailImage";
 
 const ProductColumn = ({ productState, setProductState, direction }) => {
   return (
-    <section className="collection-wrapper section-t-space product-experience">
+    <section className="collection-wrapper section-t-space product-experience pdp-v2">
       <Container>
         <Row className="g-4 align-items-start">
           <Col xl="5" lg="6">
