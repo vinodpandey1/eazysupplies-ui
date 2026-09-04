@@ -126,11 +126,11 @@ const CartProvider = (props) => {
   };
 
   // ✅ Clear Cart
-  const clearCart = () => {
+  const clearCart = (silent = false) => {
     setCartProducts([]);
     setCartTotal(0);
     localStorage.removeItem("cart");
-    ToastNotification("success", "Cart cleared successfully");
+    if (!silent) ToastNotification("success", "Cart cleared successfully");
   };
 
   // ✅ Remove Cart Item

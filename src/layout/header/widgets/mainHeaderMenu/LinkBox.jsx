@@ -21,7 +21,7 @@ const LinkBox = ({ menu, onNavigate }) => {
         <h5 className="dropdown-header mb-3">{t(menu.title)}</h5>
         <div
           className="d-grid"
-          style={{ gridTemplateColumns: "minmax(180px, 1fr)" }}
+          style={{ gridTemplateColumns: "minmax(160px, 1fr)" }}
         >
           {brandState.map((brand) => (
             <Link
@@ -32,8 +32,8 @@ const LinkBox = ({ menu, onNavigate }) => {
               aria-label={`Shop ${brand.name}`}
               title={brand.name}
               style={{
-                minHeight: 52,
-                padding: "7px 10px",
+                minHeight: 46,
+                padding: "5px 8px",
                 borderBottom: "1px solid #edf0ec",
               }}
             >

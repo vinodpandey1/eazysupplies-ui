@@ -61,7 +61,7 @@ const MenuList = ({ menu, isOpen, setIsOpen, closeMenus, level }) => {
         {menu?.mega_menu === 1 && isBrandMenu ? (
           <div
             className={`dropdown-menu ${isOpen[level] === menu?.title ? "show" : ""}`}
-            style={{ width: 290, minWidth: 290, left: "auto", right: 0, padding: 16 }}
+            style={{ width: 245, minWidth: 245, left: "auto", right: 0, padding: 12 }}
           >
             {menu?.child?.map((brandMenu, i) => (
               <LinkBox menu={brandMenu} onNavigate={closeMenus} key={i} />
