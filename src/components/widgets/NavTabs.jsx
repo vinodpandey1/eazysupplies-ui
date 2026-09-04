@@ -34,6 +34,10 @@ const NavTabTitles = ({ classes = {}, activeTab, setActiveTab, titleList, isLogo
 }
 
   const handleLogout = () => {
+    // Clear visible and persisted cart state before the account view unmounts.
+    // CartProvider also invalidates any in-flight pricing refresh here.
+    clearCart(true);
+    setCartCanvas(false);
     clearAllCookies();
     setAccountData();
     Cookies.remove("authToken");
@@ -41,8 +45,6 @@ const NavTabTitles = ({ classes = {}, activeTab, setActiveTab, titleList, isLogo
     Cookies.remove("account");
     Cookies.remove("CookieAccept");
     localStorage.clear();
-    clearCart(true);
-    setCartCanvas(false);
     Cookies.remove("uat", { path: "/" });
     queryClient.clear();
     router.push(`/`);

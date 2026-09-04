@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CartContext from ".";
 import { ToastNotification } from "@/utils/customFunctions/ToastNotification";
 import { calculateCartLine, calculateCartTotals } from "@/utils/pricing/orderTotals";
@@ -29,6 +29,7 @@ const CartProvider = (props) => {
   const [cartTotal, setCartTotal] = useState(0);
   const [cartToggle, setCartToggle] = useState(false);
   const [variationModal, setVariationModal] = useState("");
+  const cartSessionVersionRef = useRef(0);
 
   // ✅ Load Cart Data from localStorage
   useEffect(() => {
@@ -46,6 +47,7 @@ const CartProvider = (props) => {
     let active = true;
 
     const refreshCustomerPricing = async () => {
+      const sessionVersion = cartSessionVersionRef.current;
       let storedItems = [];
       try {
         storedItems = JSON.parse(localStorage.getItem("cart"))?.items || [];
@@ -65,10 +67,11 @@ const CartProvider = (props) => {
           params: { ids: productIds.join(","), status: 1, paginate: productIds.length },
         });
         const products = Array.isArray(response?.data?.data) ? response.data.data : [];
-        if (!active || !products.length) return;
+        if (!active || sessionVersion !== cartSessionVersionRef.current || !products.length) return;
 
         const productsById = new Map(products.map((product) => [Number(product?.id), product]));
         setCartProducts((currentItems) => {
+          if (sessionVersion !== cartSessionVersionRef.current) return currentItems;
           const sourceItems = currentItems.length ? currentItems : storedItems;
           return sourceItems.map((item) => {
             const freshProduct = productsById.get(Number(item?.product_id || item?.product?.id));
@@ -127,8 +130,13 @@ const CartProvider = (props) => {
 
   // ✅ Clear Cart
   const clearCart = (silent = false) => {
+    // Invalidate any pricing refresh that started before logout/clear. Without
+    // this guard, its captured cart snapshot can repopulate the cart later.
+    cartSessionVersionRef.current += 1;
     setCartProducts([]);
     setCartTotal(0);
+    setCartToggle(false);
+    setVariationModal("");
     localStorage.removeItem("cart");
     if (!silent) ToastNotification("success", "Cart cleared successfully");
   };

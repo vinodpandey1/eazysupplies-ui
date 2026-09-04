@@ -22,7 +22,7 @@ import ThemeOptionContext from "@/context/themeOptionsContext";
 import Btn from "@/elements/buttons/Btn";
 import { Href } from "@/utils/constants";
 import Cookies from "js-cookie";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RiSmartphoneLine, RiBuildingLine, RiMailLine, RiLockLine, RiUserLine, RiShieldUserLine } from "react-icons/ri";
@@ -45,6 +45,8 @@ const AuthModal = () => {
   const { t } = useTranslation("common");
   const { openAuthModal, setOpenAuthModal, themeOption } = useContext(ThemeOptionContext);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isEarthlingTheme = searchParams.get("theme") !== "classic";
 
   const handleClick = () => {
     if (state === "register") {
@@ -116,7 +118,7 @@ const AuthModal = () => {
   return (
     <Modal 
       toggle={() => setOpenAuthModal(false)} 
-      className="auth-modal modal-dialog-centered fade show" 
+      className={`auth-modal modal-dialog-centered fade show ${isEarthlingTheme ? "earthling-auth-modal" : ""}`}
       isOpen={openAuthModal}
       size="md"
     >

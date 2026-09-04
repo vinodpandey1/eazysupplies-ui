@@ -1615,6 +1615,73 @@ body.earthling-reference-theme .product-wrapper-grid .basic-product .product-det
   text-align: center;
 }
 
+/* The auth modal is portalled and its legacy stylesheet can load after the
+ * page theme. Give the default Earthling modal an explicit, stable skin. */
+.auth-modal.earthling-auth-modal .compact-auth-modal,
+.auth-modal.earthling-auth-modal .auth-modal-content,
+.auth-modal.earthling-auth-modal .auth-forms-container,
+.auth-modal.earthling-auth-modal .alternative-login,
+.auth-modal.earthling-auth-modal .auth-toggle-text,
+.auth-modal.earthling-auth-modal .divider-text {
+  background: #fffdf8 !important;
+}
+
+.auth-modal.earthling-auth-modal .compact-auth-modal {
+  border: 1px solid #dbe8d4 !important;
+  box-shadow: 0 24px 70px rgba(20, 55, 35, 0.2) !important;
+}
+
+.auth-modal.earthling-auth-modal .auth-state-icon {
+  background: linear-gradient(145deg, #e9f8dc 0%, #fff4df 100%) !important;
+  border-color: #cce4b8 !important;
+}
+
+.auth-modal.earthling-auth-modal .auth-state-icon svg,
+.auth-modal.earthling-auth-modal .auth-modal-content .form-label svg,
+.auth-modal.earthling-auth-modal .alt-login-btn svg {
+  color: #559a12 !important;
+}
+
+.auth-modal.earthling-auth-modal .auth-modal-content h3,
+.auth-modal.earthling-auth-modal .auth-modal-content .form-label,
+.auth-modal.earthling-auth-modal .alt-login-btn {
+  color: #173d2a !important;
+}
+
+.auth-modal.earthling-auth-modal .forgot-password-btn,
+.auth-modal.earthling-auth-modal .auth-toggle-btn {
+  color: #4d8f10 !important;
+}
+
+.auth-modal.earthling-auth-modal .input-wrapper.filled,
+.auth-modal.earthling-auth-modal .input-wrapper.focused {
+  background: linear-gradient(135deg, #f3faec, #fff9ed) !important;
+  border-color: #74b816 !important;
+}
+
+.auth-modal.earthling-auth-modal .verify-btn {
+  background: linear-gradient(135deg, #79c800, #4c9d0c) !important;
+  border-color: transparent !important;
+  box-shadow: 0 12px 24px rgba(85, 154, 18, 0.22) !important;
+  color: #fff !important;
+}
+
+.auth-modal.earthling-auth-modal .alt-login-btn {
+  background: #fff !important;
+  border-color: #dbe8d4 !important;
+}
+
+.auth-modal.earthling-auth-modal .alt-login-btn:hover {
+  background: linear-gradient(135deg, #f2faeb, #fff8e9) !important;
+  border-color: #74b816 !important;
+  box-shadow: 0 8px 18px rgba(85, 154, 18, 0.12) !important;
+}
+
+.auth-modal.earthling-auth-modal .auth-modal-close:hover {
+  border-color: #cce4b8 !important;
+  color: #4d8f10 !important;
+}
+
 @media (max-width: 767px) {
   body.earthling-reference-theme .pdp-v2 > .container > .row {
     border-radius: 20px;
