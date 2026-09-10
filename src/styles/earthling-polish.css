@@ -195,7 +195,7 @@ body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-pr
   justify-content: center;
   min-height: 225px;
   overflow: hidden;
-  padding: clamp(18px, 2.4vw, 34px);
+  padding: clamp(6px, 0.8vw, 12px);
   position: relative;
 }
 
@@ -212,6 +212,9 @@ body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-pr
   max-height: 250px;
   max-width: 100%;
   object-fit: contain !important;
+  padding: 2px;
+  transform: scale(1.28);
+  transform-origin: center;
   width: 100% !important;
 }
 
@@ -438,7 +441,7 @@ body.earthling-reference-theme .product-wrapper-grid:not(.list-view) .basic-prod
   justify-content: center;
   min-height: 230px;
   overflow: hidden;
-  padding: clamp(18px, 2.4vw, 34px);
+  padding: clamp(6px, 0.8vw, 12px);
 }
 
 body.earthling-reference-theme .product-wrapper-grid:not(.list-view) .basic-product.theme-product-1 .img-wrapper > a {
@@ -454,7 +457,16 @@ body.earthling-reference-theme .product-wrapper-grid:not(.list-view) .basic-prod
   max-height: 270px;
   max-width: 100%;
   object-fit: contain !important;
+  padding: 2px;
+  transform: scale(1.28);
+  transform-origin: center;
   width: 100% !important;
+}
+
+body.earthling-reference-theme .search-product .basic-product.theme-product-1 .img-wrapper img {
+  padding: 2px;
+  transform: scale(1.28);
+  transform-origin: center;
 }
 
 body.earthling-reference-theme .product-wrapper-grid:not(.list-view) .basic-product.theme-product-1 .cart-info {
@@ -825,7 +837,9 @@ body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.
   height: 100% !important;
   max-height: 230px;
   object-fit: contain !important;
-  padding: 16px;
+  padding: 4px;
+  transform: scale(1.24);
+  transform-origin: center;
   width: 100% !important;
 }
 
@@ -1084,7 +1098,8 @@ body.earthling-reference-theme #cart_side .cart_product .media > a img {
   border: 0;
   height: 76px;
   object-fit: contain;
-  padding: 6px;
+  padding: 2px;
+  transform: scale(1.14);
   width: 76px;
 }
 
@@ -1305,7 +1320,7 @@ body.earthling-reference-theme .mobile-menu ul li > button {
   body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper {
     aspect-ratio: 1 / 1;
     min-height: 150px;
-    padding: 12px;
+    padding: 6px;
   }
 
   body.earthling-reference-theme .earthling-featured__grid .basic-product.theme-product-1 .img-wrapper img {
@@ -1416,7 +1431,7 @@ body.earthling-reference-theme .mobile-menu ul li > button {
 
   body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .img-wrapper img {
     max-height: 150px;
-    padding: 12px;
+    padding: 4px;
   }
 
   body.earthling-reference-theme .pdp-v2 .related-products-section .basic-product.theme-product-1 .product-detail {
