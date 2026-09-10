@@ -1710,6 +1710,58 @@ body.earthling-reference-theme .product-wrapper-grid .basic-product .product-det
   }
 }
 
+/* Keep registration fields readable regardless of the visitor's OS colour scheme.
+ * Legacy dark-mode rules otherwise mix dark controls with dark placeholder text. */
+body.earthling-reference-theme .register-page .form-label,
+body.earthling-reference-theme .register-page .country-code-badge,
+.auth-modal.earthling-auth-modal .form-label,
+.auth-modal.earthling-auth-modal .country-code-badge {
+  color: #173d2a !important;
+}
+
+body.earthling-reference-theme .register-page .input-wrapper,
+body.earthling-reference-theme .register-page .phone-input-wrapper,
+.auth-modal.earthling-auth-modal .input-wrapper,
+.auth-modal.earthling-auth-modal .phone-input-wrapper {
+  background: #fff !important;
+  border-color: #ceddc7 !important;
+}
+
+body.earthling-reference-theme .register-page .input-wrapper.filled,
+body.earthling-reference-theme .register-page .input-wrapper.focused,
+body.earthling-reference-theme .register-page .phone-input-wrapper.filled,
+body.earthling-reference-theme .register-page .phone-input-wrapper.focused,
+.auth-modal.earthling-auth-modal .input-wrapper.filled,
+.auth-modal.earthling-auth-modal .input-wrapper.focused,
+.auth-modal.earthling-auth-modal .phone-input-wrapper.filled,
+.auth-modal.earthling-auth-modal .phone-input-wrapper.focused {
+  background: linear-gradient(135deg, #f3faec, #fff9ed) !important;
+  border-color: #74b816 !important;
+}
+
+body.earthling-reference-theme .register-page .modern-input,
+body.earthling-reference-theme .register-page .phone-number-input,
+.auth-modal.earthling-auth-modal .modern-input,
+.auth-modal.earthling-auth-modal .phone-number-input {
+  color: #1e3026 !important;
+  -webkit-text-fill-color: #1e3026 !important;
+  caret-color: #4d8f10;
+}
+
+body.earthling-reference-theme .register-page .modern-input::placeholder,
+body.earthling-reference-theme .register-page .phone-number-input::placeholder,
+.auth-modal.earthling-auth-modal .modern-input::placeholder,
+.auth-modal.earthling-auth-modal .phone-number-input::placeholder {
+  color: #68766e !important;
+  -webkit-text-fill-color: #68766e !important;
+  opacity: 1 !important;
+}
+
+body.earthling-reference-theme .register-page .input-divider,
+.auth-modal.earthling-auth-modal .input-divider {
+  background: #ceddc7 !important;
+}
+
 /* Account centre ---------------------------------------------------------
  * The account routes still inherit the original marketplace skin.  Keep
  * their structure, but make every account screen part of the Earthling
